@@ -12,8 +12,12 @@ public class Locum implements Measurable {
 
 	private List<MeasurableService> enabledServices = new ArrayList<MeasurableService>();
 	private Map<MeasurableService, Counter> counters = new HashMap<MeasurableService, Counter>();
-	private Map<BillableService, Map<Calendar, Quotation>> quotations = new HashMap<BillableService, Map<Calendar, Quotation>>();
+	private Map<BillableService, Map<String, Quotation>> quotations = new HashMap<BillableService, Map<String, Quotation>>();
 	private List<Occupant> occupants = new ArrayList<Occupant>();
+
+	Locum(float givenArea, String givenName) {
+		this(givenArea, givenName, Ownership.FOR_RENT);
+	}
 
 	Locum(float givenArea, String givenName, Ownership givenOwnership) {
 		name = givenName;
@@ -28,26 +32,22 @@ public class Locum implements Measurable {
 		counters.put(MeasurableService.GAZ, new Counter("m3"));
 		counters.put(MeasurableService.EE, new Counter("kWh"));
 
-		quotations.put(BillableService.CO, new HashMap<Calendar, Quotation>());
+		quotations.put(BillableService.CO, new HashMap<String, Quotation>());
 		quotations
-				.put(BillableService.WODA, new HashMap<Calendar, Quotation>());
-		quotations.put(BillableService.EE, new HashMap<Calendar, Quotation>());
-		quotations.put(BillableService.GAZ, new HashMap<Calendar, Quotation>());
+				.put(BillableService.WODA, new HashMap<String, Quotation>());
+		quotations.put(BillableService.EE, new HashMap<String, Quotation>());
+		quotations.put(BillableService.GAZ, new HashMap<String, Quotation>());
 		quotations.put(BillableService.INTERNET,
-				new HashMap<Calendar, Quotation>());
+				new HashMap<String, Quotation>());
 		quotations.put(BillableService.PODGRZANIE,
-				new HashMap<Calendar, Quotation>());
+				new HashMap<String, Quotation>());
 		quotations.put(BillableService.SMIECI,
-				new HashMap<Calendar, Quotation>());
+				new HashMap<String, Quotation>());
 		quotations.put(BillableService.SCIEKI,
-				new HashMap<Calendar, Quotation>());
+				new HashMap<String, Quotation>());
 
 	}
-
-	Locum(float givenArea, String givenName) {
-		this(givenArea, givenName, Ownership.FOR_RENT);
-	}
-
+	
 	public void addMeasures(Calendar date,
 			Map<MeasurableService, Float> measures) {
 		for (MeasurableService serv : measures.keySet()) {
@@ -56,16 +56,51 @@ public class Locum implements Measurable {
 		}
 	}
 
-	public String getName() {
-		return name;
+	public void addOccupant(Occupant occupant) {
+		occupants.add(occupant);
+	}
+
+	public void addQuotationSet(String date,
+			Map<BillableService, Quotation> givenQuotations) {
+		for (BillableService serv : givenQuotations.keySet()) {
+			Map<String, Quotation> serviceMap = quotations.get(serv);
+			Quotation oneQuotation = givenQuotations.get(serv);
+			serviceMap.put(date, oneQuotation);
+		}
 	}
 
 	public float getArea() {
 		return area;
 	}
 
+	public Occupant getBillingPerson() {
+		return billingPerson;
+	}
+
+	public List<MeasurableService> getEnabledServices() {
+		return enabledServices;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public List<Occupant> getOccupants() {
+		return occupants;
+	}
+
 	public float getParticipationFactor() {
 		return participationFactor;
+	}
+
+	public Map<BillableService, Quotation> getQuotationSet(String date){
+		Map<BillableService, Quotation> returnQuotations = new HashMap<BillableService, Quotation>();
+		for (BillableService serv : quotations.keySet()){
+			Map<String, Quotation> quotationsForService = quotations.get(serv);
+			Quotation value = quotationsForService.get(date);			
+			returnQuotations.put(serv, value);
+		}
+		return returnQuotations;
 	}
 
 	/**
@@ -83,50 +118,15 @@ public class Locum implements Measurable {
 		return returnMap;
 	}
 
-	public void setParticipationFactor(float participationFactor) {
-		this.participationFactor = participationFactor;
-	}
-
-	public Occupant getBillingPerson() {
-		return billingPerson;
+	public void removeOccupant(Occupant occupant) {
+		occupants.remove(occupant);
 	}
 
 	public void setBillingPerson(Occupant billingPerson) {
 		this.billingPerson = billingPerson;
 	}
-
-	public List<MeasurableService> getEnabledServices() {
-		return enabledServices;
-	}
-
-	public List<Occupant> getOccupants() {
-		return occupants;
-	}
-
-	public void addOccupant(Occupant occupant) {
-		occupants.add(occupant);
-	}
-
-	public void removeOccupant(Occupant occupant) {
-		occupants.remove(occupant);
-	}
-
-	public void addQuotationSet(Calendar date,
-			Map<BillableService, Quotation> givenQuotations) {
-		for (BillableService serv : givenQuotations.keySet()) {
-			Map<Calendar, Quotation> serviceMap = quotations.get(serv);
-			Quotation oneQuotation = givenQuotations.get(serv);
-			serviceMap.put(date, oneQuotation);
-		}
-	}
 	
-	public Map<BillableService, Quotation> getQuotationSet(Calendar date){
-		Map<BillableService, Quotation> returnQuotations = new HashMap<BillableService, Quotation>();
-		for (BillableService serv : quotations.keySet()){
-			Map<Calendar, Quotation> quotationsForService = quotations.get(serv);
-			Quotation value = quotationsForService.get(date);			
-			returnQuotations.put(serv, value);
-		}
-		return returnQuotations;
+	public void setParticipationFactor(float participationFactor) {
+		this.participationFactor = participationFactor;
 	}
 }

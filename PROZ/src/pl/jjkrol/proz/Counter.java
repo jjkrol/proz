@@ -1,5 +1,7 @@
 package pl.jjkrol.proz;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Counter {
@@ -16,17 +18,13 @@ public class Counter {
 
 	float getUsage(Calendar start, Calendar end) {
 		float startMeasure, endMeasure;
-
-		if (measures.get(start) == null)
-			startMeasure = 0;
-		else
-			startMeasure = measures.get(start);
-
-		if (measures.get(end) == null)
-			endMeasure = 0;
-		else
-			endMeasure = measures.get(end);
+		
+		startMeasure = measures.containsKey(start) ? measures.get(start) : 0;
+		endMeasure = measures.containsKey(end) ? measures.get(end) : 0;
 
 		return endMeasure - startMeasure;
+	}
+	Set<Calendar> getDates(){
+		return measures.keySet();
 	}
 }
