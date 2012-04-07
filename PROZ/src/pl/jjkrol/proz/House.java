@@ -4,26 +4,34 @@ import java.util.*;
 
 public class House implements Measurable {
 
-	String name;
-	String address;
+	private final String name;
+	private final String address;
 	List<Locum> locums = new ArrayList<Locum>();
-	Map<Service, Counter> counters = new HashMap<Service, Counter>();
+	Map<MeasurableService, Counter> counters = new HashMap<MeasurableService, Counter>();
 
-	House(String givenName) {
+	House(String givenName, String givenAddress) {
 		name = givenName;
-		counters.put(Service.CO_ADM, new Counter("m3"));
-		counters.put(Service.GAZ, new Counter("m3"));
-		counters.put(Service.POLEWACZKI, new Counter("m3"));
-		counters.put(Service.EE, new Counter("kWh"));
-		counters.put(Service.WODA_GL, new Counter("m3"));
-		counters.put(Service.EE_ADM, new Counter("kWh"));
-		counters.put(Service.CIEPLO, new Counter("m3"));
-		counters.put(Service.CIEPLO_KWH, new Counter("kWh"));
-		counters.put(Service.CO, new Counter("m3"));
-		counters.put(Service.CW, new Counter("m3"));
+		address = givenAddress;
+		counters.put(MeasurableService.GAZ, new Counter("m3"));
+		counters.put(MeasurableService.POLEWACZKI, new Counter("m3"));
+		counters.put(MeasurableService.EE, new Counter("kWh"));
+		counters.put(MeasurableService.WODA_GL, new Counter("m3"));
+		counters.put(MeasurableService.EE_ADM, new Counter("kWh"));
+		counters.put(MeasurableService.CO, new Counter("m3")); // suma co na liczniku ciep³a
+		counters.put(MeasurableService.CIEPLO, new Counter("kWh"));
+		counters.put(MeasurableService.CO_ADM, new Counter("m3"));
+		counters.put(MeasurableService.CW, new Counter("m3"));
 
 	}
-
+	public String getName() {
+		return name;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public List<Locum> getLocums() {
+		return locums;
+	}
 	void listLocums() {
 		for (Locum loc : locums) {
 			System.out.println(loc.getName());
@@ -34,8 +42,8 @@ public class House implements Measurable {
 		locums.add(loc);
 	}
 
-	public void addMeasures(Calendar date, Map<Service, Float> measures) {
-		for (Service serv : measures.keySet()) {
+	public void addMeasures(Calendar date, Map<MeasurableService, Float> measures) {
+		for (MeasurableService serv : measures.keySet()) {
 			Counter count = counters.get(serv);
 			count.addMeasure(date, measures.get(serv));
 		}
@@ -44,14 +52,29 @@ public class House implements Measurable {
 	/**
 	 * calculates usage for the set period of time
 	 */
-	public Map<Service, Float> getUsage(Calendar start, Calendar end) {
-		Map<Service, Float> usageMap = new HashMap<Service, Float>();
+	public Map<MeasurableService, Float> getUsage(Calendar start, Calendar end) {
+		Map<MeasurableService, Float> usageMap = new HashMap<MeasurableService, Float>();
 
-		for (Service serv : counters.keySet()) {
+		for (MeasurableService serv : counters.keySet()) {
 			float usage = counters.get(serv).getUsage(start, end);
 			usageMap.put(serv, usage);
 		}
 
 		return usageMap;
+	}
+	
+	public float getHeatFactor(Calendar start, Calendar end){
+		float kwhHeat = getUsage(start, end).get(MeasurableService.CIEPLO);
+		float m3Heat = getCoSum(start, end);
+		float factor = kwhHeat * 0.0036f / m3Heat;
+		
+		return factor;
+	}
+	public float getCoSum(Calendar start, Calendar end){
+		float coSum = 0f;
+		for(Locum loc : getLocums()){
+			coSum += loc.getUsage(start, end).get(MeasurableService.CO);
+		}
+		return coSum;
 	}
 }
