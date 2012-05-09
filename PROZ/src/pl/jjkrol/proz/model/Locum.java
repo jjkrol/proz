@@ -1,13 +1,38 @@
-package pl.jjkrol.proz;
+package pl.jjkrol.proz.model;
 
 import java.util.*;
 
+import pl.jjkrol.proz.controller.LocumMockup;
+
+/**
+ * A class representing a single locum
+ * @author jjkrol
+ *
+ */
 public class Locum implements Measurable {
 
+	/**
+	 * Name of the locum (or number), main identifier
+	 */
 	private final String name;
+	/**
+	 * Area of the locum in square meters
+	 */
 	private final float area;
+	
+	/**
+	 * a factor, which is used for calculating the participation
+	 * in administrative costs
+	 */
 	private float participationFactor;
+	
+	/**
+	 * a person or company responsible for payments
+	 */
 	private Occupant billingPerson;
+	/**
+	 * tells if this locum is rented or used by administration
+	 */
 	private final Ownership ownership;
 
 	private List<MeasurableService> enabledServices = new ArrayList<MeasurableService>();
@@ -15,37 +40,14 @@ public class Locum implements Measurable {
 	private Map<BillableService, Map<String, Quotation>> quotations = new HashMap<BillableService, Map<String, Quotation>>();
 	private List<Occupant> occupants = new ArrayList<Occupant>();
 
-	Locum(float givenArea, String givenName) {
+	public Locum(float givenArea, String givenName) {
 		this(givenArea, givenName, Ownership.FOR_RENT);
 	}
 
-	Locum(float givenArea, String givenName, Ownership givenOwnership) {
+	public Locum(float givenArea, String givenName, Ownership givenOwnership) {
 		name = givenName;
 		area = givenArea;
 		ownership = givenOwnership;
-
-		// /@TODO get rid of it!
-		counters.put(MeasurableService.CO, new Counter("m3"));
-		counters.put(MeasurableService.ZW, new Counter("m3"));
-		counters.put(MeasurableService.CW, new Counter("m3"));
-		counters.put(MeasurableService.CCW, new Counter("m3"));
-		counters.put(MeasurableService.GAZ, new Counter("m3"));
-		counters.put(MeasurableService.EE, new Counter("kWh"));
-
-		quotations.put(BillableService.CO, new HashMap<String, Quotation>());
-		quotations
-				.put(BillableService.WODA, new HashMap<String, Quotation>());
-		quotations.put(BillableService.EE, new HashMap<String, Quotation>());
-		quotations.put(BillableService.GAZ, new HashMap<String, Quotation>());
-		quotations.put(BillableService.INTERNET,
-				new HashMap<String, Quotation>());
-		quotations.put(BillableService.PODGRZANIE,
-				new HashMap<String, Quotation>());
-		quotations.put(BillableService.SMIECI,
-				new HashMap<String, Quotation>());
-		quotations.put(BillableService.SCIEKI,
-				new HashMap<String, Quotation>());
-
 	}
 	
 	public void addMeasures(Calendar date,
@@ -122,11 +124,37 @@ public class Locum implements Measurable {
 		occupants.remove(occupant);
 	}
 
+	/**
+	 * @param enabledServices the enabledServices to set
+	 */
+	public void setEnabledServices(List<MeasurableService> enabledServices) {
+		this.enabledServices = enabledServices;
+	}
+
+	/**
+	 * @param counters the counters to set
+	 */
+	public void setCounters(Map<MeasurableService, Counter> counters) {
+		this.counters = counters;
+	}
+
+	/**
+	 * @param quotations the quotations to set
+	 */
+	public void setQuotations(
+			Map<BillableService, Map<String, Quotation>> quotations) {
+		this.quotations = quotations;
+	}
+
 	public void setBillingPerson(Occupant billingPerson) {
 		this.billingPerson = billingPerson;
 	}
 	
 	public void setParticipationFactor(float participationFactor) {
 		this.participationFactor = participationFactor;
+	}
+	
+	public LocumMockup getMockup(){
+		return new LocumMockup(name, area, participationFactor);
 	}
 }

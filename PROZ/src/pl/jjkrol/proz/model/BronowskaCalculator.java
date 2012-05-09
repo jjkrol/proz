@@ -1,8 +1,8 @@
-package pl.jjkrol.proz;
+package pl.jjkrol.proz.model;
 
 import java.util.*;
 
-public class Calculator {
+public class BronowskaCalculator implements PaymentCalculator {
 
 	public Map<BillableService, Float> calculatePayment(House house, Locum loc,
 			Calendar start, Calendar end, String quotationName) {
@@ -18,16 +18,9 @@ public class Calculator {
 		Map<BillableService, Quotation> quotations = loc
 				.getQuotationSet(quotationName);
 
-		Map<BillableService, Float> payment = new HashMap<BillableService, Float>();
-		for (BillableService serv : billableUsage.keySet()) {
-			float locumUsage = billableUsage.get(serv);
-			float quotation = quotations.get(serv).getPrice();
-			payment.put(serv, locumUsage * quotation);
-
-		}
-
-		return payment;
+		return calculatePayment(billableUsage, quotations);
 	}
+
 
 	public Map<BillableService, Float> calculateAdministrativePayment(
 			House house, Locum loc, Calendar start, Calendar end,
@@ -37,17 +30,21 @@ public class Calculator {
 				loc, start, end, house);
 		Map<BillableService, Quotation> quotations = loc
 				.getQuotationSet(quotationName);
-		Map<BillableService, Float> administrativePayment = new HashMap<BillableService, Float>();
-
-		for (BillableService serv : administrativeUsage.keySet()) {
-			float locumAdministrativeUsage = administrativeUsage.get(serv);
+				
+		return calculatePayment(administrativeUsage, quotations);
+	}
+	
+	private Map<BillableService, Float> calculatePayment(
+			Map<BillableService, Float> billableUsage,
+			Map<BillableService, Quotation> quotations) {
+		Map<BillableService, Float> payment = new HashMap<BillableService, Float>();
+		for (BillableService serv : billableUsage.keySet()) {
+			float locumUsage = billableUsage.get(serv);
 			float quotation = quotations.get(serv).getPrice();
-			administrativePayment.put(serv, locumAdministrativeUsage
-					* quotation);
+			payment.put(serv, locumUsage * quotation);
 
 		}
-
-		return administrativePayment;
+		return payment;
 	}
 
 	private Map<BillableService, Float> calculateBillableUsage(

@@ -1,4 +1,4 @@
-package pl.jjkrol.proz;
+package pl.jjkrol.proz.model;
 
 public class Occupant {
 
@@ -12,7 +12,7 @@ public class Occupant {
 		INVOICE, BILL;
 	}
 	
-	Occupant(String givenName){
+	public Occupant(String givenName){
 		name = givenName;
 	}
 

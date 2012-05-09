@@ -1,4 +1,4 @@
-package pl.jjkrol.proz;
+package pl.jjkrol.proz.model;
 
 import java.util.*;
 
@@ -6,23 +6,13 @@ public class House implements Measurable {
 
 	private final String name;
 	private final String address;
-	List<Locum> locums = new ArrayList<Locum>();
-	Map<MeasurableService, Counter> counters = new HashMap<MeasurableService, Counter>();
+	private List<Locum> locums = new ArrayList<Locum>();
+	private Map<MeasurableService, Counter> counters = new HashMap<MeasurableService, Counter>();
 
-	House(String givenName, String givenAddress) {
+	public House(String givenName, String givenAddress, Map<MeasurableService, Counter> givenCounters) {
 		name = givenName;
 		address = givenAddress;
-		counters.put(MeasurableService.GAZ, new Counter("m3"));
-		counters.put(MeasurableService.POLEWACZKI, new Counter("m3"));
-		counters.put(MeasurableService.EE, new Counter("kWh"));
-		counters.put(MeasurableService.WODA_GL, new Counter("m3"));
-		counters.put(MeasurableService.EE_ADM, new Counter("kWh"));
-		counters.put(MeasurableService.CO, new Counter("m3")); // suma co na
-																// liczniku
-																// ciep³a
-		counters.put(MeasurableService.CIEPLO, new Counter("kWh"));
-		counters.put(MeasurableService.CO_ADM, new Counter("m3"));
-		counters.put(MeasurableService.CW, new Counter("m3"));
+		counters = givenCounters;
 
 	}
 
@@ -79,7 +69,11 @@ public class House implements Measurable {
 	public String getName() {
 		return name;
 	}
-
+	
+	public float getSingleMeasure(Calendar date, MeasurableService service){
+		Counter count = counters.get(service);
+		return count.getMeasure(date);
+	}
 	/**
 	 * calculates usage for the set period of time
 	 */
@@ -92,11 +86,5 @@ public class House implements Measurable {
 		}
 
 		return usageMap;
-	}
-
-	void listLocums() {
-		for (Locum loc : locums) {
-			System.out.println(loc.getName());
-		}
 	}
 }

@@ -1,4 +1,4 @@
-package pl.jjkrol.proz;
+package pl.jjkrol.proz.model;
 
 import java.util.Map;
 import java.util.Calendar;

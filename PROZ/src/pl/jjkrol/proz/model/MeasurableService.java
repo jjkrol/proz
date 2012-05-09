@@ -1,4 +1,4 @@
-package pl.jjkrol.proz;
+package pl.jjkrol.proz.model;
 
 public enum MeasurableService {
 	CW, CCW, ZW, CO, EE, GAZ,
