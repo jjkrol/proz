@@ -1,5 +1,5 @@
 package pl.jjkrol.proz.controller;
-
+import java.util.List;
 /**
  * A mockup for passing Locum data between View and Controller
  * 
@@ -8,13 +8,15 @@ package pl.jjkrol.proz.controller;
 public class LocumMockup {
 	public final String name;
 	public final float area;
-	public float participationFactor;
+	public final float participationFactor;
+	public List<OccupantMockup> occupants;
 
 	public LocumMockup(String givenName, float givenArea,
-			float givenParticipationFactor) {
+			float givenParticipationFactor, List<OccupantMockup> givenOccupants) {
 		name = givenName;
 		area = givenArea;
 		participationFactor = givenParticipationFactor;
+		occupants = givenOccupants;
 	}
 
 	// private OccupantMockup billingPerson;

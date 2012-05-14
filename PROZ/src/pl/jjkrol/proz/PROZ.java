@@ -9,9 +9,7 @@ import org.apache.log4j.Logger;
 
 import pl.jjkrol.proz.controller.Controller;
 import pl.jjkrol.proz.model.BronowskaCalculator;
-import pl.jjkrol.proz.model.Flat;
 import pl.jjkrol.proz.model.PaymentCalculator;
-import ch.randelshofer.quaqua.QuaquaManager;
 
 /**
  * Main application class

@@ -11,7 +11,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import pl.jjkrol.proz.controller.Controller;
 import pl.jjkrol.proz.controller.LocumMockup;
-import pl.jjkrol.proz.controller.ViewPayments;
+import pl.jjkrol.proz.controller.ViewPaymentsEvent;
 
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
  * connected with operating on payments 
  * @author jjkrol
  */
-public class PaymentsView implements SpecificView {
+public class PaymentsTab implements SpecificTab {
 	private String name = "P³atnoœci";
 	private final JPanel panel = new JPanel();
 	private final JTextArea textArea = new JTextArea(15,50);
@@ -33,7 +33,7 @@ public class PaymentsView implements SpecificView {
 				textArea.append(loc+"\n");
 			}
 		}
-		PaymentsView(){
+		public PaymentsTab(){
 			panel.setLayout(new FlowLayout(FlowLayout.LEADING));
 			panel.add(new JScrollPane(textArea));
 			
@@ -51,7 +51,7 @@ public class PaymentsView implements SpecificView {
 		
 		public void getReady(){
 			logger.debug(name+" got ready");
-			core.putEvent(new ViewPayments());
+			core.putEvent(new ViewPaymentsEvent());
 		}
 
 }

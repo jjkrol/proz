@@ -28,7 +28,7 @@ public class PROZJFrame extends JFrame {
 	private Controller core = Controller.getInstance();
 	private JFrame frame;
 	private final JTabbedPane tabbedPane = new JTabbedPane();
-	private final List<SpecificView> views = new ArrayList<SpecificView>();
+	private final List<SpecificTab> views = new ArrayList<SpecificTab>();
 	static Logger logger = Logger.getLogger(PROZJFrame.class);
 
 	public PROZJFrame() {
@@ -88,16 +88,12 @@ public class PROZJFrame extends JFrame {
 
 	private void createTabbedPane() {
 		tabbedPane.add("Home", getHomePanel());
-		tabbedPane.add("Lokale", new LocumsView().getJPanel());
-		tabbedPane.add("Najemcy", new OccupantsView().getJPanel());
-		tabbedPane.add("Faktury", new InvoicesView().getJPanel());
-		tabbedPane.add("Raportty", new ReportsView().getJPanel());
 		tabbedPane.addChangeListener(new ChangeListener() {
 			// This method is called whenever the selected tab changes
 			public void stateChanged(ChangeEvent evt) {
 				JTabbedPane pane = (JTabbedPane) evt.getSource();
 				int sel = pane.getSelectedIndex();
-				for(SpecificView v : views){
+				for(SpecificTab v : views){
 					if(v.getName().equals(tabbedPane.getTitleAt(sel))){
 						v.getReady();
 					}
@@ -112,7 +108,7 @@ public class PROZJFrame extends JFrame {
 		super.setVisible(bool);
 	}
 
-	public void addView(SpecificView view) {
+	public void addView(SpecificTab view) {
 		logger.debug("Added view "+view.getName());
 		tabbedPane.add(view.getName(), view.getJPanel());
 		views.add(view);

@@ -4,7 +4,7 @@ import java.lang.reflect.*;
 import pl.jjkrol.proz.view.*;
 
 public class PaymentsController extends Controller {
-	private final PaymentsView paymentsView = new PaymentsView();
+	private final PaymentsTab paymentsView = new PaymentsTab();
 	
 	private final HashMap<Class, Method> eventDictionary = new HashMap<Class, Method>();
 

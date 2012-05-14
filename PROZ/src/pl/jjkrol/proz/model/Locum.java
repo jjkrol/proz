@@ -3,6 +3,7 @@ package pl.jjkrol.proz.model;
 import java.util.*;
 
 import pl.jjkrol.proz.controller.LocumMockup;
+import pl.jjkrol.proz.controller.OccupantMockup;
 
 /**
  * A class representing a single locum
@@ -30,14 +31,30 @@ public class Locum implements Measurable {
 	 * a person or company responsible for payments
 	 */
 	private Occupant billingPerson;
+	
 	/**
 	 * tells if this locum is rented or used by administration
 	 */
 	private final Ownership ownership;
 
+	/**
+	 * a list of services which are enabled for the locum (and which are billed in consequence)
+	 */
 	private List<MeasurableService> enabledServices = new ArrayList<MeasurableService>();
+	
+	/**
+	 * list of counters installed in the locum
+	 */
 	private Map<MeasurableService, Counter> counters = new HashMap<MeasurableService, Counter>();
+	
+	/**
+	 * list of quotations for this locum
+	 */
 	private Map<BillableService, Map<String, Quotation>> quotations = new HashMap<BillableService, Map<String, Quotation>>();
+	
+	/**
+	 * list of occupants living in this locum
+	 */
 	private List<Occupant> occupants = new ArrayList<Occupant>();
 
 	public Locum(float givenArea, String givenName) {
@@ -155,6 +172,10 @@ public class Locum implements Measurable {
 	}
 	
 	public LocumMockup getMockup(){
-		return new LocumMockup(name, area, participationFactor);
+		List<OccupantMockup> occs = new LinkedList<OccupantMockup>();
+		for(Occupant occ : occupants){
+			occs.add(occ.getMockup());
+		}
+		return new LocumMockup(name, area, participationFactor, occs);
 	}
 }

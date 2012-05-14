@@ -1,64 +1,60 @@
 package pl.jjkrol.proz.model;
 
+import org.apache.log4j.Logger;
+
+import pl.jjkrol.proz.controller.OccupantMockup;
+
 public class Occupant {
 
-	private final String name;
+	private final int id;
+	private String name;
 	private String address;
 	private String telephone;
 	private String nip;
 	private Billing billingType;
-	
-	enum Billing{
-		INVOICE, BILL;
+	static Logger logger = Logger.getLogger(Occupant.class);
+	public enum Billing{
+		INVOICE{
+			 public String toString() {
+			        return "Faktura";	
+			 }
+		},
+		BILL{
+			 public String toString() {
+			        return "Rachunek";	
+			 }
+		}
 	}
 	
-	public Occupant(String givenName){
+	public Occupant(int id, String givenName){
+		this.id = id;
 		name = givenName;
+		billingType = Billing.BILL;
+	}
+	
+	public Occupant(int id, OccupantMockup mockup){
+		this.id = id; 
+		name = mockup.name;
+		address = mockup.address;
+		telephone = mockup.telephone;
+		nip = mockup.nip;
+		billingType = mockup.billingType;
 	}
 
-	public boolean equals(Object otherObject){
-		if (this == otherObject) return true;
-		if (!(otherObject instanceof Occupant) ) return false;
-		Occupant otherOccupant = (Occupant) otherObject;
-		if (name.equals(otherOccupant.getName())) return true;	
-		return false;
+	public void setAttributes(OccupantMockup moc){
+		this.name = moc.name;
+		this.address = moc.address;
+		this.telephone = moc.telephone;
+		this.nip = moc.nip;
+		this.billingType = moc.billingType;
 	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getTelephone() {
-		return telephone;
-	}
-
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
-	}
-
-	public String getNip() {
-		return nip;
-	}
-
-	public void setNip(String nip) {
-		this.nip = nip;
-	}
-
-	public Billing getBillingType() {
-		return billingType;
-	}
-
-	public void setBillingType(Billing billingType) {
-		this.billingType = billingType;
-	}
-
+	
 	public String getName() {
 		return name;
 	}
 	
+	public OccupantMockup getMockup(){
+		return new OccupantMockup(id, name, address, telephone, nip, billingType);
+	}
 	
 }
