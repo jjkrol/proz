@@ -12,6 +12,7 @@ import pl.jjkrol.proz.controller.AddOccupantEvent;
 import pl.jjkrol.proz.controller.Controller;
 import pl.jjkrol.proz.controller.DeleteOccupantEvent;
 import pl.jjkrol.proz.controller.LocumMockup;
+import pl.jjkrol.proz.controller.LocumsDisplayer;
 import pl.jjkrol.proz.controller.LocumsListNeededEvent;
 import pl.jjkrol.proz.controller.OccupantChosenForViewingEvent;
 import pl.jjkrol.proz.controller.OccupantMockup;
@@ -23,7 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-public class LocumsTab implements SpecificTab {
+public class LocumsTab implements SpecificTab, LocumsDisplayer{
 	
 	private class ListItem {
 		private String name;
@@ -259,8 +260,9 @@ public class LocumsTab implements SpecificTab {
 
 	@Override
 	public void getReady() {
+		logger.debug(name + " got ready");
 		internalState = new NormalState();
-		core.putEvent(new LocumsListNeededEvent());
+		core.putEvent(new LocumsListNeededEvent(this));
 	}
 
 	private void addEmptyNewItem() {
@@ -272,13 +274,6 @@ public class LocumsTab implements SpecificTab {
 	private void clearFields() {
 		nameInput.setText("");
 	}
-
-//	private OccupantMockup createMockupFromFieldData(int occupantId) {
-//		OccupantMockup moc = new OccupantMockup(occupantId,
-//				nameInput.getText(), addressInput.getText(),
-//				telephoneInput.getText(), nipInput.getText(), null);
-//		return moc;
-//	}
 
 	private int getSelectedLocumId() throws NoNodeSelectedException {
 		try {

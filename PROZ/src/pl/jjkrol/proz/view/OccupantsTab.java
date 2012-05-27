@@ -1,11 +1,5 @@
 package pl.jjkrol.proz.view;
 
-/**
- * TODO:
- * search by name, separately, or by id (for name changing)
- * billing type
- */
-
 import java.awt.Dimension;
 
 import java.awt.event.ActionEvent;
@@ -132,7 +126,7 @@ public class OccupantsTab implements SpecificTab {
 	/*
 	 * panel components
 	 */
-	private JList occupantsList;;
+	private JList occupantsList;
 	private DefaultListModel listModel = new DefaultListModel();
 	private final JTextField nameInput = new JTextField(30);
 	private final JTextField addressInput = new JTextField(30);
@@ -143,7 +137,15 @@ public class OccupantsTab implements SpecificTab {
 	private final JTextField nipInput = new JTextField(30);
 
 	private final ValueReporter listListener = new ValueReporter();
+	
+	ActionListener createListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			internalState.createNewItem();
+		}
 
+	};
+	
 	ActionListener deleteListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -227,13 +229,7 @@ public class OccupantsTab implements SpecificTab {
 		panel.add(deleteButton, "split 2, gapleft 30");
 		panel.add(saveButton, "gapleft 30");
 
-		createButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				internalState.createNewItem();
-			}
-
-		});
+		createButton.addActionListener(createListener);
 		saveButton.addActionListener(saveListener);
 		deleteButton.addActionListener(deleteListener);
 

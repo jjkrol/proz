@@ -11,6 +11,9 @@ import java.util.Map;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.DelayQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.io.FileReader;
 import java.lang.reflect.Method;
 
@@ -31,6 +34,7 @@ import org.apache.log4j.Logger;
 public class Controller {
 	private Locum m01, m1, m2, m3, m4, m5, m6, m7, m8;
 	private House mainHouse;
+	private BlockingQueue<PROZEvent> blockingQueue = new LinkedBlockingQueue<PROZEvent>();
 	private final View view = new View();
 	private final OccupantsRegister occupantsRegister = OccupantsRegister
 			.getInstance();
@@ -69,27 +73,12 @@ public class Controller {
 					.getMethod("deleteOccupantData", PROZEvent.class));
 
 			eventDictionary.put(LocumsListNeededEvent.class, Controller.class
-					.getMethod("displayLocumsForLocums", PROZEvent.class));
+					.getMethod("displayLocums", PROZEvent.class));
+			eventDictionary.put(LocumChosenForViewingEvent.class,
+					Controller.class.getMethod("displayLocum", PROZEvent.class));
 		} catch (NoSuchMethodException e) {
 			logger.warn("Exception in initializing method dictionary: "
 					+ e.getMessage());
-		}
-	}
-
-	public void prepareInitialData() {
-		Map<MeasurableService, Counter> counters = new HashMap<MeasurableService, Counter>();
-		createHouse();
-		System.out.println("Tworzê nowy dom");
-		System.out.println(mainHouse.getLocums());
-	}
-
-	public void putEvent(PROZEvent event) {
-		Method m = eventDictionary.get(event.getClass());
-		try {
-			m.invoke(this, event);
-		} catch (Exception e) {
-			System.out.println(e.getMessage() + " " + event.getClass() + " "
-					+ event);
 		}
 	}
 
@@ -99,13 +88,47 @@ public class Controller {
 	 */
 	public void run(PaymentCalculator calc) {
 		List<SpecificTab> views = new ArrayList<SpecificTab>();
+		views.add(new MeasurementsTab());
 		views.add(new PaymentsTab());
 		views.add(new OccupantsTab());
 		views.add(new LocumsTab());
 		views.add(new InvoicesTab());
 		views.add(new ReportsTab());
-
 		view.startGUI(views);
+		runLoop();
+	}
+	private void runLoop() {
+		while (true) {
+			try {
+				PROZEvent event = blockingQueue.take();
+				Method m = eventDictionary.get(event.getClass());
+				try {
+					m.invoke(this, event);
+				} catch (Exception e) {
+					System.out.println(e.getMessage() + " " + event.getClass()
+							+ " " + event);
+				}
+			} catch (InterruptedException e) {
+				logger.warn("Interrupted exception on take event "
+						+ e.getMessage());
+			}
+		}
+	}
+	
+	public void prepareInitialData() {
+		createHouse();
+		System.out.println("Tworzê nowy dom");
+		System.out.println(mainHouse.getLocums());
+	}
+
+	public void putEvent(PROZEvent event) {
+		try{
+			blockingQueue.put(event);
+		}
+		catch(InterruptedException e){
+			logger.warn("Interrupted exception on put event "+e.getMessage());
+		}
+		
 	}
 
 	/*
@@ -114,6 +137,7 @@ public class Controller {
 
 	/**
 	 * displays locums on payments panel
+	 * TODO change for the general method displayLocums
 	 */
 	public void displayLocumsForPayments(PROZEvent e) {
 		final List<LocumMockup> locums = new ArrayList<LocumMockup>();
@@ -149,7 +173,6 @@ public class Controller {
 	}
 
 	public void displayOccupantDataForOccupants(PROZEvent e) {
-		// TODO get occupants from some main repository or database
 		Occupant occ = occupantsRegister
 				.findOccupant(((OccupantChosenForViewingEvent) e).moc);
 		final OccupantMockup moc = occ.getMockup();
@@ -184,22 +207,41 @@ public class Controller {
 	/**
 	 * displays locums on locums panel
 	 */
-	public void displayLocumsForLocums(PROZEvent e) {
+	public void displayLocums(PROZEvent e) {
 		final List<LocumMockup> locMocks = new ArrayList<LocumMockup>();
 		for (Locum loc : mainHouse.getLocums()) {
 			locMocks.add(loc.getMockup());
 		}
-
+		final LocumsDisplayer d = ((LocumsListNeededEvent)e).caller; 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				LocumsTab v = (LocumsTab) view
-						.getSpecificView(LocumsTab.class);
-				v.displayLocumsList(locMocks);
+				d.displayLocumsList(locMocks);
 			}
 		});
 	}
 
+	public void displayLocum(PROZEvent e) {
+		LocumMockup emptyMockup = ((LocumChosenForViewingEvent)e).moc;
+		String locumName = emptyMockup.name;
+		try {
+			Locum loc = mainHouse.getLocumByName(locumName);
+			final List<MeasurementMockup> mocs = 
+					loc.getMeasurementsMockups();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					MeasurementsTab v = (MeasurementsTab) view
+							.getSpecificView(MeasurementsTab.class);
+					v.displayMeasurements(mocs);
+				}
+			});
+		}
+		catch(NoSuchLocum exception) {
+			//TODO some messagebox?
+		}
+		
+	}
 	/*
 	 * DATA SPECIFIC METHODS
 	 */

@@ -2,8 +2,11 @@ package pl.jjkrol.proz.model;
 
 import java.util.*;
 
+import pl.jjkrol.proz.controller.CounterMockup;
 import pl.jjkrol.proz.controller.LocumMockup;
+import pl.jjkrol.proz.controller.MeasurementMockup;
 import pl.jjkrol.proz.controller.OccupantMockup;
+import pl.jjkrol.proz.view.MeasurementsTab;
 
 /**
  * A class representing a single locum
@@ -73,6 +76,30 @@ public class Locum implements Measurable {
 			Counter count = counters.get(serv);
 			count.addMeasure(date, measures.get(serv));
 		}
+	}
+	public List<MeasurementMockup> getMeasurementsMockups() {
+		Map<Calendar, Map<MeasurableService, Float>> dates
+			= new HashMap<Calendar, Map<MeasurableService, Float>>();
+		for(MeasurableService serv : counters.keySet()) {
+			Counter c = counters.get(serv);
+			for(Calendar date : c.getDates()) {
+				if(!dates.containsKey(date)) {
+					dates.put(date,
+							new HashMap<MeasurableService, Float>());
+				}
+				dates.get(date).put(serv, c.getMeasure(date));
+			}
+		}
+		
+		List<MeasurementMockup> meas =
+				new LinkedList<MeasurementMockup>();
+		TreeSet<Calendar> keys = new TreeSet<Calendar>(dates.keySet());
+		for(Calendar date : keys) {
+			MeasurementMockup moc =
+					new MeasurementMockup(date, dates.get(date));
+			meas.add(moc);
+		}
+		return meas;
 	}
 
 	public void addOccupant(Occupant occupant) {
@@ -171,11 +198,30 @@ public class Locum implements Measurable {
 		this.participationFactor = participationFactor;
 	}
 	
+	/**
+	 * creates a mockup of the Locum including its Occupants,
+	 * Counters, EnabledServices and Quotations
+	 * @return
+	 */
 	public LocumMockup getMockup(){
 		List<OccupantMockup> occs = new LinkedList<OccupantMockup>();
 		for(Occupant occ : occupants){
 			occs.add(occ.getMockup());
 		}
-		return new LocumMockup(name, area, participationFactor, occs);
+		Map<MeasurableService, CounterMockup> counts = 
+				new HashMap<MeasurableService, CounterMockup>();
+		for(MeasurableService serv: counters.keySet()){
+			Counter c = counters.get(serv);
+			counts.put(serv, c.getMockup());
+		}
+//		List<MeasurableService> servs = new LinkedList<MeasureableSerivce>();
+//		for(Occupant occ : occupants){
+//			occs.add(occ.getMockup());
+//		}
+//		List<QuotationMockup> quots = new LinkedList<QuotationMockup>();
+//		for(Occupant  : occupants){
+//			occs.add(occ.getMockup());
+//		}
+		return new LocumMockup(name, area, participationFactor, occs,counts);
 	}
 }

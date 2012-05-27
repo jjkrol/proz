@@ -65,6 +65,13 @@ public class House implements Measurable {
 	public List<Locum> getLocums() {
 		return locums;
 	}
+	public Locum getLocumByName(String name) throws NoSuchLocum{
+		for(Locum loc : locums) {
+			if(loc.getName().equals(name))
+				return loc;
+		}
+		throw new NoSuchLocum();
+	}
 
 	public String getName() {
 		return name;
