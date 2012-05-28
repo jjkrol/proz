@@ -37,7 +37,6 @@ public class LocumMockup {
 	// private List<Occupant> occupants = new ArrayList<Occupant>();
 	@Override
 	public String toString() {
-		return "Name: " + name + ", area: " + area + ", partFact: "
-				+ participationFactor;
+		return name;
 	}
 }

@@ -24,6 +24,9 @@ import pl.jjkrol.proz.controller.*;
 
 import java.util.*;
 
+/*
+ * TODO disable create button
+ */
 public class OccupantsTab implements SpecificTab {
 
 	private class ListItem {

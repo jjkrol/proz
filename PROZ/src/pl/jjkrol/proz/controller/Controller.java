@@ -1,29 +1,48 @@
 package pl.jjkrol.proz.controller;
 
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.text.SimpleDateFormat;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.DelayQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.io.FileReader;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.SwingUtilities;
 
-import pl.jjkrol.proz.model.*;
-import pl.jjkrol.proz.view.*;
-
-import au.com.bytecode.opencsv.*;
 import org.apache.log4j.Logger;
+
+import pl.jjkrol.proz.model.BillableService;
+import pl.jjkrol.proz.model.Counter;
+import pl.jjkrol.proz.model.Flat;
+import pl.jjkrol.proz.model.House;
+import pl.jjkrol.proz.model.Locum;
+import pl.jjkrol.proz.model.MeasurableService;
+import pl.jjkrol.proz.model.NoSuchLocum;
+import pl.jjkrol.proz.model.NoSuchQuotationSet;
+import pl.jjkrol.proz.model.Occupant;
+import pl.jjkrol.proz.model.OccupantsRegister;
+import pl.jjkrol.proz.model.Office;
+import pl.jjkrol.proz.model.Ownership;
+import pl.jjkrol.proz.model.PaymentCalculator;
+import pl.jjkrol.proz.model.Quotation;
+import pl.jjkrol.proz.view.InvoicesTab;
+import pl.jjkrol.proz.view.LocumsTab;
+import pl.jjkrol.proz.view.MeasurementsTab;
+import pl.jjkrol.proz.view.OccupantsTab;
+import pl.jjkrol.proz.view.PROZJFrame;
+import pl.jjkrol.proz.view.PaymentsTab;
+import pl.jjkrol.proz.view.ReportsTab;
+import pl.jjkrol.proz.view.SpecificTab;
+import pl.jjkrol.proz.view.View;
+import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * A class responsible for the application control flow
@@ -34,13 +53,16 @@ import org.apache.log4j.Logger;
 public class Controller {
 	private Locum m01, m1, m2, m3, m4, m5, m6, m7, m8;
 	private House mainHouse;
-	private BlockingQueue<PROZEvent> blockingQueue = new LinkedBlockingQueue<PROZEvent>();
+	private BlockingQueue<PROZEvent> blockingQueue =
+			new LinkedBlockingQueue<PROZEvent>();
+	private PaymentCalculator calculator;
 	private final View view = new View();
 	private final OccupantsRegister occupantsRegister = OccupantsRegister
 			.getInstance();
 	static Logger logger = Logger.getLogger(PROZJFrame.class);
 
-	private final HashMap<Class, Method> eventDictionary = new HashMap<Class, Method>();
+	private final HashMap<Class, Method> eventDictionary =
+			new HashMap<Class, Method>();
 
 	private static volatile Controller instance = null;
 
@@ -75,7 +97,16 @@ public class Controller {
 			eventDictionary.put(LocumsListNeededEvent.class, Controller.class
 					.getMethod("displayLocums", PROZEvent.class));
 			eventDictionary.put(LocumChosenForViewingEvent.class,
-					Controller.class.getMethod("displayLocum", PROZEvent.class));
+					Controller.class.getMethod("displayLocumMeasurements",
+							PROZEvent.class));
+			eventDictionary.put(
+					LocumMeasurementsAndQuotationsNeededEvent.class,
+					Controller.class.getMethod(
+							"displayLocumMeasurementsAndQuotations",
+							PROZEvent.class));
+			eventDictionary.put(CalculatedResultsNeededEvent.class,
+					Controller.class.getMethod("displayCalculatedResults",
+							PROZEvent.class));
 		} catch (NoSuchMethodException e) {
 			logger.warn("Exception in initializing method dictionary: "
 					+ e.getMessage());
@@ -84,9 +115,11 @@ public class Controller {
 
 	/**
 	 * main function, creates and runs gui
+	 * 
 	 * @param calc
 	 */
-	public void run(PaymentCalculator calc) {
+	public void run(PaymentCalculator calculator) {
+		this.calculator = calculator;
 		List<SpecificTab> views = new ArrayList<SpecificTab>();
 		views.add(new MeasurementsTab());
 		views.add(new PaymentsTab());
@@ -96,17 +129,22 @@ public class Controller {
 		views.add(new ReportsTab());
 		view.startGUI(views);
 		runLoop();
-	}
+	}
+
 	private void runLoop() {
 		while (true) {
 			try {
 				PROZEvent event = blockingQueue.take();
+				if(!eventDictionary.containsKey(event.getClass())) {
+					logger.warn("No such class in the dictionary");
+				}
 				Method m = eventDictionary.get(event.getClass());
 				try {
 					m.invoke(this, event);
 				} catch (Exception e) {
-					System.out.println(e.getMessage() + " " + event.getClass()
-							+ " " + event);
+					System.out.println(e.getClass()+" "+e.getMessage() + " " + event.getClass()
+							+ " " + m.getName());
+					e.printStackTrace();
 				}
 			} catch (InterruptedException e) {
 				logger.warn("Interrupted exception on take event "
@@ -114,7 +152,7 @@ public class Controller {
 			}
 		}
 	}
-	
+
 	public void prepareInitialData() {
 		createHouse();
 		System.out.println("Tworzê nowy dom");
@@ -122,13 +160,12 @@ public class Controller {
 	}
 
 	public void putEvent(PROZEvent event) {
-		try{
+		try {
 			blockingQueue.put(event);
+		} catch (InterruptedException e) {
+			logger.warn("Interrupted exception on put event " + e.getMessage());
 		}
-		catch(InterruptedException e){
-			logger.warn("Interrupted exception on put event "+e.getMessage());
-		}
-		
+
 	}
 
 	/*
@@ -136,8 +173,8 @@ public class Controller {
 	 */
 
 	/**
-	 * displays locums on payments panel
-	 * TODO change for the general method displayLocums
+	 * displays locums on payments panel TODO change for the general method
+	 * displayLocums
 	 */
 	public void displayLocumsForPayments(PROZEvent e) {
 		final List<LocumMockup> locums = new ArrayList<LocumMockup>();
@@ -147,8 +184,8 @@ public class Controller {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				PaymentsTab v = (PaymentsTab) view
-						.getSpecificView(PaymentsTab.class);
+				PaymentsTab v =
+						(PaymentsTab) view.getSpecificView(PaymentsTab.class);
 				v.displayLocums(locums);
 			}
 		});
@@ -165,22 +202,23 @@ public class Controller {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				OccupantsTab v = (OccupantsTab) view
-						.getSpecificView(OccupantsTab.class);
+				OccupantsTab v =
+						(OccupantsTab) view.getSpecificView(OccupantsTab.class);
 				v.displayOccupantsList(occMocks);
 			}
 		});
 	}
 
 	public void displayOccupantDataForOccupants(PROZEvent e) {
-		Occupant occ = occupantsRegister
-				.findOccupant(((OccupantChosenForViewingEvent) e).moc);
+		Occupant occ =
+				occupantsRegister
+						.findOccupant(((OccupantChosenForViewingEvent) e).moc);
 		final OccupantMockup moc = occ.getMockup();
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				OccupantsTab v = (OccupantsTab) view
-						.getSpecificView(OccupantsTab.class);
+				OccupantsTab v =
+						(OccupantsTab) view.getSpecificView(OccupantsTab.class);
 				v.displayOccupantsData(moc);
 			}
 		});
@@ -212,7 +250,7 @@ public class Controller {
 		for (Locum loc : mainHouse.getLocums()) {
 			locMocks.add(loc.getMockup());
 		}
-		final LocumsDisplayer d = ((LocumsListNeededEvent)e).caller; 
+		final LocumsDisplayer d = ((LocumsListNeededEvent) e).caller;
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -221,27 +259,89 @@ public class Controller {
 		});
 	}
 
-	public void displayLocum(PROZEvent e) {
-		LocumMockup emptyMockup = ((LocumChosenForViewingEvent)e).moc;
+	/**
+	 * display single locum measurements on the measurements tab
+	 * 
+	 * @param e
+	 */
+	public void displayLocumMeasurements(PROZEvent e) {
+		LocumMockup emptyMockup = ((LocumChosenForViewingEvent) e).moc;
 		String locumName = emptyMockup.name;
 		try {
 			Locum loc = mainHouse.getLocumByName(locumName);
-			final List<MeasurementMockup> mocs = 
-					loc.getMeasurementsMockups();
+			final List<MeasurementMockup> mocs = loc.getMeasurementsMockups();
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					MeasurementsTab v = (MeasurementsTab) view
-							.getSpecificView(MeasurementsTab.class);
+					MeasurementsTab v =
+							(MeasurementsTab) view
+									.getSpecificView(MeasurementsTab.class);
 					v.displayMeasurements(mocs);
 				}
 			});
+		} catch (NoSuchLocum exception) {
+			// TODO some messagebox?
 		}
-		catch(NoSuchLocum exception) {
+
+	}
+
+	public void displayLocumMeasurementsAndQuotations(PROZEvent e) {
+		LocumMockup emptyMockup =
+				((LocumMeasurementsAndQuotationsNeededEvent) e).moc;
+		String locumName = emptyMockup.name;
+		try {
+			Locum loc = mainHouse.getLocumByName(locumName);
+
+			// get measurement and quotation data
+			final List<MeasurementMockup> measurements =
+					loc.getMeasurementsMockups();
+			final Map<String, List<QuotationMockup>> quotations =
+					loc.getQuotationsMockups();
+			final PaymentsTab v =
+					(PaymentsTab) view.getSpecificView(PaymentsTab.class);
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					v.displayLocumMeasurementsAndQuotations(measurements,
+							quotations);
+				}
+			});
+		} catch (NoSuchLocum exception) {
+			// TODO some messagebox?
+		}
+	}
+
+	public void displayCalculatedResults(PROZEvent e) {
+		LocumMockup emptyLocum =
+				((CalculatedResultsNeededEvent) e).locum;
+		Calendar from =
+				((CalculatedResultsNeededEvent) e).from.date;
+		Calendar to =
+				((CalculatedResultsNeededEvent) e).to.date;
+		String quotation =
+				((CalculatedResultsNeededEvent) e).quotation;
+		try {
+			Locum loc = mainHouse.getLocumByName(emptyLocum.name);
+			final Map<BillableService, Float> results = 
+					calculator.calculatePayment(mainHouse, loc, from, to, quotation);
+			final Map<BillableService, Float> administrativeResults = 
+					calculator.calculateAdministrativePayment(mainHouse, loc, from, to, quotation);
+			// get measurement and quotation data
+			final PaymentsTab c = (PaymentsTab) view.getSpecificView(PaymentsTab.class);
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					c.displayCalculationResults(results, administrativeResults);
+				}
+			});
+		} catch (NoSuchLocum exception) {
+			// TODO some messagebox?
+		}
+		catch(NoSuchQuotationSet exception) {
 			//TODO some messagebox?
 		}
-		
 	}
+
 	/*
 	 * DATA SPECIFIC METHODS
 	 */
@@ -274,11 +374,11 @@ public class Controller {
 			dates.add(cal);
 		}
 
-		List<MeasurableService> houseServices = Arrays.asList(
-				MeasurableService.GAZ, MeasurableService.EE,
-				MeasurableService.EE_ADM, MeasurableService.CIEPLO,
-				MeasurableService.CO_ADM, MeasurableService.WODA_GL,
-				MeasurableService.CW, MeasurableService.POLEWACZKI);
+		List<MeasurableService> houseServices =
+				Arrays.asList(MeasurableService.GAZ, MeasurableService.EE,
+						MeasurableService.EE_ADM, MeasurableService.CIEPLO,
+						MeasurableService.CO_ADM, MeasurableService.WODA_GL,
+						MeasurableService.CW, MeasurableService.POLEWACZKI);
 
 		for (MeasurableService currentService : houseServices) {
 			line = myEntries.get(lineIndex++);
@@ -291,13 +391,14 @@ public class Controller {
 			}
 		}
 
-		List<MeasurableService> locumServices = Arrays.asList(
-				MeasurableService.CO, MeasurableService.ZW,
-				MeasurableService.CW, MeasurableService.CCW,
-				MeasurableService.GAZ, MeasurableService.EE);
+		List<MeasurableService> locumServices =
+				Arrays.asList(MeasurableService.CO, MeasurableService.ZW,
+						MeasurableService.CW, MeasurableService.CCW,
+						MeasurableService.GAZ, MeasurableService.EE);
 
 		for (Locum loc : mainHouse.getLocums()) {
-			Map<Calendar, Map<MeasurableService, Float>> measures = new HashMap<Calendar, Map<MeasurableService, Float>>();
+			Map<Calendar, Map<MeasurableService, Float>> measures =
+					new HashMap<Calendar, Map<MeasurableService, Float>>();
 
 			for (MeasurableService currentService : locumServices) {
 				line = myEntries.get(lineIndex++);
@@ -321,15 +422,15 @@ public class Controller {
 		}
 		// quotations
 
-		Map<BillableService, Quotation> quotations = new HashMap<BillableService, Quotation>();
-		quotations.put(BillableService.INTERNET, new Quotation(20f));
-		quotations.put(BillableService.SMIECI, new Quotation(27.39f));
-		quotations.put(BillableService.CO, new Quotation(90f));
-		quotations.put(BillableService.WODA, new Quotation(2.59f));
-		quotations.put(BillableService.SCIEKI, new Quotation(19f));
-		quotations.put(BillableService.EE, new Quotation(0.51f));
-		quotations.put(BillableService.GAZ, new Quotation(2.35f));
-		quotations.put(BillableService.PODGRZANIE, new Quotation(23.24f));
+		List<Quotation> quotations = new ArrayList<Quotation>();
+		quotations.add(new Quotation(20f, BillableService.INTERNET));
+		quotations.add(new Quotation(27.39f, BillableService.SMIECI));
+		quotations.add(new Quotation(90f, BillableService.CO));
+		quotations.add(new Quotation(2.59f, BillableService.WODA));
+		quotations.add(new Quotation(19f, BillableService.SCIEKI));
+		quotations.add(new Quotation(0.51f, BillableService.EE));
+		quotations.add(new Quotation(2.35f, BillableService.GAZ));
+		quotations.add(new Quotation(23.24f, BillableService.PODGRZANIE));
 
 		for (Locum loc : mainHouse.getLocums()) {
 			loc.addQuotationSet("pierwsze", quotations);
@@ -341,7 +442,8 @@ public class Controller {
 	 * creates house and locums, inserts occupants
 	 */
 	public void createHouse() {
-		Map<MeasurableService, Counter> counters = new HashMap<MeasurableService, Counter>();
+		Map<MeasurableService, Counter> counters =
+				new HashMap<MeasurableService, Counter>();
 		mainHouse = new House("dom1", "Bronowska 52", counters);
 		counters.put(MeasurableService.GAZ, new Counter("m3"));
 		counters.put(MeasurableService.POLEWACZKI, new Counter("m3"));
@@ -402,24 +504,22 @@ public class Controller {
 			counters.put(MeasurableService.EE, new Counter("kWh"));
 			loc.setCounters(counters);
 
-			Map<BillableService, Map<String, Quotation>> quotations = new HashMap<BillableService, Map<String, Quotation>>();
-			quotations
-					.put(BillableService.CO, new HashMap<String, Quotation>());
-			quotations.put(BillableService.WODA,
-					new HashMap<String, Quotation>());
-			quotations
-					.put(BillableService.EE, new HashMap<String, Quotation>());
-			quotations.put(BillableService.GAZ,
-					new HashMap<String, Quotation>());
-			quotations.put(BillableService.INTERNET,
-					new HashMap<String, Quotation>());
-			quotations.put(BillableService.PODGRZANIE,
-					new HashMap<String, Quotation>());
-			quotations.put(BillableService.SMIECI,
-					new HashMap<String, Quotation>());
-			quotations.put(BillableService.SCIEKI,
-					new HashMap<String, Quotation>());
-			loc.setQuotations(quotations);
+			/*
+			 * Map<BillableService, Map<String, Quotation>> quotations = new
+			 * HashMap<BillableService, Map<String, Quotation>>(); quotations
+			 * .put(BillableService.CO, new HashMap<String, Quotation>());
+			 * quotations.put(BillableService.WODA, new HashMap<String,
+			 * Quotation>()); quotations .put(BillableService.EE, new
+			 * HashMap<String, Quotation>());
+			 * quotations.put(BillableService.GAZ, new HashMap<String,
+			 * Quotation>()); quotations.put(BillableService.INTERNET, new
+			 * HashMap<String, Quotation>());
+			 * quotations.put(BillableService.PODGRZANIE, new HashMap<String,
+			 * Quotation>()); quotations.put(BillableService.SMIECI, new
+			 * HashMap<String, Quotation>());
+			 * quotations.put(BillableService.SCIEKI, new HashMap<String,
+			 * Quotation>()); loc.setQuotations(quotations);
+			 */
 		}
 	}
 

@@ -14,7 +14,6 @@ import pl.jjkrol.proz.model.PaymentCalculator;
 /**
  * Main application class
  * @author jjkrol
- *
  */
 public class PROZ {
 	static Logger logger = Logger.getLogger(PROZ.class);

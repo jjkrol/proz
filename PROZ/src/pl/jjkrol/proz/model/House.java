@@ -1,14 +1,14 @@
 package pl.jjkrol.proz.model;
 
 import java.util.*;
-
+import org.apache.log4j.Logger;
 public class House implements Measurable {
 
 	private final String name;
 	private final String address;
 	private List<Locum> locums = new ArrayList<Locum>();
 	private Map<MeasurableService, Counter> counters = new HashMap<MeasurableService, Counter>();
-
+	static Logger logger = Logger.getLogger(House.class);
 	public House(String givenName, String givenAddress, Map<MeasurableService, Counter> givenCounters) {
 		name = givenName;
 		address = givenAddress;
@@ -57,9 +57,10 @@ public class House implements Measurable {
 	public float getHeatFactor(Calendar start, Calendar end) {
 		float kwhHeat = getUsage(start, end).get(MeasurableService.CIEPLO);
 		float m3Heat = getCoSum(start, end);
-		float factor = kwhHeat * 0.0036f / m3Heat;
-
-		return factor;
+		if(m3Heat > 0)
+			return kwhHeat * 0.0036f / m3Heat;
+		else
+			return 0f;
 	}
 
 	public List<Locum> getLocums() {
