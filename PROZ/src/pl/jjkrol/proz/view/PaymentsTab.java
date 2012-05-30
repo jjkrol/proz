@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +37,9 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.sun.pdfview.PDFFile;
+import com.sun.pdfview.PDFPage;
+import com.sun.pdfview.PagePanel;
 
 import pl.jjkrol.proz.controller.CalculatedResultsNeededEvent;
 import pl.jjkrol.proz.controller.Controller;
@@ -288,8 +293,24 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 		private ActionListener generateTable = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				core.putEvent(new GenerateUsageTableEvent(results,
-						administrativeResults));
+				RandomAccessFile raf;
+				try {
+				PagePanel pan = new PagePanel();
+				panel.add(pan);
+					raf = new RandomAccessFile("C:\\tabelka.pdf", "r");
+				FileChannel fc = raf.getChannel();
+				PDFFile file;
+					file = new PDFFile(fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size()));
+				PDFPage page = file.getPage(1);
+				pan.showPage(page);
+				panel.repaint();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				//core.putEvent(new GenerateUsageTableEvent(results,
+				//		administrativeResults));
 			}
 		};
 

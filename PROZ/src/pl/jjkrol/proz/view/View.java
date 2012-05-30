@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * Main class of the application view
@@ -13,6 +15,19 @@ import javax.swing.SwingUtilities;
 public class View {
 	private PROZJFrame frame;
 	public List<SpecificTab> views;
+	
+	/**
+	 * View constructor sets the look and feel of the application
+	 */
+	public View() {
+  		try {
+			UIManager.setLookAndFeel(ch.randelshofer.quaqua.QuaquaManager
+					.getLookAndFeel());
+		} catch (UnsupportedLookAndFeelException e) {
+
+		}
+
+	}
 
 	/**
 	 * creates and shows the main frame
@@ -41,6 +56,13 @@ public class View {
 		JOptionPane.showMessageDialog(frame, message);
 	}
 
+	/**
+	 * Returns the specific tab instantiated in the view.
+	 * Used by controller for invoking methods of the specific tab
+	 * directly, because View as a facade would be to big.
+	 * @param wantedClass
+	 * @return specificTab
+	 */
 	public SpecificTab getSpecificView(Class wantedClass) {
 		for (SpecificTab v : views) {
 			if (v.getClass() == wantedClass)

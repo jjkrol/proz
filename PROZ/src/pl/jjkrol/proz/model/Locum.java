@@ -66,6 +66,11 @@ public class Locum implements Measurable {
 	 */
 	private List<Occupant> occupants = new ArrayList<Occupant>();
 
+	public Locum() {
+		this.name = "";
+		this.area = 0;
+		this.ownership = null;
+	}
 	public Locum(float givenArea, String givenName) {
 		this(givenArea, givenName, Ownership.FOR_RENT);
 	}

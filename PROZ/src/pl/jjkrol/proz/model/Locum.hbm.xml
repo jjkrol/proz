@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2012-05-30 21:10:43 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+ <class name="pl.jjkrol.proz.model.Locum" table="LOCUMS">
+  <id access="field" name="name" type="java.lang.String">
+   <column name="NAME"/>
+   <generator class="increment"/>
+  </id>
+  <property access="field" generated="never" lazy="false" name="area" type="float">
+   <column name="AREA"/>
+  </property>
+  <property generated="never" lazy="false" name="participationFactor" type="float">
+   <column name="PARTICIPATIONFACTOR"/>
+  </property>
+ </class>
+</hibernate-mapping>
