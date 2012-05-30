@@ -3,13 +3,26 @@ package pl.jjkrol.proz.model;
 import java.util.*;
 import pl.jjkrol.proz.model.NoSuchQuotationSet;
 import org.apache.log4j.Logger;
+
+/**
+ * Responsible for calculating usage and payments for all services
+ * 
+ * @author jjkrol
+ * 
+ */
 public class BronowskaCalculator implements PaymentCalculator {
-static Logger logger = Logger.getLogger(BronowskaCalculator.class);
+
+	static Logger logger = Logger.getLogger(BronowskaCalculator.class);
+
 	public Map<BillableService, Float> calculatePayment(House house, Locum loc,
 			Calendar start, Calendar end, String quotationName)
 			throws NoSuchQuotationSet {
 
-		int period = end.get(Calendar.MONTH) - start.get(Calendar.MONTH); //TODO correct?
+		int monthDiff = end.get(Calendar.MONTH) - start.get(Calendar.MONTH);
+		int yearDiff = end.get(Calendar.YEAR) - start.get(Calendar.YEAR);
+		// number of full months elapsed between dates
+		int period = (yearDiff > 0) ? yearDiff * 12 + monthDiff : monthDiff;
+
 		int occupantsNumber = loc.getOccupants().size();
 		float heatFactor = house.getHeatFactor(start, end);
 

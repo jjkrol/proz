@@ -46,8 +46,8 @@ public class Locum implements Measurable {
 	 * a list of services which are enabled for the locum (and which are billed
 	 * in consequence)
 	 */
-	private List<MeasurableService> enabledServices =
-			new ArrayList<MeasurableService>();
+	private List<BillableService> enabledServices =
+			new ArrayList<BillableService>();
 
 	/**
 	 * list of counters installed in the locum
@@ -125,7 +125,7 @@ public class Locum implements Measurable {
 		return billingPerson;
 	}
 
-	public List<MeasurableService> getEnabledServices() {
+	public List<BillableService> getEnabledServices() {
 		return enabledServices;
 	}
 
@@ -173,7 +173,7 @@ public class Locum implements Measurable {
 	 * @param enabledServices
 	 *            the enabledServices to set
 	 */
-	public void setEnabledServices(List<MeasurableService> enabledServices) {
+	public void setEnabledServices(List<BillableService> enabledServices) {
 		this.enabledServices = enabledServices;
 	}
 
@@ -219,6 +219,7 @@ public class Locum implements Measurable {
 			Counter c = counters.get(serv);
 			counts.put(serv, c.getMockup());
 		}
+		List<BillableService> enabledServs = new ArrayList<BillableService>(enabledServices); 
 		// List<MeasurableService> servs = new LinkedList<MeasureableSerivce>();
 		// for(Occupant occ : occupants){
 		// occs.add(occ.getMockup());
@@ -227,7 +228,7 @@ public class Locum implements Measurable {
 		// for(Occupant : occupants){
 		// occs.add(occ.getMockup());
 		// }
-		return new LocumMockup(name, area, participationFactor, occs, counts);
+		return new LocumMockup(name, area, participationFactor, occs, counts, enabledServs);
 	}
 
 	public Map<String, List<QuotationMockup>> getQuotationsMockups() {

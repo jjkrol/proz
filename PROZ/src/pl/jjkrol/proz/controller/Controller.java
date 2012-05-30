@@ -1,8 +1,13 @@
 package pl.jjkrol.proz.controller;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,8 +24,21 @@ import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import pl.jjkrol.proz.model.BillableService;
 import pl.jjkrol.proz.model.Counter;
+import pl.jjkrol.proz.model.DocumentBuilder;
+import pl.jjkrol.proz.model.DocumentDirector;
 import pl.jjkrol.proz.model.Flat;
 import pl.jjkrol.proz.model.House;
 import pl.jjkrol.proz.model.Locum;
@@ -33,6 +51,7 @@ import pl.jjkrol.proz.model.Office;
 import pl.jjkrol.proz.model.Ownership;
 import pl.jjkrol.proz.model.PaymentCalculator;
 import pl.jjkrol.proz.model.Quotation;
+import pl.jjkrol.proz.model.UsageTableBuilder;
 import pl.jjkrol.proz.view.InvoicesTab;
 import pl.jjkrol.proz.view.LocumsTab;
 import pl.jjkrol.proz.view.MeasurementsTab;
@@ -61,8 +80,8 @@ public class Controller {
 			.getInstance();
 	static Logger logger = Logger.getLogger(PROZJFrame.class);
 
-	private final HashMap<Class, Method> eventDictionary =
-			new HashMap<Class, Method>();
+	private final HashMap<Class, PROZStrategy> eventDictionary =
+			new HashMap<Class, PROZStrategy>();
 
 	private static volatile Controller instance = null;
 
@@ -75,42 +94,23 @@ public class Controller {
 		}
 		return instance;
 	}
-
+	
 	protected Controller() {
-		try {
-			eventDictionary.put(ViewPaymentsEvent.class, Controller.class
-					.getMethod("displayLocumsForPayments", PROZEvent.class));
+			eventDictionary.put(ViewPaymentsEvent.class, 
+					new DisplayLocumsForPayments());
 			eventDictionary.put(OccupantsListNeededEvent.class,
-					Controller.class.getMethod("displayOccupantsForOccupants",
-							PROZEvent.class));
+					new DisplayOccupantsForOccupants());
 			eventDictionary
-					.put(OccupantChosenForViewingEvent.class, Controller.class
-							.getMethod("displayOccupantDataForOccupants",
-									PROZEvent.class));
-			eventDictionary.put(AddOccupantEvent.class, Controller.class
-					.getMethod("addOccupantData", PROZEvent.class));
-			eventDictionary.put(SaveOccupantEvent.class, Controller.class
-					.getMethod("saveOccupantData", PROZEvent.class));
-			eventDictionary.put(DeleteOccupantEvent.class, Controller.class
-					.getMethod("deleteOccupantData", PROZEvent.class));
+					.put(OccupantChosenForViewingEvent.class, new DisplayOccupantDataForOccupants());
+			eventDictionary.put(AddOccupantEvent.class, new AddOccupantData());
+			eventDictionary.put(SaveOccupantEvent.class, new SaveOccupantData());
+			eventDictionary.put(DeleteOccupantEvent.class, new DeleteOccupantData());
 
-			eventDictionary.put(LocumsListNeededEvent.class, Controller.class
-					.getMethod("displayLocums", PROZEvent.class));
-			eventDictionary.put(LocumChosenForViewingEvent.class,
-					Controller.class.getMethod("displayLocumMeasurements",
-							PROZEvent.class));
-			eventDictionary.put(
-					LocumMeasurementsAndQuotationsNeededEvent.class,
-					Controller.class.getMethod(
-							"displayLocumMeasurementsAndQuotations",
-							PROZEvent.class));
-			eventDictionary.put(CalculatedResultsNeededEvent.class,
-					Controller.class.getMethod("displayCalculatedResults",
-							PROZEvent.class));
-		} catch (NoSuchMethodException e) {
-			logger.warn("Exception in initializing method dictionary: "
-					+ e.getMessage());
-		}
+			eventDictionary.put(LocumsListNeededEvent.class, new DisplayLocums());
+			eventDictionary.put(LocumChosenForViewingEvent.class, new DisplayLocumMeasurements());
+			eventDictionary.put( LocumMeasurementsAndQuotationsNeededEvent.class,  new DisplayLocumMeasurementsAndQuotations());
+			eventDictionary.put(CalculatedResultsNeededEvent.class, new DisplayCalculatedResults());
+			eventDictionary.put(GenerateUsageTableEvent.class, new GenerateUsageTable());
 	}
 
 	/**
@@ -135,15 +135,19 @@ public class Controller {
 		while (true) {
 			try {
 				PROZEvent event = blockingQueue.take();
+				logger.debug("Event taken");
 				if(!eventDictionary.containsKey(event.getClass())) {
 					logger.warn("No such class in the dictionary");
 				}
-				Method m = eventDictionary.get(event.getClass());
+				PROZStrategy obj = eventDictionary.get(event.getClass()); 
 				try {
-					m.invoke(this, event);
-				} catch (Exception e) {
-					System.out.println(e.getClass()+" "+e.getMessage() + " " + event.getClass()
-							+ " " + m.getName());
+					logger.debug(obj);
+					obj.execute(event);
+				}catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} catch (InterruptedException e) {
@@ -172,11 +176,15 @@ public class Controller {
 	 * VIEW SPECIFIC METHODS
 	 */
 
+	abstract private class PROZStrategy{
+		abstract void execute(PROZEvent e);
+	}
 	/**
 	 * displays locums on payments panel TODO change for the general method
 	 * displayLocums
 	 */
-	public void displayLocumsForPayments(PROZEvent e) {
+	class DisplayLocumsForPayments extends PROZStrategy{
+	void execute(PROZEvent e) {
 		final List<LocumMockup> locums = new ArrayList<LocumMockup>();
 		for (Locum loc : mainHouse.getLocums()) {
 			locums.add(loc.getMockup());
@@ -190,11 +198,13 @@ public class Controller {
 			}
 		});
 	}
+	}
 
 	/**
 	 * displays occupants on occupants panel
 	 */
-	public void displayOccupantsForOccupants(PROZEvent e) {
+	class DisplayOccupantsForOccupants extends PROZStrategy{
+		void execute(PROZEvent e) {
 		final List<OccupantMockup> occMocks = new ArrayList<OccupantMockup>();
 		for (OccupantMockup occ : occupantsRegister.getOccupantsMockups()) {
 			occMocks.add(occ);
@@ -208,8 +218,10 @@ public class Controller {
 			}
 		});
 	}
+	}
 
-	public void displayOccupantDataForOccupants(PROZEvent e) {
+	class DisplayOccupantDataForOccupants extends PROZStrategy{
+	public void execute(PROZEvent e) {
 		Occupant occ =
 				occupantsRegister
 						.findOccupant(((OccupantChosenForViewingEvent) e).moc);
@@ -223,29 +235,40 @@ public class Controller {
 			}
 		});
 	}
-
-	public void addOccupantData(PROZEvent e) {
+	}
+class AddOccupantData extends PROZStrategy{
+	public void execute(PROZEvent e) {
 		OccupantMockup moc = ((AddOccupantEvent) e).mockup;
 		occupantsRegister.createOccupant(moc);
-		displayOccupantsForOccupants(null);
+		PROZStrategy s = new DisplayOccupantsForOccupants();
+		s.execute(e);
 	}
-
-	public void saveOccupantData(PROZEvent e) {
+}
+	class SaveOccupantData extends PROZStrategy{
+	public void execute(PROZEvent e) {
 		OccupantMockup moc = ((SaveOccupantEvent) e).mockup;
 		occupantsRegister.editOccupant(moc.id, moc);
-		displayOccupantsForOccupants(null);
+		PROZStrategy s = new DisplayOccupantsForOccupants();
+		s.execute(e);
 	}
-
-	public void deleteOccupantData(PROZEvent e) {
+	}
+class DeleteOccupantData extends PROZStrategy{
+	public void execute(PROZEvent e) {
 		OccupantMockup moc = ((DeleteOccupantEvent) e).mockup;
 		occupantsRegister.deleteOccupant(moc.id);
-		displayOccupantsForOccupants(null);
+		PROZStrategy s = new DisplayOccupantsForOccupants();
+		s.execute(e);
 	}
-
+}
 	/**
 	 * displays locums on locums panel
 	 */
-	public void displayLocums(PROZEvent e) {
+class DisplayLocums extends PROZStrategy{
+	public DisplayLocums() {
+		logger.debug("kotek");
+	}
+	
+	public void execute(PROZEvent e) {
 		final List<LocumMockup> locMocks = new ArrayList<LocumMockup>();
 		for (Locum loc : mainHouse.getLocums()) {
 			locMocks.add(loc.getMockup());
@@ -258,13 +281,14 @@ public class Controller {
 			}
 		});
 	}
-
+}
 	/**
 	 * display single locum measurements on the measurements tab
 	 * 
 	 * @param e
 	 */
-	public void displayLocumMeasurements(PROZEvent e) {
+class DisplayLocumMeasurements extends PROZStrategy{
+	public void execute(PROZEvent e) {
 		LocumMockup emptyMockup = ((LocumChosenForViewingEvent) e).moc;
 		String locumName = emptyMockup.name;
 		try {
@@ -284,8 +308,9 @@ public class Controller {
 		}
 
 	}
-
-	public void displayLocumMeasurementsAndQuotations(PROZEvent e) {
+}
+class DisplayLocumMeasurementsAndQuotations extends PROZStrategy{
+	public void execute(PROZEvent e) {
 		LocumMockup emptyMockup =
 				((LocumMeasurementsAndQuotationsNeededEvent) e).moc;
 		String locumName = emptyMockup.name;
@@ -310,8 +335,9 @@ public class Controller {
 			// TODO some messagebox?
 		}
 	}
-
-	public void displayCalculatedResults(PROZEvent e) {
+}
+class DisplayCalculatedResults extends PROZStrategy{
+	public void execute(PROZEvent e) {
 		LocumMockup emptyLocum =
 				((CalculatedResultsNeededEvent) e).locum;
 		Calendar from =
@@ -341,7 +367,7 @@ public class Controller {
 			//TODO some messagebox?
 		}
 	}
-
+}
 	/*
 	 * DATA SPECIFIC METHODS
 	 */
@@ -351,10 +377,11 @@ public class Controller {
 	public void readSampleData() {
 		List<String[]> myEntries;
 		try {
-			CSVReader reader = new CSVReader(new FileReader("data.csv"));
+			CSVReader reader = new CSVReader(new FileReader("data/data.csv"));
 			myEntries = reader.readAll();
 		} catch (Exception e) {
-			return; // TODO fix this
+			logger.warn("Data file not found!");
+			return;
 		}
 
 		int lineIndex = 0;
@@ -396,6 +423,11 @@ public class Controller {
 						MeasurableService.CW, MeasurableService.CCW,
 						MeasurableService.GAZ, MeasurableService.EE);
 
+		List<BillableService> enabledServices = new ArrayList<BillableService>();
+		for(BillableService serv : BillableService.class.getEnumConstants()) {
+			enabledServices.add(serv);
+		}
+		
 		for (Locum loc : mainHouse.getLocums()) {
 			Map<Calendar, Map<MeasurableService, Float>> measures =
 					new HashMap<Calendar, Map<MeasurableService, Float>>();
@@ -434,8 +466,10 @@ public class Controller {
 
 		for (Locum loc : mainHouse.getLocums()) {
 			loc.addQuotationSet("pierwsze", quotations);
+			loc.setEnabledServices(new ArrayList<BillableService>(enabledServices));
 		}
-
+		enabledServices = m1.getEnabledServices();
+		enabledServices.remove(BillableService.SMIECI);
 	}
 
 	/**
@@ -537,4 +571,140 @@ public class Controller {
 		occ = occupantsRegister.createOccupant("Magdalena Lis");
 		m3.addOccupant(occ);
 	}
+	
+	private class GenerateUsageTable extends PROZStrategy{
+	public void execute(PROZEvent e) {
+			//FIXME move to model
+		final Map<BillableService, Float> results = ((GenerateUsageTableEvent)e).results;
+			final Map<BillableService, Float> administrativeResults = ((GenerateUsageTableEvent)e).administrativeResults;
+			DocumentBuilder builder = new UsageTableBuilder();
+			DocumentDirector director = new DocumentDirector(builder);
+			director.buildDocument(results, administrativeResults);
+		}
+	}
+	
+	public void generateInvoice(PROZEvent e) {
+			//FIXME move to model
+			final Map<BillableService, Float> results = ((GenerateUsageTableEvent)e).results;
+				final Map<BillableService, Float> administrativeResults = ((GenerateUsageTableEvent)e).administrativeResults;
+				Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+				try {
+					PdfWriter writer =
+							PdfWriter.getInstance(document, new FileOutputStream(
+									"C:\\tabelka.pdf"));
+					document.open();
+					PdfPTable t = new PdfPTable(7);
+					t.setWidthPercentage(100f);
+					t.setWidths(new int[] {3,1,1,1,1,1,1});
+					try {
+		            BaseFont bf = BaseFont.createFont("c:/windows/fonts/arial.ttf", 
+		                    BaseFont.CP1250, BaseFont.EMBEDDED); 
+		                    Font font = new Font(bf, 12); 
+					PdfPCell cell;
+					t.getDefaultCell().setPadding(5);
+					cell = new PdfPCell();
+					cell.setRowspan(2);
+					t.addCell(cell);
+					cell = new PdfPCell(new Phrase("Okres rozliczeniowy"));
+					cell.setColspan(2);	
+					t.addCell(cell);
+					cell = new PdfPCell(new Phrase("Op³aty mieszkaniowe", font));
+					cell.setColspan(2);	
+					t.addCell(cell);
+					cell = new PdfPCell(new Phrase("Op³aty administracyjne",font));
+					cell.setColspan(2);	
+					t.addCell(cell);
+					cell = new PdfPCell(new Phrase("poczatek"));
+					t.addCell(cell);
+					cell = new PdfPCell(new Phrase("koniec"));
+					t.addCell(cell);
+					t.addCell(new Phrase("stawka", font));
+					t.addCell(new Phrase("op³ata", font));
+					t.addCell(new Phrase("wsp.", font));
+					t.addCell(new Phrase("op³ata", font));
+					t.addCell("Centralne Ogrzewanie");
+					t.addCell("");
+					t.addCell("");
+					t.addCell("");
+					t.addCell(new DecimalFormat("#.##").format(results.get(BillableService.CO)));
+					t.addCell("");
+					t.addCell("");
+					t.addCell(new Phrase("Woda zimna i ciep³a", font));
+					t.addCell("");
+					t.addCell("");
+					t.addCell("");
+					t.addCell(new DecimalFormat("#.##").format(results.get(BillableService.WODA)));
+					t.addCell("");
+					t.addCell("");
+					t.addCell(new Phrase("Podgrzanie ciep³ej wody", font));
+					t.addCell("");
+					t.addCell("");
+					t.addCell("");
+					t.addCell(new DecimalFormat("#.##").format(results.get(BillableService.PODGRZANIE)));
+					t.addCell("");
+					t.addCell("");
+					t.addCell(new Phrase("Wywóz œcieków",font));
+					t.addCell("");
+					t.addCell("");
+					t.addCell("");
+					t.addCell(new DecimalFormat("#.##").format(results.get(BillableService.SCIEKI)));
+					t.addCell("");
+					t.addCell("");
+					t.addCell("Gaz");
+					t.addCell("");
+					t.addCell("");
+					t.addCell("");
+					t.addCell(new DecimalFormat("#.##").format(results.get(BillableService.GAZ)));
+					t.addCell("");
+					t.addCell("");
+					t.addCell("Energia elektryczna");
+					t.addCell("");
+					t.addCell("");
+					t.addCell("");
+					t.addCell(new DecimalFormat("#.##").format(results.get(BillableService.EE)));
+					t.addCell("");
+					t.addCell("");
+					t.addCell(new Phrase("Wywóz œmieci", font));
+					t.addCell("");
+					t.addCell("");
+					t.addCell("");
+					t.addCell(new DecimalFormat("#.##").format(results.get(BillableService.SMIECI)));;
+					t.addCell("");
+					t.addCell("");
+					t.addCell("Internet");
+					t.addCell("");
+					t.addCell("");
+					t.addCell("");
+					t.addCell(new DecimalFormat("#.##").format(results.get(BillableService.INTERNET)));
+					t.addCell("");
+					t.addCell("");
+					t.addCell(new Phrase("Nale¿na suma op³at za media", font));
+					cell = new PdfPCell();
+					cell.setColspan(3);
+					t.addCell(cell);
+					t.addCell("suma");
+					t.addCell("");
+					t.addCell("suma");
+					document.add(t);
+					Paragraph par = new Paragraph("Pobrana op³ata: op³ata",font);
+					document.add(par);
+					par = new Paragraph("Nale¿noœæ: op³ata", font);
+					document.add(par);
+					document.close();
+					}
+					catch(IOException exc) {
+						
+					}
+					try {
+						Process p =
+								Runtime.getRuntime()
+										.exec("rundll32 url.dll,FileProtocolHandler c:\\tabelka.pdf");
+						p.waitFor();
+					} catch (Exception exc) {
+
+					}
+				} catch (FileNotFoundException exc) {
+				} catch (DocumentException exc) {
+				}
+			}
 }
