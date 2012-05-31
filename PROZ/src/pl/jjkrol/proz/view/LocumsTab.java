@@ -1,6 +1,22 @@
 package pl.jjkrol.proz.view;
+import pl.jjkrol.proz.events.*;
+import pl.jjkrol.proz.events.occupants.OccupantChosenForViewingEvent;
 
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -8,23 +24,18 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
-import pl.jjkrol.proz.controller.AddOccupantEvent;
 import pl.jjkrol.proz.controller.Controller;
-import pl.jjkrol.proz.controller.DeleteOccupantEvent;
-import pl.jjkrol.proz.controller.LocumMockup;
+import pl.jjkrol.proz.mockups.LocumMockup;
 import pl.jjkrol.proz.controller.LocumsDisplayer;
-import pl.jjkrol.proz.controller.LocumsListNeededEvent;
-import pl.jjkrol.proz.controller.OccupantChosenForViewingEvent;
-import pl.jjkrol.proz.controller.OccupantMockup;
-import pl.jjkrol.proz.controller.SaveOccupantEvent;
+import pl.jjkrol.proz.mockups.OccupantMockup;
 import pl.jjkrol.proz.model.Occupant;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-
 public class LocumsTab implements SpecificTab, LocumsDisplayer{
+	private BlockingQueue<PROZEvent> blockingQueue;
+	
+	public LocumsTab(BlockingQueue<PROZEvent> blockingQueue) {
+		this.blockingQueue = blockingQueue;
+	}
 	
 	private class ListItem {
 		private String name;
@@ -67,7 +78,12 @@ public class LocumsTab implements SpecificTab, LocumsDisplayer{
 		void valueChanged(int id) {
 			OccupantMockup moc = new OccupantMockup(id, null, null, null, null,
 					null);
-			core.putEvent(new OccupantChosenForViewingEvent(moc));
+			try {
+				blockingQueue.put(new OccupantChosenForViewingEvent(moc));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -164,15 +180,19 @@ public class LocumsTab implements SpecificTab, LocumsDisplayer{
 		}
 	};
 
-	public void displayLocumsList(List<LocumMockup> locums) {
+	public void displayLocumsList(final List<LocumMockup> locums) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
 		locumsList.removeListSelectionListener(listListener);
 		locumsListModel.removeAllElements();
 		for (LocumMockup loc : locums) {
-			locumsListModel.addElement(loc.name);
+			locumsListModel.addElement(loc.getName());
 		}
 		locumsList.invalidate();
 		locumsList.validate();
 		locumsList.addListSelectionListener(listListener);
+				}});
 	}
 
 	public void displayOccupantsData(OccupantMockup moc) {
@@ -262,7 +282,12 @@ public class LocumsTab implements SpecificTab, LocumsDisplayer{
 	public void getReady() {
 		logger.debug(name + " got ready");
 		internalState = new NormalState();
-		core.putEvent(new LocumsListNeededEvent(this));
+		try {
+			blockingQueue.put(new LocumsListNeededEvent(this));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void addEmptyNewItem() {

@@ -2,6 +2,7 @@ package pl.jjkrol.proz.model;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Map;
 
 import com.itextpdf.text.Document;
@@ -35,7 +36,8 @@ abstract public class DocumentBuilder {
 	 * @throws IOException
 	 */
 	abstract public void buildBody(final Map<BillableService, Float> results,
-			final Map<BillableService, Float> administrativeResults)
+			final Map<BillableService, Float> administrativeResults,
+			final Calendar from, final Calendar to)
 			throws DocumentException, IOException;
 	
 	/**

@@ -2,7 +2,7 @@ package pl.jjkrol.proz.model;
 
 import java.util.*;
 
-import pl.jjkrol.proz.controller.CounterMockup;
+import pl.jjkrol.proz.mockups.CounterMockup;
 
 public class Counter {
 	String unit;

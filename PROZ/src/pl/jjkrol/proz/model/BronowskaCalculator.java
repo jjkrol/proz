@@ -14,8 +14,32 @@ public class BronowskaCalculator implements PaymentCalculator {
 
 	static Logger logger = Logger.getLogger(BronowskaCalculator.class);
 
-	public Map<BillableService, Float> calculatePayment(House house, Locum loc,
-			Calendar start, Calendar end, String quotationName)
+	/**
+	 * Calculates all usage information
+	 * 
+	 * @throws NoSuchQuotationSet
+	 */
+	public Result calculate(final Building building, final Locum loc,
+			final Calendar from, final Calendar to, final String quotationName)
+			throws NoSuchQuotationSet {
+		Result res = new Result();
+		res.setBuilding(building);
+		res.setLocum(loc);
+		res.setFrom(from);
+		res.setTo(to);
+		res.setQuotationName(quotationName);
+		res.setResults(calculatePayment(building, loc, from, to, quotationName));
+		res.setAdministrativeResults(calculateAdministrativePayment(building,
+				loc, from, to, quotationName));
+		return res;
+
+	}
+
+	/**
+	 * Calculates payments for usage of single locum services
+	 */
+	public Map<BillableService, Float> calculatePayment(Building house,
+			Locum loc, Calendar start, Calendar end, String quotationName)
 			throws NoSuchQuotationSet {
 
 		int monthDiff = end.get(Calendar.MONTH) - start.get(Calendar.MONTH);
@@ -38,8 +62,11 @@ public class BronowskaCalculator implements PaymentCalculator {
 		}
 	}
 
+	/**
+	 * Calculates payments for usage of administrative services
+	 */
 	public Map<BillableService, Float> calculateAdministrativePayment(
-			House house, Locum loc, Calendar start, Calendar end,
+			Building house, Locum loc, Calendar start, Calendar end,
 			String quotationName) throws NoSuchQuotationSet {
 		Map<BillableService, Float> administrativeUsage =
 				getAdministrativeUsage(loc, start, end, house);
@@ -51,6 +78,12 @@ public class BronowskaCalculator implements PaymentCalculator {
 		}
 	}
 
+	/**
+	 * Calculates all payments
+	 * @param billableUsage
+	 * @param quotations
+	 * @return Result object with all data concerning payment
+	 */
 	private Map<BillableService, Float> calculatePayment(
 			Map<BillableService, Float> billableUsage,
 			List<Quotation> quotations) {
@@ -70,6 +103,14 @@ public class BronowskaCalculator implements PaymentCalculator {
 		return payment;
 	}
 
+	/**
+	 * Calculates usage of services
+	 * @param usage
+	 * @param period
+	 * @param size
+	 * @param heatFactor
+	 * @return map of usages
+	 */
 	private Map<BillableService, Float> calculateBillableUsage(
 			Map<MeasurableService, Float> usage, int period, int size,
 			float heatFactor) {
@@ -93,8 +134,16 @@ public class BronowskaCalculator implements PaymentCalculator {
 		return finalUsage;
 	}
 
+	/**
+	 * Calculates usage of administrative services
+	 * @param loc
+	 * @param start
+	 * @param end
+	 * @param house
+	 * @return
+	 */
 	private Map<BillableService, Float> getAdministrativeUsage(Locum loc,
-			Calendar start, Calendar end, House house) {
+			Calendar start, Calendar end, Building house) {
 
 		Map<MeasurableService, Float> houseUsage = house.getUsage(start, end);
 		float heatFactor = house.getHeatFactor(start, end);

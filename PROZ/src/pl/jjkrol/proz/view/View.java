@@ -7,6 +7,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.apache.log4j.Logger;
+
 /**
  * Main class of the application view
  * 
@@ -15,6 +17,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class View {
 	private PROZJFrame frame;
 	public List<SpecificTab> views;
+	static Logger logger = org.apache.log4j.Logger.getLogger(View.class);
 	
 	/**
 	 * View constructor sets the look and feel of the application
@@ -24,7 +27,7 @@ public class View {
 			UIManager.setLookAndFeel(ch.randelshofer.quaqua.QuaquaManager
 					.getLookAndFeel());
 		} catch (UnsupportedLookAndFeelException e) {
-
+			logger.warn(e.getMessage());
 		}
 
 	}
@@ -62,12 +65,13 @@ public class View {
 	 * directly, because View as a facade would be to big.
 	 * @param wantedClass
 	 * @return specificTab
+	 * @throws NoSuchTabException 
 	 */
-	public SpecificTab getSpecificView(Class wantedClass) {
+	public SpecificTab getSpecificView(Class wantedClass) throws NoSuchTabException {
 		for (SpecificTab v : views) {
 			if (v.getClass() == wantedClass)
 				return v;
 		}
-		return new OccupantsTab();
+		throw new NoSuchTabException();
 	}
 }

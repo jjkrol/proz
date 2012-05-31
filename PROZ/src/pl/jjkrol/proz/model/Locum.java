@@ -2,11 +2,11 @@ package pl.jjkrol.proz.model;
 
 import java.util.*;
 
-import pl.jjkrol.proz.controller.CounterMockup;
-import pl.jjkrol.proz.controller.LocumMockup;
-import pl.jjkrol.proz.controller.MeasurementMockup;
-import pl.jjkrol.proz.controller.OccupantMockup;
-import pl.jjkrol.proz.controller.QuotationMockup;
+import pl.jjkrol.proz.mockups.CounterMockup;
+import pl.jjkrol.proz.mockups.LocumMockup;
+import pl.jjkrol.proz.mockups.MeasurementMockup;
+import pl.jjkrol.proz.mockups.OccupantMockup;
+import pl.jjkrol.proz.mockups.QuotationMockup;
 import pl.jjkrol.proz.view.MeasurementsTab;
 
 /**
@@ -17,53 +17,34 @@ import pl.jjkrol.proz.view.MeasurementsTab;
  */
 public class Locum implements Measurable {
 
-	/**
-	 * Name of the locum (or number), main identifier
-	 */
+	/** Name of the locum (or number), main identifier */
 	private final String name;
-	/**
-	 * Area of the locum in square meters
-	 */
+	/** Area of the locum in square meters */
 	private final float area;
-
 	/**
 	 * a factor, which is used for calculating the participation in
 	 * administrative costs
 	 */
 	private float participationFactor;
-
-	/**
-	 * a person or company responsible for payments
-	 */
+	/** a person or company responsible for payments */
 	private Occupant billingPerson;
 
-	/**
-	 * tells if this locum is rented or used by administration
-	 */
+	/** tells if this locum is rented or used by administration */
 	private final Ownership ownership;
 
-	/**
-	 * a list of services which are enabled for the locum (and which are billed
-	 * in consequence)
-	 */
+	/** a list of services which are enabled for the locum (and which are billed in consequence) */
 	private List<BillableService> enabledServices =
 			new ArrayList<BillableService>();
 
-	/**
-	 * list of counters installed in the locum
-	 */
+	/** list of counters installed in the locum */
 	private Map<MeasurableService, Counter> counters =
 			new HashMap<MeasurableService, Counter>();
 
-	/**
-	 * list of quotations for this locum
-	 */
+	/** list of quotations for this locum */
 	private Map<String, List<Quotation>> quotations =
 			new HashMap<String, List<Quotation>>();
 
-	/**
-	 * list of occupants living in this locum
-	 */
+	/** list of occupants living in this locum */
 	private List<Occupant> occupants = new ArrayList<Occupant>();
 
 	public Locum() {
@@ -71,6 +52,7 @@ public class Locum implements Measurable {
 		this.area = 0;
 		this.ownership = null;
 	}
+
 	public Locum(float givenArea, String givenName) {
 		this(givenArea, givenName, Ownership.FOR_RENT);
 	}
@@ -194,10 +176,10 @@ public class Locum implements Measurable {
 	 * @param quotations
 	 *            the quotations to set
 	 */
-/*	public void setQuotations(
-			Map<BillableService, Map<String, Quotation>> quotations) {
-		this.quotations = quotations;
-	}*/
+	/*
+	 * public void setQuotations( Map<BillableService, Map<String, Quotation>>
+	 * quotations) { this.quotations = quotations; }
+	 */
 
 	public void setBillingPerson(Occupant billingPerson) {
 		this.billingPerson = billingPerson;
@@ -224,7 +206,8 @@ public class Locum implements Measurable {
 			Counter c = counters.get(serv);
 			counts.put(serv, c.getMockup());
 		}
-		List<BillableService> enabledServs = new ArrayList<BillableService>(enabledServices); 
+		List<BillableService> enabledServs =
+				new ArrayList<BillableService>(enabledServices);
 		// List<MeasurableService> servs = new LinkedList<MeasureableSerivce>();
 		// for(Occupant occ : occupants){
 		// occs.add(occ.getMockup());
@@ -233,14 +216,16 @@ public class Locum implements Measurable {
 		// for(Occupant : occupants){
 		// occs.add(occ.getMockup());
 		// }
-		return new LocumMockup(name, area, participationFactor, occs, counts, enabledServs);
+		return new LocumMockup(name, area, participationFactor, occs, counts,
+				enabledServs);
 	}
 
 	public Map<String, List<QuotationMockup>> getQuotationsMockups() {
-		Map<String, List<QuotationMockup>> mockups = new HashMap<String, List<QuotationMockup>>();
-		for(String name : quotations.keySet()) {
+		Map<String, List<QuotationMockup>> mockups =
+				new HashMap<String, List<QuotationMockup>>();
+		for (String name : quotations.keySet()) {
 			List<QuotationMockup> mocs = new ArrayList<QuotationMockup>();
-			for(Quotation quot : quotations.get(name)) {
+			for (Quotation quot : quotations.get(name)) {
 				mocs.add(quot.getMockup());
 			}
 			mockups.put(name, mocs);

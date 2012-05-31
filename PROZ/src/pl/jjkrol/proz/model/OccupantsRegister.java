@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
-import pl.jjkrol.proz.controller.OccupantMockup;
+import pl.jjkrol.proz.mockups.OccupantMockup;
 
 public class OccupantsRegister {
 	

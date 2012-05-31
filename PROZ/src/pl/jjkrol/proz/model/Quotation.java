@@ -1,5 +1,5 @@
 package pl.jjkrol.proz.model;
-import pl.jjkrol.proz.controller.QuotationMockup;
+import pl.jjkrol.proz.mockups.QuotationMockup;
 public class Quotation {
 	private BillableService service;
 	private float price;
@@ -18,6 +18,6 @@ public class Quotation {
 	}
 	
 	public QuotationMockup getMockup() {
-		return new QuotationMockup();
+		return new QuotationMockup(service, price);
 	}
 }

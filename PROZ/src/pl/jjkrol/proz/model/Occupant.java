@@ -2,7 +2,7 @@ package pl.jjkrol.proz.model;
 
 import org.apache.log4j.Logger;
 
-import pl.jjkrol.proz.controller.OccupantMockup;
+import pl.jjkrol.proz.mockups.OccupantMockup;
 
 public class Occupant {
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+                                         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+ <session-factory name="">
+  <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+  <property name="hibernate.connection.password">test101</property>
+  <property name="hibernate.connection.url">jdbc:postgresql://79.133.199.167:5432/proz</property>
+  <property name="hibernate.connection.username">test101</property>
+  <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+  <property name="hibernate.hbm2ddl.auto">update</property>
+    
+  <mapping class="pl.jjkrol.proz.model.Locum" resource="pl/jjkrol/proz/model/Locum.hbm.xml"/>
+ </session-factory>
+</hibernate-configuration>

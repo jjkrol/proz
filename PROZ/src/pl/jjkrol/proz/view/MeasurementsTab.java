@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.jar.JarInputStream;
 
 import javax.swing.DefaultListModel;
@@ -18,19 +19,19 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import pl.jjkrol.proz.events.*;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
 import pl.jjkrol.proz.controller.Controller;
-import pl.jjkrol.proz.controller.LocumChosenForViewingEvent;
-import pl.jjkrol.proz.controller.LocumMockup;
+import pl.jjkrol.proz.mockups.LocumMockup;
 import pl.jjkrol.proz.controller.LocumsDisplayer;
-import pl.jjkrol.proz.controller.LocumsListNeededEvent;
-import pl.jjkrol.proz.controller.MeasurementMockup;
+import pl.jjkrol.proz.mockups.MeasurementMockup;
 import pl.jjkrol.proz.model.MeasurableService;
 
 public class MeasurementsTab implements SpecificTab, LocumsDisplayer {
@@ -75,25 +76,32 @@ public class MeasurementsTab implements SpecificTab, LocumsDisplayer {
 		};
 
 		void locumsValueChanged(LocumMockup moc) {
-			core.putEvent(new LocumChosenForViewingEvent(moc));
+			try {
+				blockingQueue.put(new LocumChosenForViewingEvent(moc));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		void measurementsValueChanged(MeasurementMockup moc) {
 			displayMeasurementData(moc);
 		}
-		
-		void toggleButtons() {}
+
+		void toggleButtons() {
+		}
 	}
 
 	private class NormalState extends State {
-		NormalState(){
-			//clear fields
+		NormalState() {
+			// clear fields
 		}
-		
+
 		@Override
 		void createNewItem() {
-			if(locumsList.hasFocus()) {
-				LocumMockup selected = (LocumMockup)locumsList.getSelectedValue();
+			if (locumsList.hasFocus()) {
+				LocumMockup selected =
+						(LocumMockup) locumsList.getSelectedValue();
 				internalState = new EditingNewState(selected);
 				internalState.toggleButtons();
 				addEmptyElement();
@@ -102,7 +110,6 @@ public class MeasurementsTab implements SpecificTab, LocumsDisplayer {
 			// clearFields();
 			// addEmptyNewItem();
 		}
-
 
 		@Override
 		void saveMeasurement(int occupantId) {
@@ -131,10 +138,11 @@ public class MeasurementsTab implements SpecificTab, LocumsDisplayer {
 
 	private class EditingNewState extends State {
 		private LocumMockup selectedLocum;
-		EditingNewState(LocumMockup selectedLocum){
+
+		EditingNewState(LocumMockup selectedLocum) {
 			this.selectedLocum = selectedLocum;
-			}
-		
+		}
+
 		@Override
 		void saveMeasurement(int occupantId) {
 			// OccupantMockup moc = createMockupFromFieldData(occupantId);
@@ -150,12 +158,12 @@ public class MeasurementsTab implements SpecificTab, LocumsDisplayer {
 
 		@Override
 		void locumsValueChanged(LocumMockup moc) {
-			//TODO drop the changes, and revert to the normal state
-			//revert to normal state
+			// TODO drop the changes, and revert to the normal state
+			// revert to normal state
 			internalState = new NormalState();
 			internalState.toggleButtons();
-			//call the method again,
-			//so the application behaves normally
+			// call the method again,
+			// so the application behaves normally
 			internalState.locumsValueChanged(moc);
 			// removeEmptyNewItem();
 		}
@@ -163,17 +171,17 @@ public class MeasurementsTab implements SpecificTab, LocumsDisplayer {
 		@Override
 		void measurementsValueChanged(MeasurementMockup moc) {
 			logger.debug("tutaj");
-			if(moc != emptyElement) {
+			if (moc != emptyElement) {
 				internalState = new NormalState();
 				internalState.toggleButtons();
 				removeEmptyElement();
-				
-				//call the method again,
-				//so the application behaves normally
+
+				// call the method again,
+				// so the application behaves normally
 				internalState.measurementsValueChanged(moc);
 			}
 		}
-		
+
 		@Override
 		void toggleButtons() {
 			createButton.setEnabled(false);
@@ -230,7 +238,7 @@ public class MeasurementsTab implements SpecificTab, LocumsDisplayer {
 	/**
 	 * An empty measurement mockup for showing as a new unsaved item
 	 */
-	private MeasurementMockup emptyElement = new MeasurementMockup(null,null);
+	private MeasurementMockup emptyElement = new MeasurementMockup(null, null);
 	/**
 	 * Input for date of the measurement
 	 */
@@ -269,7 +277,6 @@ public class MeasurementsTab implements SpecificTab, LocumsDisplayer {
 		}
 	};
 
-
 	ActionListener saveListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -301,17 +308,28 @@ public class MeasurementsTab implements SpecificTab, LocumsDisplayer {
 		locumsList.addListSelectionListener(locumsListListener);
 	}
 
-	public void displayMeasurements(List<MeasurementMockup> measurements) {
-		measurementsList.removeListSelectionListener(measurementsListListener);
-		measurementsListModel.removeAllElements();
-		for (MeasurementMockup mea : measurements) {
-			measurementsListModel.addElement(mea);
-		}
-		measurementsList.invalidate();
-		measurementsList.validate();
-		measurementsList.addListSelectionListener(measurementsListListener);
+	/**
+	 * Displays list of all measurements
+	 * 
+	 * @param measurements
+	 */
+	public void displayMeasurements(final List<MeasurementMockup> measurements) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				measurementsList
+						.removeListSelectionListener(measurementsListListener);
+				measurementsListModel.removeAllElements();
+				for (MeasurementMockup mea : measurements) {
+					measurementsListModel.addElement(mea);
+				}
+				measurementsList.invalidate();
+				measurementsList.validate();
+				measurementsList
+						.addListSelectionListener(measurementsListListener);
+			}
+		});
 	}
-
 
 	private void displayMeasurementData(MeasurementMockup moc) {
 		Calendar date = moc.date;
@@ -325,8 +343,9 @@ public class MeasurementsTab implements SpecificTab, LocumsDisplayer {
 			field.setText(value.toString());
 		}
 	}
-
-	public MeasurementsTab() {
+	private BlockingQueue<PROZEvent> blockingQueue;
+	public MeasurementsTab(BlockingQueue<PROZEvent> blockingQueue) {
+		this.blockingQueue = blockingQueue;
 		panel.setLayout(new MigLayout());
 	}
 
@@ -400,7 +419,12 @@ public class MeasurementsTab implements SpecificTab, LocumsDisplayer {
 	public void getReady() {
 		logger.debug(name + " got ready");
 		internalState = new NormalState();
-		core.putEvent(new LocumsListNeededEvent(this));
+		try {
+			blockingQueue.put(new LocumsListNeededEvent(this));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private LocumMockup getSelectedLocum() throws NoNodeSelectedException {
@@ -423,18 +447,20 @@ public class MeasurementsTab implements SpecificTab, LocumsDisplayer {
 
 	private void clearFields() {
 		dateInput.setText("");
-		for(MeasurableService serv : serviceFields.keySet()) {
+		for (MeasurableService serv : serviceFields.keySet()) {
 			JTextField field = serviceFields.get(serv);
 			field.setText("");
-	}
-	}
-		private void addEmptyElement() {
-			measurementsListModel.addElement(emptyElement);
-			measurementsList.setSelectedValue(emptyElement, true);
-			
 		}
-		private void removeEmptyElement() {
-			measurementsListModel.removeElement(emptyElement);
-			
-		}
+	}
+
+	private void addEmptyElement() {
+		measurementsListModel.addElement(emptyElement);
+		measurementsList.setSelectedValue(emptyElement, true);
+
+	}
+
+	private void removeEmptyElement() {
+		measurementsListModel.removeElement(emptyElement);
+
+	}
 }

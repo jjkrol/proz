@@ -7,7 +7,7 @@
 	<property name="build.jar.lib.dir" location="${build.jar.dir}/vendor/lib" />
 	<property name="build.jar.data.dir" location="${build.jar.dir}/data" />
 	<property name="build.test.dir" location="${build.dir}/test" />
-	<property name="build.javadoc.dir" location="${build}/javadoc" />
+	<property name="build.javadoc.dir" location="${build.dir}/javadoc" />
 	<property name="doc.dir" location="doc" />
 	<property name="index.dir" location="index" />
 	<property name="src.dir" location="src" />
@@ -75,7 +75,6 @@
 	    </target>
 	
 	<target name="javadoc" depends="prepare">
-		<mkdir dir="${build.test.dir}" />
 	    <javadoc
 	          access="public"
 	           destdir="${build.javadoc.dir}"

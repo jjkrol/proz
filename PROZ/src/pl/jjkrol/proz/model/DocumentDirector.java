@@ -2,15 +2,16 @@ package pl.jjkrol.proz.model;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Map;
-
+import pl.jjkrol.proz.mockups.ResultMockup;
 import org.apache.log4j.Logger;
 
 import com.itextpdf.text.DocumentException;
 
 /**
- * Class responsible for managing the building of documents
- * specified by the given DocumentBuilder.
+ * Class responsible for managing the building of documents specified by the
+ * given DocumentBuilder.
  */
 public class DocumentDirector {
 	static Logger logger = Logger.getLogger(DocumentDirector.class);
@@ -20,22 +21,18 @@ public class DocumentDirector {
 		this.builder = builder;
 	}
 
-	public void buildDocument(final Map<BillableService, Float> results,
-			final Map<BillableService, Float> administrativeResults) {
+	public void buildDocument(String filepath, ResultMockup result) {
+		final Map<BillableService, Float> results = result.results;
+		final Map<BillableService, Float> administrativeResults =
+				result.administrativeResults;
+		final Calendar from = result.from;
+		final Calendar to = result.to;
+		//TODO transform into a key-value structure
 		try {
 			builder.initializeDocument();
-			builder.initializeListeners("c:\\tabelka.pdf");
-			builder.buildBody(results, administrativeResults);
+			builder.initializeListeners(filepath);
+			builder.buildBody(results, administrativeResults, from, to);
 			builder.finalizeDocument();
-			
-			try {
-				Process p =
-						Runtime.getRuntime()
-								.exec("rundll32 url.dll,FileProtocolHandler c:\\tabelka.pdf");
-				p.waitFor();
-			} catch (Exception exc) {
-				logger.debug(exc.getMessage());
-			}
 		} catch (DocumentException exc) {
 			logger.debug(exc.getMessage());
 		} catch (FileNotFoundException exc) {

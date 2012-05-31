@@ -1,22 +1,23 @@
 package pl.jjkrol.proz.view;
 
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.tree.*;
-
-import org.apache.log4j.Logger;
-import org.junit.runners.ParentRunner;
-
-import pl.jjkrol.proz.controller.Controller;
-import pl.jjkrol.proz.controller.MainButtonClickedEvent;
-
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import org.apache.log4j.Logger;
+
+import pl.jjkrol.proz.controller.Controller;
 
 /**
  * A subclassed JFrame, responsible for creating
@@ -51,20 +52,6 @@ public class PROZJFrame extends JFrame {
 		helpMenu.add("Samouczek");
 		helpMenu.add("O programie");
 		return helpMenu;
-	}
-
-	private JMenu getModulesMenu() {
-		JMenu modulesMenu = new JMenu("Modu³y");
-		JMenuItem locumsItem = new JMenuItem("Lokale", KeyEvent.VK_L);
-		ActionListener locumListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(frame, "Lokale");
-			}
-		};
-		locumsItem.addActionListener(locumListener);
-		modulesMenu.add(locumsItem);
-		return modulesMenu;
 	}
 
 	private JMenu getEditMenu() {
@@ -119,15 +106,7 @@ public class PROZJFrame extends JFrame {
 		JButton b1 = new JButton("Przycisk 1"), b2 = new JButton("Przycisk 2");
 		JTextField txt = new JTextField(10);
 
-		ActionListener bl = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				core.putEvent(new MainButtonClickedEvent());
-			}
-		};
 
-		b1.addActionListener(bl);
-		b2.addActionListener(bl);
 
 		homePanel.add(b1);
 		homePanel.add(b2);

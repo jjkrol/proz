@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import com.itextpdf.text.Document;
@@ -16,6 +17,7 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import java.util.Calendar;
 
 public class UsageTableBuilder extends DocumentBuilder {
 
@@ -42,8 +44,10 @@ public class UsageTableBuilder extends DocumentBuilder {
 	 */
 	@Override
 	public void buildBody(final Map<BillableService, Float> results,
-			final Map<BillableService, Float> administrativeResults)
+			final Map<BillableService, Float> administrativeResults,
+			Calendar from, Calendar to)
 			throws DocumentException, IOException {
+			SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 		document.open();
 		PdfPTable t = new PdfPTable(7);
 		t.setWidthPercentage(100f);
@@ -66,9 +70,9 @@ public class UsageTableBuilder extends DocumentBuilder {
 		cell = new PdfPCell(new Phrase("Op³aty administracyjne", font));
 		cell.setColspan(2);
 		t.addCell(cell);
-		cell = new PdfPCell(new Phrase("poczatek"));
+		cell = new PdfPCell(new Phrase(df.format(from.getTime())));
 		t.addCell(cell);
-		cell = new PdfPCell(new Phrase("koniec"));
+		cell = new PdfPCell(new Phrase(df.format(to.getTime())));
 		t.addCell(cell);
 		t.addCell(new Phrase("stawka", font));
 		t.addCell(new Phrase("op³ata", font));

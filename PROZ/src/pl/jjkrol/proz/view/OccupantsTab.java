@@ -4,6 +4,8 @@ import java.awt.Dimension;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import pl.jjkrol.proz.mockups.OccupantMockup;
 import pl.jjkrol.proz.model.Occupant;
 
 import javax.swing.DefaultListModel;
@@ -14,6 +16,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.Logger;
@@ -21,14 +24,26 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 import pl.jjkrol.proz.controller.*;
-
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+
+import pl.jjkrol.proz.events.*;
+import pl.jjkrol.proz.events.occupants.AddOccupantEvent;
+import pl.jjkrol.proz.events.occupants.DeleteOccupantEvent;
+import pl.jjkrol.proz.events.occupants.OccupantChosenForViewingEvent;
+import pl.jjkrol.proz.events.occupants.OccupantsListNeededEvent;
+import pl.jjkrol.proz.events.occupants.SaveOccupantEvent;
 
 /*
  * TODO disable create button
  */
 public class OccupantsTab implements SpecificTab {
-
+	
+	BlockingQueue<PROZEvent> blockingQueue;
+	public OccupantsTab(BlockingQueue<PROZEvent> blockingQueue) {
+		this.blockingQueue = blockingQueue;
+	}
+	
 	private class ListItem {
 		private String name;
 		private int id;
@@ -73,9 +88,14 @@ public class OccupantsTab implements SpecificTab {
 		};
 
 		void valueChanged(int id) {
-			OccupantMockup moc = new OccupantMockup(id, null, null, null, null,
-					null);
-			core.putEvent(new OccupantChosenForViewingEvent(moc));
+			OccupantMockup moc =
+					new OccupantMockup(id, null, null, null, null, null);
+			try {
+				blockingQueue.put(new OccupantChosenForViewingEvent(moc));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -89,12 +109,22 @@ public class OccupantsTab implements SpecificTab {
 
 		void saveOccupant(int occupantId) {
 			OccupantMockup moc = createMockupFromFieldData(occupantId);
-			core.putEvent(new SaveOccupantEvent(moc));
+			try {
+				blockingQueue.put(new SaveOccupantEvent(moc));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		void deleteOccupant(int occupantId) {
 			OccupantMockup moc = createMockupFromFieldData(occupantId);
-			core.putEvent(new DeleteOccupantEvent(moc));
+			try {
+				blockingQueue.put(new DeleteOccupantEvent(moc));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			clearFields();
 		}
 	}
@@ -102,7 +132,12 @@ public class OccupantsTab implements SpecificTab {
 	private class EditingNewState extends State {
 		void saveOccupant(int occupantId) {
 			OccupantMockup moc = createMockupFromFieldData(occupantId);
-			core.putEvent(new AddOccupantEvent(moc));
+			try {
+				blockingQueue.put(new AddOccupantEvent(moc));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			internalState = new NormalState();
 		}
 
@@ -140,7 +175,7 @@ public class OccupantsTab implements SpecificTab {
 	private final JTextField nipInput = new JTextField(30);
 
 	private final ValueReporter listListener = new ValueReporter();
-	
+
 	ActionListener createListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -148,7 +183,7 @@ public class OccupantsTab implements SpecificTab {
 		}
 
 	};
-	
+
 	ActionListener deleteListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -173,26 +208,41 @@ public class OccupantsTab implements SpecificTab {
 		}
 	};
 
-	public void displayOccupantsList(List<OccupantMockup> occupants) {
-		occupantsList.removeListSelectionListener(listListener);
-		listModel.removeAllElements();
-		for (OccupantMockup occ : occupants) {
-			listModel.addElement(new ListItem(occ.name, occ.id));
-		}
-		occupantsList.invalidate();
-		occupantsList.validate();
-		occupantsList.addListSelectionListener(listListener);
+	/**
+	 * Displays occupants list
+	 * 
+	 * @param occupants
+	 */
+	public void displayOccupantsList(final List<OccupantMockup> occupants) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				occupantsList.removeListSelectionListener(listListener);
+				listModel.removeAllElements();
+				for (OccupantMockup occ : occupants) {
+					listModel.addElement(new ListItem(occ.name, occ.id));
+				}
+				occupantsList.invalidate();
+				occupantsList.validate();
+				occupantsList.addListSelectionListener(listListener);
+			}
+		});
 	}
 
-	public void displayOccupantsData(OccupantMockup moc) {
-		nameInput.setText(moc.name);
-		addressInput.setText(moc.address);
-		telephoneInput.setText(moc.telephone);
-		nipInput.setText(moc.nip);
-		if (moc.billingType.equals(Occupant.Billing.BILL))
-			billingInput.setSelectedIndex(0);
-		else
-			billingInput.setSelectedIndex(1);
+	public void displayOccupantsData(final OccupantMockup moc) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				nameInput.setText(moc.name);
+				addressInput.setText(moc.address);
+				telephoneInput.setText(moc.telephone);
+				nipInput.setText(moc.nip);
+				if (moc.billingType.equals(Occupant.Billing.BILL))
+					billingInput.setSelectedIndex(0);
+				else
+					billingInput.setSelectedIndex(1);
+			}
+		});
 	}
 
 	@Override
@@ -247,7 +297,12 @@ public class OccupantsTab implements SpecificTab {
 	@Override
 	public void getReady() {
 		internalState = new NormalState();
-		core.putEvent(new OccupantsListNeededEvent());
+		try {
+			blockingQueue.put(new OccupantsListNeededEvent());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void addEmptyNewItem() {
@@ -264,10 +319,11 @@ public class OccupantsTab implements SpecificTab {
 	}
 
 	private OccupantMockup createMockupFromFieldData(int occupantId) {
-		OccupantMockup moc = new OccupantMockup(occupantId,
-				nameInput.getText(), addressInput.getText(),
-				telephoneInput.getText(), nipInput.getText(),
-				(Occupant.Billing) billingInput.getSelectedItem());
+		OccupantMockup moc =
+				new OccupantMockup(occupantId, nameInput.getText(),
+						addressInput.getText(), telephoneInput.getText(),
+						nipInput.getText(), (Occupant.Billing) billingInput
+								.getSelectedItem());
 		return moc;
 	}
 
