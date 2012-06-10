@@ -31,37 +31,73 @@ import pl.jjkrol.proz.mockups.OccupantMockup;
 import pl.jjkrol.proz.model.Occupant;
 
 /**
+ * The Class LocumsTab.
+ *
  * @author   jjkrol
  */
 public class LocumsTab extends SpecificTab implements LocumsDisplayer{
+	
+	/** The blocking queue. */
 	private BlockingQueue<PROZEvent> blockingQueue;
 	
+	/**
+	 * Instantiates a new locums tab.
+	 *
+	 * @param blockingQueue the blocking queue
+	 */
 	public LocumsTab(BlockingQueue<PROZEvent> blockingQueue) {
 		this.blockingQueue = blockingQueue;
 	}
 	
 	/**
+	 * The Class ListItem.
+	 *
 	 * @author   jjkrol
 	 */
 	private class ListItem {
+		
+		/** The name. */
 		private String name;
+		
+		/** The id. */
 		private int id;
 
+		/**
+		 * Instantiates a new list item.
+		 *
+		 * @param name the name
+		 * @param id the id
+		 */
 		ListItem(String name, int id) {
 			this.name = name;
 			this.id = id;
 		}
 
+		/**
+		 * Gets the id.
+		 *
+		 * @return the id
+		 */
 		public int getId() {
 			return id;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
 		public String toString() {
 			return name;
 		}
 	}
 
+	/**
+	 * The Class ValueReporter.
+	 */
 	private class ValueReporter implements ListSelectionListener {
+		
+		/* (non-Javadoc)
+		 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
+		 */
 		public void valueChanged(ListSelectionEvent event) {
 			if (!event.getValueIsAdjusting()) {
 				int id;
@@ -76,11 +112,35 @@ public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 
 	}
 
+	/**
+	 * The Class State.
+	 */
 	private class State {
+		
+		/**
+		 * Creates the new item.
+		 */
 		void createNewItem() { };
 
+		/**
+		 * Save occupant.
+		 *
+		 * @param occupantId the occupant id
+		 */
 		void saveOccupant(int occupantId) { };
+		
+		/**
+		 * Delete occupant.
+		 *
+		 * @param occupantId the occupant id
+		 */
 		void deleteOccupant(int occupantId){};
+		
+		/**
+		 * Value changed.
+		 *
+		 * @param id the id
+		 */
 		void valueChanged(int id) {
 			OccupantMockup moc = new OccupantMockup(id, null, null, null, null,
 					null);
@@ -94,35 +154,57 @@ public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 
 	}
 
+	/**
+	 * The Class NormalState.
+	 */
 	private class NormalState extends State {
+		
+		/* (non-Javadoc)
+		 * @see pl.jjkrol.proz.view.LocumsTab.State#createNewItem()
+		 */
 		void createNewItem() {
 			internalState = new EditingNewState();
 			clearFields();
 			addEmptyNewItem();
 		}
 
+		/* (non-Javadoc)
+		 * @see pl.jjkrol.proz.view.LocumsTab.State#saveOccupant(int)
+		 */
 		void saveOccupant(int occupantId) {
-//			OccupantMockup moc = createMockupFromFieldData(occupantId);
-//			core.putEvent(new SaveOccupantEvent(moc));
 		}
+		
+		/* (non-Javadoc)
+		 * @see pl.jjkrol.proz.view.LocumsTab.State#deleteOccupant(int)
+		 */
 		void deleteOccupant(int occupantId){
-//			OccupantMockup moc = createMockupFromFieldData(occupantId);
-//			core.putEvent(new DeleteOccupantEvent(moc));
 			clearFields();
 		}
 	}
 
+	/**
+	 * The Class EditingNewState.
+	 */
 	private class EditingNewState extends State {
+		
+		/* (non-Javadoc)
+		 * @see pl.jjkrol.proz.view.LocumsTab.State#saveOccupant(int)
+		 */
 		void saveOccupant(int occupantId) {
-//			OccupantMockup moc = createMockupFromFieldData(occupantId);
-//			core.putEvent(new AddOccupantEvent(moc));
 			internalState = new NormalState();
 		}
 
+		/* (non-Javadoc)
+		 * @see pl.jjkrol.proz.view.LocumsTab.State#createNewItem()
+		 */
 		void createNewItem() {
 			logger.warn("You cannot create new object while editing one");
 			return;
 		}
+		
+		/* (non-Javadoc)
+		 * @see pl.jjkrol.proz.view.LocumsTab.State#valueChanged(int)
+		 */
 		void valueChanged(int id) {
 			if (id != -1) {
 				internalState = new NormalState();
@@ -133,30 +215,68 @@ public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 
 	}
 
+	/** The internal state. */
 	private State internalState = new NormalState();
+	
+	/** The name. */
 	private String name = "Lokale";
+	
+	/** The core. */
 	private final Controller core = Controller.getInstance();
 
+	/** The locums list. */
 	private JList locumsList;
+	
+	/** The locums list model. */
 	private DefaultListModel locumsListModel = new DefaultListModel();
+	
+	/** The name input. */
 	private final JTextField nameInput = new JTextField(30);
+	
+	/** The area input. */
 	private final JTextField areaInput = new JTextField(30);
+	
+	/** The participation factor input. */
 	private final JTextField participationFactorInput = new JTextField(30);
+	
+	/** The billing types. */
 	Occupant.Billing[] billingTypes = { Occupant.Billing.BILL,
 			Occupant.Billing.INVOICE };
+	
+	/** The billing person input. */
 	private final JComboBox billingPersonInput = new JComboBox(billingTypes);
+	
+	/** The enabled services list. */
 	private JList enabledServicesList;
+	
+	/** The enabled services list model. */
 	private DefaultListModel enabledServicesListModel = new DefaultListModel();
+	
+	/** The counters list. */
 	private JList countersList;
+	
+	/** The counters list model. */
 	private DefaultListModel countersListModel = new DefaultListModel();
+	
+	/** The quotations list. */
 	private JList quotationsList;
+	
+	/** The quotations list model. */
 	private DefaultListModel quotationsListModel = new DefaultListModel();
+	
+	/** The occupants list. */
 	private JList occupantsList;
+	
+	/** The occupants list model. */
 	private DefaultListModel occupantsListModel = new DefaultListModel();
 	
+	/** The list listener. */
 	private final ValueReporter listListener = new ValueReporter();
+	
+	/** The logger. */
 	static Logger logger = Logger.getLogger(OccupantsTab.class);
 
+	/** The delete listener. */
 	ActionListener deleteListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -172,6 +292,7 @@ public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 
 	};
 
+	/** The save listener. */
 	ActionListener saveListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -186,6 +307,9 @@ public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 		}
 	};
 
+	/* (non-Javadoc)
+	 * @see pl.jjkrol.proz.controller.LocumsDisplayer#displayLocumsList(java.util.List)
+	 */
 	public void displayLocumsList(final List<LocumMockup> locums) {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
@@ -201,10 +325,18 @@ public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 				}});
 	}
 
+	/**
+	 * Display occupants data.
+	 *
+	 * @param moc the moc
+	 */
 	public void displayOccupantsData(OccupantMockup moc) {
 		nameInput.setText(moc.getName());
 	}
 
+	/* (non-Javadoc)
+	 * @see pl.jjkrol.proz.view.SpecificTab#getJPanel()
+	 */
 	@Override
 	public JPanel getJPanel() {
 		JPanel panel = new JPanel();
@@ -279,11 +411,17 @@ public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 		return panel;
 	}
 
+	/* (non-Javadoc)
+	 * @see pl.jjkrol.proz.view.SpecificTab#getName()
+	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
+	/* (non-Javadoc)
+	 * @see pl.jjkrol.proz.view.SpecificTab#getReady()
+	 */
 	@Override
 	public void getReady() {
 		logger.debug(name + " got ready");
@@ -296,16 +434,28 @@ public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 		}
 	}
 
+	/**
+	 * Adds the empty new item.
+	 */
 	private void addEmptyNewItem() {
 		locumsListModel.addElement(new ListItem("<nowy>", -1));
 		int index = locumsList.getModel().getSize();
 		locumsList.setSelectedIndex(index - 1);
 	}
 
+	/**
+	 * Clear fields.
+	 */
 	private void clearFields() {
 		nameInput.setText("");
 	}
 
+	/**
+	 * Gets the selected locum id.
+	 *
+	 * @return the selected locum id
+	 * @throws NoNodeSelectedException the no node selected exception
+	 */
 	private int getSelectedLocumId() throws NoNodeSelectedException {
 		try {
 			return ((ListItem) locumsList.getSelectedValue()).getId();
@@ -314,6 +464,9 @@ public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 		}
 	}
 
+	/**
+	 * Removes the empty new item.
+	 */
 	private void removeEmptyNewItem() {
 		int index = locumsList.getModel().getSize();
 		locumsListModel.remove(index - 1);

@@ -47,7 +47,7 @@ public class View {
 			public void run() {
 				frame.setTitle("PROZ");
 				frame.setDefaultCloseOperation(PROZJFrame.DO_NOTHING_ON_CLOSE);
-				frame.setSize(800, 600);
+				frame.setSize(850, 650);
 				for (SpecificTab v : views) {
 					frame.addTab(v);
 				}

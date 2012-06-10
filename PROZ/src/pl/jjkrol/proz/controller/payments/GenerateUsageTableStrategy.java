@@ -1,4 +1,4 @@
-package pl.jjkrol.proz.controller;
+package pl.jjkrol.proz.controller.payments;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -27,10 +27,10 @@ import org.apache.log4j.Logger;
 /**
  * generates a pdf with a usage table and displays it
  */
-class GenerateUsageTableStrategy extends PaymentsStrategy {
+public class GenerateUsageTableStrategy extends PaymentsStrategy {
 	static Logger logger = Logger.getLogger("strategy");
 
-	GenerateUsageTableStrategy(View view, Model model) {
+	public GenerateUsageTableStrategy(View view, Model model) {
 		super(view, model);
 	}
 

@@ -30,17 +30,18 @@ import pl.jjkrol.proz.events.*;
 import pl.jjkrol.proz.events.measurements.AddMeasurementEvent;
 import pl.jjkrol.proz.events.measurements.DeleteMeasurementEvent;
 import pl.jjkrol.proz.events.measurements.LocumChosenForViewingEvent;
+import pl.jjkrol.proz.events.measurements.SaveMeasurementEvent;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
 import pl.jjkrol.proz.controller.Controller;
-import pl.jjkrol.proz.controller.SaveMeasurementEvent;
 import pl.jjkrol.proz.mockups.LocumMockup;
 import pl.jjkrol.proz.controller.LocumsDisplayer;
 import pl.jjkrol.proz.mockups.MeasurementMockup;
 import pl.jjkrol.proz.model.MeasurableService;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MeasurementsTab.
  * 
@@ -53,12 +54,8 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 	 */
 	private class LocumsValueReporter implements ListSelectionListener {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * javax.swing.event.ListSelectionListener#valueChanged(javax.swing.
-		 * event.ListSelectionEvent)
+		/**
+		 * {@inheritDoc}
 		 */
 		public void valueChanged(ListSelectionEvent event) {
 			if (!event.getValueIsAdjusting()) {
@@ -77,12 +74,8 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 	 */
 	private class MeasurementsValueReporter implements ListSelectionListener {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * javax.swing.event.ListSelectionListener#valueChanged(javax.swing.
-		 * event.ListSelectionEvent)
+		/**
+		 * {@inheritDoc}
 		 */
 		public void valueChanged(ListSelectionEvent event) {
 			if (!event.getValueIsAdjusting()) {
@@ -112,18 +105,14 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 
 		/**
 		 * Save measurement.
-		 * 
-		 * @param occupantId
-		 *            the occupant id
+		 *
 		 */
 		void save() {
 		};
 
 		/**
 		 * Delete measurement.
-		 * 
-		 * @param occupantId
-		 *            the occupant id
+		 *
 		 */
 		void delete() {
 		};
@@ -247,9 +236,7 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 
 		/**
 		 * Instantiates a new editing new state.
-		 * 
-		 * @param selectedLocum
-		 *            the selected locum
+		 *
 		 */
 		EditingNewState() {
 				clearFields();
@@ -391,13 +378,6 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 	ActionListener deleteListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			/*
-			 * try { int measurementId = getSelectedMeasurement().g;
-			 * internalState.delete(measurementId); } catch
-			 * (NoNodeSelectedException ex) {
-			 * 
-			 * }
-			 */
 			internalState.delete();
 		}
 	};
@@ -406,12 +386,6 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 	ActionListener saveListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// try {
-			// int occupantId = getSelectedOccupantId();
-			// internalState.saveOccupant(occupantId);
-			// }
-			// catch (NoNodeSelectedException ex) {
-			// }
 			internalState.save();
 		}
 	};
@@ -496,10 +470,8 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 		panel.setLayout(new MigLayout());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see pl.jjkrol.proz.view.SpecificTab#getJPanel()
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public JPanel getJPanel() {
@@ -652,6 +624,12 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 
 	}
 
+	/**
+	 * Gets the measurement mockup from fields.
+	 *
+	 * @return the measurement mockup from fields
+	 * @throws BadDateValue the bad date value
+	 */
 	private MeasurementMockup getMeasurementMockupFromFields()
 			throws BadDateValue {
 		try {

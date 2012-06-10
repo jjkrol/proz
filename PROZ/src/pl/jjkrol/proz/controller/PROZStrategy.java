@@ -19,12 +19,12 @@ public class PROZStrategy {
 	 */
 	protected Model model;
 	
-	PROZStrategy(View view, Model model){
+	protected PROZStrategy(View view, Model model){
 		this.view = view;
 		this.model = model;
 	}
 	
-	void execute(PROZEvent e) {
+	public void execute(PROZEvent e) {
 	}
 
 }

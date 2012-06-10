@@ -12,10 +12,20 @@ import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
+import pl.jjkrol.proz.controller.measurements.AddMeasurementDataStrategy;
+import pl.jjkrol.proz.controller.measurements.DeleteMeasurementDataStrategy;
+import pl.jjkrol.proz.controller.measurements.DisplayLocumMeasurementsStrategy;
+import pl.jjkrol.proz.controller.measurements.SaveMeasurementDataStrategy;
+import pl.jjkrol.proz.controller.occupants.*;
+import pl.jjkrol.proz.controller.payments.DisplayCalculatedResultsStrategy;
+import pl.jjkrol.proz.controller.payments.DisplayLocumMeasurementsAndQuotationsStrategy;
+import pl.jjkrol.proz.controller.payments.GenerateInvoiceStrategy;
+import pl.jjkrol.proz.controller.payments.GenerateUsageTableStrategy;
 import pl.jjkrol.proz.events.*;
 import pl.jjkrol.proz.events.measurements.AddMeasurementEvent;
 import pl.jjkrol.proz.events.measurements.DeleteMeasurementEvent;
 import pl.jjkrol.proz.events.measurements.LocumChosenForViewingEvent;
+import pl.jjkrol.proz.events.measurements.SaveMeasurementEvent;
 import pl.jjkrol.proz.events.occupants.AddOccupantEvent;
 import pl.jjkrol.proz.events.occupants.DeleteOccupantEvent;
 import pl.jjkrol.proz.events.occupants.OccupantChosenForViewingEvent;

@@ -11,6 +11,7 @@ public class WindowClosingStrategy extends PROZStrategy {
 	}
 	
 	@Override
+	public
 	void execute(PROZEvent e) {
 		model.closeDatabase();
 		System.exit(0);

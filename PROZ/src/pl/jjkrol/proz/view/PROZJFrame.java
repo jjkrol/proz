@@ -25,21 +25,35 @@ import pl.jjkrol.proz.events.PROZEvent;
 import pl.jjkrol.proz.events.WindowClosingEvent;
 
 /**
- * A subclassed JFrame, responsible for creating the main windows of the application
+ * A subclassed JFrame, responsible for creating the main windows of the application.
+ *
  * @author   jjkrol
  */
 public class PROZJFrame extends JFrame implements WindowListener{
-	/**
-	 * @uml.property  name="core"
-	 * @uml.associationEnd  
-	 */
+	
+	/** The core. */
 	private Controller core = Controller.getInstance();
+	
+	/** The frame. */
 	private JFrame frame;
+	
+	/** The tabbed pane. */
 	private final JTabbedPane tabbedPane = new JTabbedPane();
+	
+	/** The views. */
 	private final List<SpecificTab> views = new ArrayList<SpecificTab>();
+	
+	/** The blocking queue. */
 	private final BlockingQueue<PROZEvent> blockingQueue;
+	
+	/** The logger. */
 	static Logger logger = Logger.getLogger(PROZJFrame.class);
 
+	/**
+	 * Instantiates a new pROZJ frame.
+	 *
+	 * @param blockingQueue the blocking queue
+	 */
 	public PROZJFrame(BlockingQueue<PROZEvent> blockingQueue) {
 		this.blockingQueue = blockingQueue;
 		addWindowListener(this);
@@ -47,6 +61,9 @@ public class PROZJFrame extends JFrame implements WindowListener{
 		createTabbedPane();
 	}
 
+	/**
+	 * Creates the menu.
+	 */
 	private void createMenu() {
 		JMenuBar mb = new JMenuBar();
 
@@ -57,6 +74,11 @@ public class PROZJFrame extends JFrame implements WindowListener{
 		setJMenuBar(mb);
 	}
 
+	/**
+	 * Gets the help menu.
+	 *
+	 * @return the help menu
+	 */
 	private JMenu getHelpMenu() {
 		JMenu helpMenu = new JMenu("Pomoc");
 		helpMenu.add("Samouczek");
@@ -64,6 +86,11 @@ public class PROZJFrame extends JFrame implements WindowListener{
 		return helpMenu;
 	}
 
+	/**
+	 * Gets the edits the menu.
+	 *
+	 * @return the edits the menu
+	 */
 	private JMenu getEditMenu() {
 		JMenu editMenu = new JMenu("Edycja");
 		editMenu.add("Cofnij");
@@ -71,6 +98,11 @@ public class PROZJFrame extends JFrame implements WindowListener{
 		return editMenu;
 	}
 
+	/**
+	 * Gets the file menu.
+	 *
+	 * @return the file menu
+	 */
 	private JMenu getFileMenu() {
 		JMenu fileMenu = new JMenu("Plik");
 		fileMenu.add("Nowy");
@@ -87,6 +119,9 @@ public class PROZJFrame extends JFrame implements WindowListener{
 		return fileMenu;
 	}
 
+	/**
+	 * Creates the tabbed pane.
+	 */
 	private void createTabbedPane() {
 		tabbedPane.add("Home", getHomePanel());
 		tabbedPane.addChangeListener(new ChangeListener() {
@@ -106,11 +141,19 @@ public class PROZJFrame extends JFrame implements WindowListener{
 		add(tabbedPane);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.Window#setVisible(boolean)
+	 */
 	@Override
 	public void setVisible(boolean bool) {
 		super.setVisible(bool);
 	}
 
+	/**
+	 * Adds the tab.
+	 *
+	 * @param tab the tab
+	 */
 	public void addTab(SpecificTab tab) {
 		logger.debug("Added view "+tab.getName());
 		tabbedPane.add(tab.getName(), tab.getJPanel());
@@ -123,6 +166,11 @@ public class PROZJFrame extends JFrame implements WindowListener{
 			tabbedPane.setEnabledAt(tabbedPane.getComponentCount()-2, false);
 	}
 
+	/**
+	 * Gets the home panel.
+	 *
+	 * @return the home panel
+	 */
 	private JPanel getHomePanel() {
 		JPanel homePanel = new JPanel();
 		JButton b1 = new JButton("Przycisk 1"), b2 = new JButton("Przycisk 2");
@@ -136,16 +184,25 @@ public class PROZJFrame extends JFrame implements WindowListener{
 		return homePanel;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void windowActivated(WindowEvent arg0) {
 		
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void windowClosed(WindowEvent arg0) {
 		
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void windowClosing(WindowEvent arg0) {
 		try {
@@ -156,21 +213,33 @@ public class PROZJFrame extends JFrame implements WindowListener{
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void windowDeactivated(WindowEvent arg0) {
 		
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void windowDeiconified(WindowEvent arg0) {
 		
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void windowIconified(WindowEvent arg0) {
 		
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void windowOpened(WindowEvent arg0) {
 		
