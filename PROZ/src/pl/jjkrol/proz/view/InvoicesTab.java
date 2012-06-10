@@ -6,14 +6,23 @@ import javax.swing.JPanel;
 
 import pl.jjkrol.proz.events.PROZEvent;
 
-public class InvoicesTab implements SpecificTab {
+/**
+ * @author   jjkrol
+ */
+public class InvoicesTab extends SpecificTab {
+	/**
+	 * @uml.property  name="name"
+	 */
 	private String name = "Faktury";
 
 	private BlockingQueue<PROZEvent> blockingQueue;
 	public InvoicesTab(BlockingQueue<PROZEvent> blockingQueue) {
 		this.blockingQueue = blockingQueue;
-		// TODO Auto-generated constructor stub
 	}
+	/**
+	 * @return
+	 * @uml.property  name="name"
+	 */
 	@Override
 	public String getName() {
 		return name;
@@ -28,7 +37,6 @@ public class InvoicesTab implements SpecificTab {
 
 	@Override
 	public void getReady() {
-		// TODO Auto-generated method stub
 
 	}
 }

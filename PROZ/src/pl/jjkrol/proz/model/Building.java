@@ -3,22 +3,46 @@ package pl.jjkrol.proz.model;
 import java.util.*;
 import org.apache.log4j.Logger;
 
+// TODO: Auto-generated Javadoc
 /**
- * Class represents a bulding with locums and its counters
- * @author jjkrol
+ * Class represents a bulding with locums and its counters.
  *
+ * @author   jjkrol
  */
 public class Building implements Measurable {
 
-	private final String name;
-	private final String address;
+	/** building's id. */
+	private int id;
+	
+	/** building's name. */
+	private String name;
+	
+	/** building's address. */
+	private String address;
+	
+	/** The locums. */
+	private Set<Locum> locums = new HashSet<Locum>();
+	
+	/** The counters. */
+	private Map<MeasurableService, Counter> counters = new HashMap<MeasurableService, Counter>();
+	
+	/** The logger. */
+	static Logger logger = Logger.getLogger(Building.class);
 	
 	/**
-	 * List of locums in the building
+	 * Instantiates a new building.
 	 */
-	private List<Locum> locums = new ArrayList<Locum>();
-	private Map<MeasurableService, Counter> counters = new HashMap<MeasurableService, Counter>();
-	static Logger logger = Logger.getLogger(Building.class);
+	protected Building() {
+		
+	}
+	
+	/**
+	 * Instantiates a new building.
+	 *
+	 * @param givenName the given name
+	 * @param givenAddress the given address
+	 * @param givenCounters the given counters
+	 */
 	public Building(String givenName, String givenAddress, Map<MeasurableService, Counter> givenCounters) {
 		name = givenName;
 		address = givenAddress;
@@ -26,15 +50,48 @@ public class Building implements Measurable {
 
 	}
 
+	/**
+	 * Sets the id.
+	 *
+	 * @param id the new id
+	 */
+	private void setId(int id) {
+		this.id = id;
+	}
+	
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
+	private int getId() {
+		return id;
+	}
+
+	/**
+	 * Adds the locum.
+	 *
+	 * @param loc the loc
+	 */
 	public void addLocum(Locum loc) {
 		locums.add(loc);
 	}
 
+	/**
+	 * Adds the measure.
+	 *
+	 * @param date the date
+	 * @param serv the serv
+	 * @param measure the measure
+	 */
 	public void addMeasure(Calendar date, MeasurableService serv, float measure) {
 		Counter count = counters.get(serv);
 		count.addMeasure(date, measure);
 	}
 
+	/* (non-Javadoc)
+	 * @see pl.jjkrol.proz.model.Measurable#addMeasures(java.util.Calendar, java.util.Map)
+	 */
 	public void addMeasures(Calendar date,
 			Map<MeasurableService, Float> measures) {
 		for (MeasurableService serv : measures.keySet()) {
@@ -43,17 +100,24 @@ public class Building implements Measurable {
 		}
 	}
 
+	/**
+	 * Gets the address.
+	 *
+	 * @return the address
+	 */
 	public String getAddress() {
 		return address;
 	}
 	
 	/**
-	 * Calculates the sum of Central Heating in the specified period
-	 * @param start
-	 * @param end
+	 * Calculates the sum of Central Heating in the specified period.
+	 *
+	 * @param start the start
+	 * @param end the end
 	 * @return central heating sum
+	 * @throws NoSuchDate 
 	 */
-	public float getCoSum(Calendar start, Calendar end) {
+	public float getCoSum(Calendar start, Calendar end) throws NoSuchDate {
 		float coSum = 0f;
 		for (Locum loc : locums) {
 			coSum += loc.getUsage(start, end).get(MeasurableService.CO);
@@ -61,6 +125,11 @@ public class Building implements Measurable {
 		return coSum;
 	}
 
+	/**
+	 * Gets the dates.
+	 *
+	 * @return the dates
+	 */
 	public Set<Calendar> getDates() {
 		Set<Calendar> dates = new TreeSet<Calendar>();
 		for (MeasurableService serv : counters.keySet()) {
@@ -70,7 +139,15 @@ public class Building implements Measurable {
 		return dates;
 	}
 
-	public float getHeatFactor(Calendar start, Calendar end) {
+	/**
+	 * Gets the heat factor.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @return the heat factor
+	 * @throws NoSuchDate 
+	 */
+	public float getHeatFactor(Calendar start, Calendar end) throws NoSuchDate {
 		float kwhHeat = getUsage(start, end).get(MeasurableService.CIEPLO);
 		float m3Heat = getCoSum(start, end);
 		if(m3Heat > 0)
@@ -79,6 +156,13 @@ public class Building implements Measurable {
 			return 0f;
 	}
 
+	/**
+	 * Gets the locum by name.
+	 *
+	 * @param name the name
+	 * @return the locum by name
+	 * @throws NoSuchLocum the no such locum
+	 */
 	public Locum getLocumByName(String name) throws NoSuchLocum{
 		for(Locum loc : locums) {
 			if(loc.getName().equals(name))
@@ -87,19 +171,106 @@ public class Building implements Measurable {
 		throw new NoSuchLocum();
 	}
 
-	public List<Locum> getLocums(){
+	/**
+	 * Gets the counters.
+	 *
+	 * @return  the counters
+	 */
+	Map<MeasurableService, Counter> getCounters() {
+		return counters;
+	}
+
+	/**
+	 * Sets the counters.
+	 *
+	 * @param counters  the counters to set
+	 */
+	void setCounters(Map<MeasurableService, Counter> counters) {
+		this.counters = counters;
+	}
+
+	/**
+	 * Gets the logger.
+	 *
+	 * @return  the logger
+	 */
+	private static Logger getLogger() {
+		return logger;
+	}
+
+	/**
+	 * Sets the logger.
+	 *
+	 * @param logger  the logger to set
+	 */
+	private static void setLogger(Logger logger) {
+		Building.logger = logger;
+	}
+
+	/**
+	 * Sets the name.
+	 *
+	 * @param name  the name to set
+	 */
+	private void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Sets the address.
+	 *
+	 * @param address  the address to set
+	 */
+	private void setAddress(String address) {
+		this.address = address;
+	}
+
+	/**
+	 * Sets the locums.
+	 *
+	 * @param locums  the locums to set
+	 */
+	private void setLocums(Set<Locum> locums) {
+		this.locums = locums;
+	}
+
+	/**
+	 * Gets the locums.
+	 *
+	 * @return  building's set of locums
+	 */
+	public Set<Locum> getLocums(){
 		return locums;
 	}
+	
+	/**
+	 * Gets the name.
+	 *
+	 * @return  building's name
+	 */
 	public String getName() {
 		return name;
 	}
 	
-	public float getSingleMeasure(Calendar date, MeasurableService service){
+	/**
+	 * Gets the single measure.
+	 *
+	 * @param date the date
+	 * @param service the service
+	 * @return the single measure
+	 * @throws NoSuchDate 
+	 */
+	public float getSingleMeasure(Calendar date, MeasurableService service) throws NoSuchDate{
 		Counter count = counters.get(service);
 		return count.getMeasure(date);
 	}
+	
 	/**
-	 * calculates usage for the set period of time
+	 * calculates usage for the set period of time.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @return the usage
 	 */
 	public Map<MeasurableService, Float> getUsage(Calendar start, Calendar end) {
 		Map<MeasurableService, Float> usageMap = new HashMap<MeasurableService, Float>();

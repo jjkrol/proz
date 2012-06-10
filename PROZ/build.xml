@@ -94,9 +94,6 @@
 		<delete dir="${build.dir}" />
 	</target>
 		
-	<target name="deploy" depends="compress">
-		<scp file="proz.zip" todir="bronowska52.jjkrol.pl:bronhasloowska@jjkrol.pl:/home/bronowska52.jjkrol.pl/public_html"/>
-</target>
 </project>
 
 <!--<project name="PROZ" default="compile" basedir=".">  

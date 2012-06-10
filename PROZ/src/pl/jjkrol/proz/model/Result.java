@@ -1,132 +1,209 @@
 package pl.jjkrol.proz.model;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Map;
 import pl.jjkrol.proz.mockups.ResultMockup;
 
+// TODO: change to a mockup?
 /**
- * Class responsible for storing all data connected with calculated result
- * 
- * @author jjkrol
- * 
+ * Class responsible for storing all data connected with calculated result.
+ *
+ * @author   jjkrol
  */
 public class Result {
-	private Map<BillableService, Float> results;
-	private Map<BillableService, Float> administrativeResults;
+	
+	/** set of results. */
+	private Map<BillableService, BigDecimal> results;
+	
+	/** set of administrative results. */
+	private Map<BillableService, BigDecimal> administrativeResults;
+	
+	/** building for which the result is calculated. */
 	private Building building;
+	
+	/** locum for which the result is calculated. */
 	private Locum locum;
+	
+	/** date of first measurement. */
 	private Calendar from;
+	
+	/** date of second measurement. */
 	private Calendar to;
+	
+	/** name of quotation set used. */
 	private String quotationName;
+	
+	/** starting billable usage */
+	private Map<BillableService, Float> billableMeasurementStart;
+
+	/** ending billable usage */
+	private Map<BillableService, Float> billableMeasurementEnd;
+	
+	/**
+	 * @return the billableMeasurementStart
+	 */
+	Map<BillableService, Float> getBillableMeasurementStart() {
+		return billableMeasurementStart;
+	}
 
 	/**
-	 * @return the results
+	 * @param billableMeasurementStart the billableMeasurementStart to set
 	 */
-	public Map<BillableService, Float> getResults() {
+	void setBillableMeasurementStart(Map<BillableService, Float> billableUsageStart) {
+		this.billableMeasurementStart = billableUsageStart;
+	}
+
+	/**
+	 * @return the billableMeasurementEnd
+	 */
+	Map<BillableService, Float> getBillableMeasurementEnd() {
+		return billableMeasurementEnd;
+	}
+
+	/**
+	 * @param billableUsageEnd the billableMeasurementEnd to set
+	 */
+	void setBillableMeasurementEnd(Map<BillableService, Float> billableMeasurementEnd) {
+		this.billableMeasurementEnd = billableMeasurementEnd;
+	}
+
+	
+	
+	/**
+	 * Gets the results.
+	 *
+	 * @return   the results
+	 */
+	Map<BillableService, BigDecimal> getResults() {
 		return results;
 	}
 
 	/**
-	 * @param results
-	 *            the results to set
+	 * Sets the results.
+	 *
+	 * @param results   the results to set
 	 */
-	public void setResults(Map<BillableService, Float> results) {
+	void setResults(Map<BillableService, BigDecimal> results) {
 		this.results = results;
 	}
 
 	/**
-	 * @return the administrativeResults
+	 * Gets the administrative results.
+	 *
+	 * @return   the administrativeResults
 	 */
-	public Map<BillableService, Float> getAdministrativeResults() {
+	Map<BillableService, BigDecimal> getAdministrativeResults() {
 		return administrativeResults;
 	}
 
 	/**
-	 * @param administrativeResults
-	 *            the administrativeResults to set
+	 * Sets the administrative results.
+	 *
+	 * @param administrativeResults   the administrativeResults to set
 	 */
-	public void setAdministrativeResults(
-			Map<BillableService, Float> administrativeResults) {
+	void setAdministrativeResults(
+			Map<BillableService, BigDecimal> administrativeResults) {
 		this.administrativeResults = administrativeResults;
 	}
 
 	/**
-	 * @return the building
+	 * Gets the building.
+	 *
+	 * @return   the building
 	 */
-	public Building getBuilding() {
+	Building getBuilding() {
 		return building;
 	}
 
 	/**
-	 * @param building
-	 *            the building to set
+	 * Sets the building.
+	 *
+	 * @param building   the building to set
 	 */
-	public void setBuilding(Building building) {
+	void setBuilding(Building building) {
 		this.building = building;
 	}
 
 	/**
-	 * @return the locum
+	 * Gets the locum.
+	 *
+	 * @return   the locum
 	 */
-	public Locum getLocum() {
+	Locum getLocum() {
 		return locum;
 	}
 
 	/**
-	 * @param locum
-	 *            the locum to set
+	 * Sets the locum.
+	 *
+	 * @param locum   the locum to set
 	 */
-	public void setLocum(Locum locum) {
+	void setLocum(Locum locum) {
 		this.locum = locum;
 	}
 
 	/**
-	 * @return the from
+	 * Gets the from.
+	 *
+	 * @return   the from
 	 */
-	public Calendar getFrom() {
+	Calendar getFrom() {
 		return from;
 	}
 
 	/**
-	 * @param from
-	 *            the from to set
+	 * Sets the from.
+	 *
+	 * @param from   the from to set
 	 */
-	public void setFrom(Calendar from) {
+	void setFrom(Calendar from) {
 		this.from = from;
 	}
 
 	/**
-	 * @return the to
+	 * Gets the to.
+	 *
+	 * @return   the to
 	 */
-	public Calendar getTo() {
+	Calendar getTo() {
 		return to;
 	}
 
 	/**
-	 * @param to
-	 *            the to to set
+	 * Sets the to.
+	 *
+	 * @param to   the to to set
 	 */
-	public void setTo(Calendar to) {
+	void setTo(Calendar to) {
 		this.to = to;
 	}
 
 	/**
-	 * @return the quotationName
+	 * Gets the quotation name.
+	 *
+	 * @return   the quotationName
 	 */
-	public String getQuotationName() {
+	String getQuotationName() {
 		return quotationName;
 	}
 
 	/**
-	 * @param quotationName
-	 *            the quotationName to set
+	 * Sets the quotation name.
+	 *
+	 * @param quotationName   the quotationName to set
 	 */
-	public void setQuotationName(String quotationName) {
+	void setQuotationName(String quotationName) {
 		this.quotationName = quotationName;
 	}
 
-	public ResultMockup getMockup() {
+	/**
+	 * Gets the mockup.
+	 *
+	 * @return the mockup
+	 */
+	ResultMockup getMockup() {
 		return new ResultMockup(building, locum, from, to, quotationName, results,
-				administrativeResults);
+				administrativeResults, billableMeasurementStart, billableMeasurementEnd);
 	}
 }

@@ -1,5 +1,6 @@
 package pl.jjkrol.proz.model;
 
+import java.awt.TrayIcon.MessageType;
 import java.io.FileReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -11,21 +12,44 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import pl.jjkrol.proz.dao.BuildingDAO;
+import pl.jjkrol.proz.dao.CounterDAO;
+import pl.jjkrol.proz.dao.LocumDAO;
+import pl.jjkrol.proz.dao.OccupantDAO;
 import pl.jjkrol.proz.mockups.LocumMockup;
 import pl.jjkrol.proz.mockups.MeasurementMockup;
 import pl.jjkrol.proz.mockups.QuotationMockup;
 import pl.jjkrol.proz.mockups.ResultMockup;
 import au.com.bytecode.opencsv.CSVReader;
 import pl.jjkrol.proz.mockups.OccupantMockup;
+import pl.jjkrol.proz.model.Occupant.Billing;
 
+/**
+ * @author jjkrol
+ */
 public class Model {
+	/** A building, for which the application is used */
 	private Building building;
-	private Locum m01, m1, m2, m3, m4, m5, m6, m7, m8;
-	private OccupantsRegister occupantsRegister = OccupantsRegister
-			.getInstance();
-	static Logger logger = Logger.getLogger(Model.class);
+	/** Temporary map for fetching locums of the building */
+	private Map<String, Locum> buildingLocums = new HashMap<String, Locum>();
+	/** logger */
+	static Logger logger = Logger.getLogger("model");
+
+	/**
+	 * initializes database
+	 */
+	public Model() {
+		HibernateUtil.beginTransaction();
+		logger.debug("init model");
+	}
 
 	/**
 	 * Initializes database connection and reads all data or reads data from
@@ -37,27 +61,31 @@ public class Model {
 
 	}
 
+	/**
+	 * TODO delete this
+	 * 
+	 * @return
+	 */
 	public Building getMainHouse() {
 		return building;
 	}
 
-	private void initDatabase() {
-		/*
-		 * Hibernate test HibernateUtil.configureSessionFactory(); Session
-		 * session = HibernateUtil.getSessionFactory().openSession();
-		 * Transaction transaction = null; try { transaction =
-		 * session.beginTransaction(); List<Locum> locums =
-		 * session.createQuery("from Locum").list(); for (Locum loc : locums ) {
-		 * System.out.println(loc.getName()); } transaction.commit(); } catch
-		 * (HibernateException e) { logger.debug(e.getMessage());
-		 * e.printStackTrace(); transaction.rollback(); e.printStackTrace(); }
-		 * finally { session.close(); }
-		 */
-	}
-
+	/**
+	 * returns calculated results
+	 * 
+	 * @param calculator
+	 * @param locumName
+	 * @param from
+	 * @param to
+	 * @param quotationName
+	 * @return
+	 * @throws NoSuchLocum
+	 * @throws NoSuchQuotationSet
+	 * @throws NoSuchDate 
+	 */
 	public ResultMockup calculateResults(final PaymentCalculator calculator,
 			final String locumName, final Calendar from, final Calendar to,
-			final String quotationName) throws NoSuchLocum, NoSuchQuotationSet {
+			final String quotationName) throws NoSuchLocum, NoSuchQuotationSet, NoSuchDate {
 
 		Locum loc = building.getLocumByName(locumName);
 		Result res =
@@ -67,9 +95,13 @@ public class Model {
 	}
 
 	/**
-	 * reads data from specific csv fil
+	 * TODO delete this
+	 * reads data from specific csv file
 	 */
 	private void readSampleData() {
+		
+		//TODO transform this to use for importing data from csv
+		/*
 		List<String[]> myEntries;
 		try {
 			CSVReader reader = new CSVReader(new FileReader("data/data.csv"));
@@ -79,6 +111,19 @@ public class Model {
 			return;
 		}
 
+		List<MeasurableService> houseServices =
+				Arrays.asList(MeasurableService.GAZ, MeasurableService.EE,
+						MeasurableService.EE_ADM, MeasurableService.CIEPLO,
+						MeasurableService.CO_ADM, MeasurableService.WODA_GL,
+						MeasurableService.CW, MeasurableService.POLEWACZKI);
+
+		List<MeasurableService> locumServices =
+				Arrays.asList(MeasurableService.CO, MeasurableService.ZW,
+						MeasurableService.CW, MeasurableService.CCW,
+						MeasurableService.GAZ, MeasurableService.EE);
+
+
+		
 		int lineIndex = 0;
 		DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -95,13 +140,7 @@ public class Model {
 			cal.setTime(date);
 			dates.add(cal);
 		}
-
-		List<MeasurableService> houseServices =
-				Arrays.asList(MeasurableService.GAZ, MeasurableService.EE,
-						MeasurableService.EE_ADM, MeasurableService.CIEPLO,
-						MeasurableService.CO_ADM, MeasurableService.WODA_GL,
-						MeasurableService.CW, MeasurableService.POLEWACZKI);
-
+		
 		for (MeasurableService currentService : houseServices) {
 			line = myEntries.get(lineIndex++);
 
@@ -112,18 +151,6 @@ public class Model {
 				i++;
 			}
 		}
-
-		List<MeasurableService> locumServices =
-				Arrays.asList(MeasurableService.CO, MeasurableService.ZW,
-						MeasurableService.CW, MeasurableService.CCW,
-						MeasurableService.GAZ, MeasurableService.EE);
-
-		List<BillableService> enabledServices =
-				new ArrayList<BillableService>();
-		for (BillableService serv : BillableService.class.getEnumConstants()) {
-			enabledServices.add(serv);
-		}
-
 		for (Locum loc : building.getLocums()) {
 			Map<Calendar, Map<MeasurableService, Float>> measures =
 					new HashMap<Calendar, Map<MeasurableService, Float>>();
@@ -143,11 +170,16 @@ public class Model {
 					i++;
 				}
 			}
-
 			for (Calendar date : measures.keySet()) {
 				loc.addMeasures(date, measures.get(date));
 			}
-		}
+		}*/	
+		
+		List<BillableService> enabledServices =
+				new ArrayList<BillableService>();
+		for (BillableService serv : BillableService.class.getEnumConstants()) {
+			enabledServices.add(serv);
+		}
 		// quotations
 
 		List<Quotation> quotations = new ArrayList<Quotation>();
@@ -165,110 +197,51 @@ public class Model {
 			loc.setEnabledServices(new ArrayList<BillableService>(
 					enabledServices));
 		}
-		enabledServices = m1.getEnabledServices();
-		enabledServices.remove(BillableService.SMIECI);
 	}
 
 	/**
-	 * creates house and locums, inserts occupants
+	 * TODO transform it to read most from database creates house and locums,
+	 * inserts occupants
 	 */
 	private void createHouse() {
 		Map<MeasurableService, Counter> counters =
 				new HashMap<MeasurableService, Counter>();
-		building = new Building("dom1", "Bronowska 52", counters);
-		counters.put(MeasurableService.GAZ, new Counter("m3"));
-		counters.put(MeasurableService.POLEWACZKI, new Counter("m3"));
-		counters.put(MeasurableService.EE, new Counter("kWh"));
-		counters.put(MeasurableService.WODA_GL, new Counter("m3"));
-		counters.put(MeasurableService.EE_ADM, new Counter("kWh"));
-		counters.put(MeasurableService.CO, new Counter("m3"));
-		counters.put(MeasurableService.CIEPLO, new Counter("kWh"));
-		counters.put(MeasurableService.CO_ADM, new Counter("m3"));
-		counters.put(MeasurableService.CW, new Counter("m3"));
+		BuildingDAO buildingDAO = new BuildingDAO();
+		building = buildingDAO.getBuildingById(1);
 
-		m01 = new Flat(50, "m01");
-		m01.setParticipationFactor(0);
-
-		m1 = new Flat(50, "m1");
-		m1.setParticipationFactor(0.2f);
-
-		m2 = new Flat(163, "m2", Ownership.OWN);
-		m2.setParticipationFactor(0.2f);
-
-		m3 = new Flat(50, "m3");
-		m3.setParticipationFactor(0.1f);
-
-		m4 = new Flat(32, "m4");
-		m4.setParticipationFactor(0.2f);
-
-		m5 = new Office(62, "m5");
-		m5.setParticipationFactor(0.2f);
-
-		m6 = new Office(57, "m6");
-		m6.setParticipationFactor(0.1f);
-
-		m7 = new Flat(31, "m7", Ownership.OWN);
-		m7.setParticipationFactor(0);
-
-		m8 = new Flat(70, "m8", Ownership.OWN);
-		m8.setParticipationFactor(0);
-
-		generateOccupants();
-
-		building.addLocum(m01);
-		building.addLocum(m1);
-		building.addLocum(m2);
-		building.addLocum(m3);
-		building.addLocum(m4);
-		building.addLocum(m5);
-		building.addLocum(m6);
-		building.addLocum(m7);
-		building.addLocum(m8);
-
-		for (Locum loc : building.getLocums()) {
-			counters = new HashMap<MeasurableService, Counter>();
-			counters.put(MeasurableService.CO, new Counter("m3"));
-			counters.put(MeasurableService.ZW, new Counter("m3"));
-			counters.put(MeasurableService.CW, new Counter("m3"));
-			counters.put(MeasurableService.CCW, new Counter("m3"));
-			counters.put(MeasurableService.GAZ, new Counter("m3"));
-			counters.put(MeasurableService.EE, new Counter("kWh"));
-			loc.setCounters(counters);
-
-			/*
-			 * Map<BillableService, Map<String, Quotation>> quotations = new
-			 * HashMap<BillableService, Map<String, Quotation>>(); quotations
-			 * .put(BillableService.CO, new HashMap<String, Quotation>());
-			 * quotations.put(BillableService.WODA, new HashMap<String,
-			 * Quotation>()); quotations .put(BillableService.EE, new
-			 * HashMap<String, Quotation>());
-			 * quotations.put(BillableService.GAZ, new HashMap<String,
-			 * Quotation>()); quotations.put(BillableService.INTERNET, new
-			 * HashMap<String, Quotation>());
-			 * quotations.put(BillableService.PODGRZANIE, new HashMap<String,
-			 * Quotation>()); quotations.put(BillableService.SMIECI, new
-			 * HashMap<String, Quotation>());
-			 * quotations.put(BillableService.SCIEKI, new HashMap<String,
-			 * Quotation>()); loc.setQuotations(quotations);
-			 */
+		for (MeasurableService serv : building.getCounters().keySet()) {
+			logger.debug("Licznik " + serv + " "
+					+ building.getCounters().get(serv).getUnit());
 		}
+
+		// loadLocums();
+
+		/*for (Locum loc : building.getLocums()) {
+			counters = new HashMap<MeasurableService, Counter>();
+			MeasurableService[] services =
+					{ MeasurableService.CO, MeasurableService.ZW,
+							MeasurableService.CW, MeasurableService.CCW,
+							MeasurableService.GAZ };
+
+			for (MeasurableService serv : services) {
+				CounterDAO counterDAO = new CounterDAO();
+				Counter count = new Counter("m3");
+				counterDAO.saveOrUpdate(count);
+				counters.put(serv, count);
+			}
+
+			CounterDAO counterDAO = new CounterDAO();
+			Counter count = new Counter("kWh");
+			counterDAO.saveOrUpdate(count);
+			counters.put(MeasurableService.EE, count);
+
+			loc.setCounters(counters);
+		}*/
 	}
 
-	private void generateOccupants() {
-		Occupant occ;
-		occ = occupantsRegister.createOccupant("Beata Kozak-Szulc");
-		m1.addOccupant(occ);
-		m1.setBillingPerson(occ);
-		occ = occupantsRegister.createOccupant("Pan Szulc");
-		m1.addOccupant(occ);
-		occ = occupantsRegister.createOccupant("Katarzyna Wiœniewska");
-		m2.addOccupant(occ);
-		occ = occupantsRegister.createOccupant("Jakub Król");
-		m2.addOccupant(occ);
-		occ = occupantsRegister.createOccupant("Magdalena Lis");
-		m3.addOccupant(occ);
-	}
-
+	/**
+	 * @return mockups of all locums
+	 */
 	public List<LocumMockup> getLocumsMockups() {
 		List<LocumMockup> list = new ArrayList<LocumMockup>();
 		for (Locum loc : building.getLocums()) {
@@ -277,12 +250,23 @@ public class Model {
 		return list;
 	}
 
+	/**
+	 * 
+	 * @param locumName
+	 * @return measurement mockups of the specified locum
+	 * @throws NoSuchLocum
+	 */
 	public List<MeasurementMockup> getLocumMeasurementMockups(
 			final String locumName) throws NoSuchLocum {
 		Locum loc = building.getLocumByName(locumName);
 		return loc.getMeasurementsMockups();
 	}
 
+	/**
+	 * @param locumName
+	 * @return quotation mockups of the specified locum
+	 * @throws NoSuchLocum
+	 */
 	public Map<String, List<QuotationMockup>> getLocumQuotationMockups(
 			final String locumName) throws NoSuchLocum {
 
@@ -290,27 +274,70 @@ public class Model {
 		return loc.getQuotationsMockups();
 	}
 
-	public void saveOccupant(int id, OccupantMockup moc) {
-		occupantsRegister.editOccupant(id, moc);
+	/**
+	 * saves occupant's data TODO get rid of id
+	 * 
+	 * @param id
+	 * @param moc
+	 * @throws NoSuchOccupant
+	 */
+	public void saveOccupant(int id, OccupantMockup moc) throws NoSuchOccupant {
+		OccupantDAO occupantDAO = new OccupantDAO();
+		Occupant occ = occupantDAO.getOccupantById(id);
+		occ.setAttributes(moc);
 	}
 
-	public void deleteOccupantData(int id) {
-		occupantsRegister.deleteOccupant(id);
+	public void deleteOccupantData(int id) throws NoSuchOccupant {
+		OccupantDAO occupantDAO = new OccupantDAO();
+		occupantDAO.deleteById(id);
 	}
 
 	public void addOccupantData(OccupantMockup moc) {
-		occupantsRegister.createOccupant(moc);
+		OccupantDAO occupantDAO = new OccupantDAO();
+		Occupant occupant = new Occupant(moc);
+		occupantDAO.saveOrUpdate(occupant);
 	}
 
-	public OccupantMockup getOccupantMockup(OccupantMockup moc) {
-		return occupantsRegister.findOccupant(moc).getMockup();
+	public OccupantMockup getOccupantMockup(OccupantMockup moc)
+			throws NoSuchOccupant {
+		OccupantDAO occupantDAO = new OccupantDAO();
+		Occupant occupant = occupantDAO.getOccupantById(moc.getId());
+		return occupant.getMockup();
 	}
 
 	public List<OccupantMockup> getOccupantsMockups() {
+		OccupantDAO occupantDAO = new OccupantDAO();
+		List<Occupant> occupants = occupantDAO.getAllOccupants();
+
 		List<OccupantMockup> occMocks = new ArrayList<OccupantMockup>();
-		for (OccupantMockup occ : occupantsRegister.getOccupantsMockups()) {
-			occMocks.add(occ);
+
+		for (Occupant occ : occupants) {
+			occMocks.add(occ.getMockup());
 		}
+
 		return occMocks;
 	}
+
+	public void closeDatabase() {
+		logger.debug("Closing database");
+		HibernateUtil.commitTransaction();
+		HibernateUtil.closeSession();
+		logger.debug("Database closed");
+	}
+
+	public void deleteMeasurements(LocumMockup loc, Calendar date) {
+		LocumDAO locumDAO = new LocumDAO();
+		Locum locum = locumDAO.getLocumByName(loc.getName());
+		locum.removeMeasures(date);
+	}
+
+	public void addMeasurementData(LocumMockup loc, MeasurementMockup mea) {
+		LocumDAO locumDAO = new LocumDAO();
+		Locum locum = locumDAO.getLocumByName(loc.getName());
+		locum.addMeasures(mea.getDate(), mea.getValues());	}
+
+	public void saveMeasurementData(LocumMockup loc, MeasurementMockup mea) {
+		LocumDAO locumDAO = new LocumDAO();
+		Locum locum = locumDAO.getLocumByName(loc.getName());
+		locum.setMeasures(mea.getDate(), mea.getValues());	}
 }

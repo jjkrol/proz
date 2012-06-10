@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 	 * displays measurements and quotations of the locum for showing in the
 	 * payments tab
 	 */
-	class DisplayLocumMeasurementsAndQuotationsStrategy extends PROZStrategy {
+	class DisplayLocumMeasurementsAndQuotationsStrategy extends PaymentsStrategy {
 		static Logger logger = Logger.getLogger(PROZStrategy.class);
 		
 		DisplayLocumMeasurementsAndQuotationsStrategy(View view, Model model) {
@@ -47,7 +47,7 @@ import org.apache.log4j.Logger;
 				logger.warn("No such locum: " + locumName + "!");
 				// TODO some messagebox?
 			} catch (NoSuchTabException exception) {
-				// TODO Auto-generated catch block
+				logger.warn("No such tab");
 				exception.printStackTrace();
 			}
 		}

@@ -5,11 +5,21 @@
  <session-factory name="">
   <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
   <property name="hibernate.connection.password">test101</property>
-  <property name="hibernate.connection.url">jdbc:postgresql://79.133.199.167:5432/proz</property>
+  <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/proz</property>
   <property name="hibernate.connection.username">test101</property>
   <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+  <property name="hibernate.show_sql">true</property>
   <property name="hibernate.hbm2ddl.auto">update</property>
+  
+  <property name="hibernate.c3p0.min_size">5</property>
+  <property name="hibernate.c3p0.max_size">20</property>
+  <property name="hibernate.c3p0.timeout">300</property>
+  <property name="hibernate.c3p0.max_statements">50</property>
+  <property name="hibernate.c3p0.idle_test_period">3000</property>
     
-  <mapping class="pl.jjkrol.proz.model.Locum" resource="pl/jjkrol/proz/model/Locum.hbm.xml"/>
+ <mapping class="pl.jjkrol.proz.model.Counter" resource="pl/jjkrol/proz/model/Counter.hbm.xml"/>
+ <mapping class="pl.jjkrol.proz.model.Occupant" resource="pl/jjkrol/proz/model/Occupant.hbm.xml"/>
+ <mapping class="pl.jjkrol.proz.model.Locum" resource="pl/jjkrol/proz/model/Locum.hbm.xml"/>
+ <mapping class="pl.jjkrol.proz.model.Building" resource="pl/jjkrol/proz/model/Building.hbm.xml"/>
  </session-factory>
 </hibernate-configuration>

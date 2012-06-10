@@ -37,13 +37,19 @@ import pl.jjkrol.proz.events.occupants.SaveOccupantEvent;
 /*
  * TODO disable create button
  */
-public class OccupantsTab implements SpecificTab {
+/**
+ * @author   jjkrol
+ */
+public class OccupantsTab extends SpecificTab {
 	
 	BlockingQueue<PROZEvent> blockingQueue;
 	public OccupantsTab(BlockingQueue<PROZEvent> blockingQueue) {
 		this.blockingQueue = blockingQueue;
 	}
 	
+	/**
+	 * @author   jjkrol
+	 */
 	private class ListItem {
 		private String name;
 		private int id;
@@ -93,7 +99,7 @@ public class OccupantsTab implements SpecificTab {
 			try {
 				blockingQueue.put(new OccupantChosenForViewingEvent(moc));
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				logger.warn(e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -112,7 +118,7 @@ public class OccupantsTab implements SpecificTab {
 			try {
 				blockingQueue.put(new SaveOccupantEvent(moc));
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				logger.warn(e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -122,7 +128,7 @@ public class OccupantsTab implements SpecificTab {
 			try {
 				blockingQueue.put(new DeleteOccupantEvent(moc));
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				logger.warn(e.getMessage());
 				e.printStackTrace();
 			}
 			clearFields();
@@ -135,7 +141,7 @@ public class OccupantsTab implements SpecificTab {
 			try {
 				blockingQueue.put(new AddOccupantEvent(moc));
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				logger.warn(e.getMessage());
 				e.printStackTrace();
 			}
 			internalState = new NormalState();
@@ -155,7 +161,6 @@ public class OccupantsTab implements SpecificTab {
 		}
 
 	}
-
 	private String name = "Najemcy";
 	private State internalState = new NormalState();
 	private final Controller core = Controller.getInstance();
@@ -208,11 +213,6 @@ public class OccupantsTab implements SpecificTab {
 		}
 	};
 
-	/**
-	 * Displays occupants list
-	 * 
-	 * @param occupants
-	 */
 	public void displayOccupantsList(final List<OccupantMockup> occupants) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -220,7 +220,7 @@ public class OccupantsTab implements SpecificTab {
 				occupantsList.removeListSelectionListener(listListener);
 				listModel.removeAllElements();
 				for (OccupantMockup occ : occupants) {
-					listModel.addElement(new ListItem(occ.name, occ.id));
+					listModel.addElement(new ListItem(occ.getName(), occ.getId()));
 				}
 				occupantsList.invalidate();
 				occupantsList.validate();
@@ -233,11 +233,11 @@ public class OccupantsTab implements SpecificTab {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				nameInput.setText(moc.name);
-				addressInput.setText(moc.address);
-				telephoneInput.setText(moc.telephone);
-				nipInput.setText(moc.nip);
-				if (moc.billingType.equals(Occupant.Billing.BILL))
+				nameInput.setText(moc.getName());
+				addressInput.setText(moc.getAddress());
+				telephoneInput.setText(moc.getTelephone());
+				nipInput.setText(moc.getNip());
+				if (moc.getBillingType().equals(Occupant.Billing.BILL))
 					billingInput.setSelectedIndex(0);
 				else
 					billingInput.setSelectedIndex(1);
@@ -300,7 +300,7 @@ public class OccupantsTab implements SpecificTab {
 		try {
 			blockingQueue.put(new OccupantsListNeededEvent());
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			logger.warn(e.getMessage());
 			e.printStackTrace();
 		}
 	}

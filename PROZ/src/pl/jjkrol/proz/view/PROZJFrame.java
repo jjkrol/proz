@@ -2,8 +2,11 @@ package pl.jjkrol.proz.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,21 +21,28 @@ import javax.swing.event.ChangeListener;
 import org.apache.log4j.Logger;
 
 import pl.jjkrol.proz.controller.Controller;
+import pl.jjkrol.proz.events.PROZEvent;
+import pl.jjkrol.proz.events.WindowClosingEvent;
 
 /**
- * A subclassed JFrame, responsible for creating
- * the main windows of the application
- * @author jjkrol
- *
+ * A subclassed JFrame, responsible for creating the main windows of the application
+ * @author   jjkrol
  */
-public class PROZJFrame extends JFrame {
+public class PROZJFrame extends JFrame implements WindowListener{
+	/**
+	 * @uml.property  name="core"
+	 * @uml.associationEnd  
+	 */
 	private Controller core = Controller.getInstance();
 	private JFrame frame;
 	private final JTabbedPane tabbedPane = new JTabbedPane();
 	private final List<SpecificTab> views = new ArrayList<SpecificTab>();
+	private final BlockingQueue<PROZEvent> blockingQueue;
 	static Logger logger = Logger.getLogger(PROZJFrame.class);
 
-	public PROZJFrame() {
+	public PROZJFrame(BlockingQueue<PROZEvent> blockingQueue) {
+		this.blockingQueue = blockingQueue;
+		addWindowListener(this);
 		createMenu();
 		createTabbedPane();
 	}
@@ -67,7 +77,11 @@ public class PROZJFrame extends JFrame {
 		fileMenu.add("Zamknij").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				try {
+					blockingQueue.put(new WindowClosingEvent());
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		return fileMenu;
@@ -80,9 +94,11 @@ public class PROZJFrame extends JFrame {
 			public void stateChanged(ChangeEvent evt) {
 				JTabbedPane pane = (JTabbedPane) evt.getSource();
 				int sel = pane.getSelectedIndex();
-				for(SpecificTab v : views){
-					if(v.getName().equals(tabbedPane.getTitleAt(sel))){
-						v.getReady();
+				for(SpecificTab tab : views){
+					
+					
+					if(tab.getName().equals(tabbedPane.getTitleAt(sel))){
+						tab.getReady();
 					}
 				}
 			}
@@ -95,10 +111,16 @@ public class PROZJFrame extends JFrame {
 		super.setVisible(bool);
 	}
 
-	public void addView(SpecificTab view) {
-		logger.debug("Added view "+view.getName());
-		tabbedPane.add(view.getName(), view.getJPanel());
-		views.add(view);
+	public void addTab(SpecificTab tab) {
+		logger.debug("Added view "+tab.getName());
+		tabbedPane.add(tab.getName(), tab.getJPanel());
+		views.add(tab);
+		if(!(tab instanceof PaymentsTab || 
+				tab instanceof MeasurementsTab ||
+				tab instanceof OccupantsTab ||
+				tab instanceof LocumsTab
+				))
+			tabbedPane.setEnabledAt(tabbedPane.getComponentCount()-2, false);
 	}
 
 	private JPanel getHomePanel() {
@@ -112,6 +134,46 @@ public class PROZJFrame extends JFrame {
 		homePanel.add(b2);
 		homePanel.add(txt);
 		return homePanel;
+	}
+
+	@Override
+	public void windowActivated(WindowEvent arg0) {
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent arg0) {
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent arg0) {
+		try {
+			blockingQueue.put(new WindowClosingEvent());
+		} catch (InterruptedException e) {
+			logger.warn(e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent arg0) {
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent arg0) {
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent arg0) {
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent arg0) {
+		
 	}
 
 }

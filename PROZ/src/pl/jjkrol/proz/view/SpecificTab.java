@@ -2,8 +2,9 @@ package pl.jjkrol.proz.view;
 
 import javax.swing.JPanel;
 
-public interface SpecificTab {
-	JPanel getJPanel();
-	String getName();
-	void getReady();
+public abstract class SpecificTab {
+	protected String name;
+	abstract JPanel getJPanel();
+	abstract String getName();
+	abstract void getReady();
 }

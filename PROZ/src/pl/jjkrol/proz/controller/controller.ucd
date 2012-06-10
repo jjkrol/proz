@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="controller" size="2524,935" id="pl.jjkrol.proz.controller" metadata="uml2-1.0" initialized="true" scrolledX="256" scrolledY="172" tag="1000" key="32303037303533312D313030302050524F5A2F6A6A6B726F6C">
+  <children xsi:type="editmodel:ClassEditModel" name="Controller" location="1372,473" size="112,85" id="pl.jjkrol.proz.controller/Controller" runTimeClassModel="getInstance(),logger,run(Lpl.jjkrol.proz.model.PaymentCalculator;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="89,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="logger" id="pl.jjkrol.proz.controller/Controller#logger"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="46,18">
+      <children xsi:type="editmodel:MethodEditModel" name="run" id="pl.jjkrol.proz.controller/Controller#run(Lpl.jjkrol.proz.model.PaymentCalculator;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="ReportsTab" location="774,654" size="113,135" id="pl.jjkrol.proz.view/ReportsTab" runTimeClassModel="name,getJPanel(),getReady(),ReportsTab(Ljava.util.concurrent.BlockingQueue;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="79,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="name" id="pl.jjkrol.proz.view/ReportsTab#name"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="85,54">
+      <children xsi:type="editmodel:MethodEditModel" name="ReportsTab" id="pl.jjkrol.proz.view/ReportsTab#ReportsTab(Ljava.util.concurrent.BlockingQueue;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getJPanel" id="pl.jjkrol.proz.view/ReportsTab#getJPanel()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getReady" id="pl.jjkrol.proz.view/ReportsTab#getReady()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.view/SpecificTab&lt;-pl.jjkrol.proz.view/ReportsTab" source="//@children.1" target="//@children.4/@sourceConnections.0" targetEnd="//@children.1/@sourceConnections.0/@children.1" sourceEnd="//@children.1/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="56,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="InvoicesTab" location="1205,654" size="117,135" id="pl.jjkrol.proz.view/InvoicesTab" runTimeClassModel="InvoicesTab(Ljava.util.concurrent.BlockingQueue;),name,getJPanel(),getReady()">
+    <children xsi:type="editmodel:CompartmentEditModel" size="79,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="name" id="pl.jjkrol.proz.view/InvoicesTab#name"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="87,54">
+      <children xsi:type="editmodel:MethodEditModel" name="InvoicesTab" id="pl.jjkrol.proz.view/InvoicesTab#InvoicesTab(Ljava.util.concurrent.BlockingQueue;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getJPanel" id="pl.jjkrol.proz.view/InvoicesTab#getJPanel()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getReady" id="pl.jjkrol.proz.view/InvoicesTab#getReady()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.view/SpecificTab&lt;-pl.jjkrol.proz.view/InvoicesTab" source="//@children.2" target="//@children.4/@sourceConnections.0" targetEnd="//@children.2/@sourceConnections.0/@children.1" sourceEnd="//@children.2/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="58,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="MeasurementsTab" location="265,654" size="187,261" id="pl.jjkrol.proz.view/MeasurementsTab" runTimeClassModel="getSelectedMeasurement(),deleteListener,saveListener,name,MeasurementsTab(Ljava.util.concurrent.BlockingQueue;),logger,getJPanel(),displayMeasurements(Ljava.util.List;),getReady(),displayLocumsList(Ljava.util.List;),createListener">
+    <children xsi:type="editmodel:CompartmentEditModel" size="164,90">
+      <children xsi:type="editmodel:AttributeEditModel" name="createListener" id="pl.jjkrol.proz.view/MeasurementsTab#createListener"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="deleteListener" id="pl.jjkrol.proz.view/MeasurementsTab#deleteListener"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="logger" id="pl.jjkrol.proz.view/MeasurementsTab#logger"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="name" id="pl.jjkrol.proz.view/MeasurementsTab#name"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="saveListener" id="pl.jjkrol.proz.view/MeasurementsTab#saveListener"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="152,108">
+      <children xsi:type="editmodel:MethodEditModel" name="MeasurementsTab" id="pl.jjkrol.proz.view/MeasurementsTab#MeasurementsTab(Ljava.util.concurrent.BlockingQueue;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="displayLocumsList" id="pl.jjkrol.proz.view/MeasurementsTab#displayLocumsList(Ljava.util.List;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="displayMeasurements" id="pl.jjkrol.proz.view/MeasurementsTab#displayMeasurements(Ljava.util.List;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getJPanel" id="pl.jjkrol.proz.view/MeasurementsTab#getJPanel()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getReady" id="pl.jjkrol.proz.view/MeasurementsTab#getReady()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSelectedMeasurement" id="pl.jjkrol.proz.view/MeasurementsTab#getSelectedMeasurement()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.view/SpecificTab&lt;-pl.jjkrol.proz.view/MeasurementsTab" source="//@children.3" target="//@children.4/@sourceConnections.0" targetEnd="//@children.3/@sourceConnections.0/@children.1" sourceEnd="//@children.3/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="93,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.controller/LocumsDisplayer&lt;-pl.jjkrol.proz.view/MeasurementsTab" source="//@children.3" target="//@children.4/@sourceConnections.1" targetEnd="//@children.3/@sourceConnections.1/@children.1" sourceEnd="//@children.3/@sourceConnections.1/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="93,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="LocumsTab" location="50,654" size="185,225" id="pl.jjkrol.proz.view/LocumsTab" runTimeClassModel="deleteListener,saveListener,name,logger,getJPanel(),displayLocumsList(Ljava.util.List;),getReady(),LocumsTab(Ljava.util.concurrent.BlockingQueue;),displayOccupantsData(Lpl.jjkrol.proz.mockups.OccupantMockup;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="162,72">
+      <children xsi:type="editmodel:AttributeEditModel" name="deleteListener" id="pl.jjkrol.proz.view/LocumsTab#deleteListener"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="logger" id="pl.jjkrol.proz.view/LocumsTab#logger"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="name" id="pl.jjkrol.proz.view/LocumsTab#name"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="saveListener" id="pl.jjkrol.proz.view/LocumsTab#saveListener"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="139,90">
+      <children xsi:type="editmodel:MethodEditModel" name="LocumsTab" id="pl.jjkrol.proz.view/LocumsTab#LocumsTab(Ljava.util.concurrent.BlockingQueue;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="displayLocumsList" id="pl.jjkrol.proz.view/LocumsTab#displayLocumsList(Ljava.util.List;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="displayOccupantsData" id="pl.jjkrol.proz.view/LocumsTab#displayOccupantsData(Lpl.jjkrol.proz.mockups.OccupantMockup;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getJPanel" id="pl.jjkrol.proz.view/LocumsTab#getJPanel()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getReady" id="pl.jjkrol.proz.view/LocumsTab#getReady()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.3/@sourceConnections.0 //@children.7/@sourceConnections.0 //@children.1/@sourceConnections.0 //@children.6/@sourceConnections.0 //@children.2/@sourceConnections.0" autoLocated="true" id="pl.jjkrol.proz.view/SpecificTab&lt;-pl.jjkrol.proz.view/LocumsTab" source="//@children.4" target="//@children.8" targetEnd="//@children.4/@sourceConnections.0/@children.1" sourceEnd="//@children.4/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="92,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="58,131" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.3/@sourceConnections.1 //@children.7/@sourceConnections.1" autoLocated="true" id="pl.jjkrol.proz.controller/LocumsDisplayer&lt;-pl.jjkrol.proz.view/LocumsTab" source="//@children.4" target="//@children.5" targetEnd="//@children.4/@sourceConnections.1/@children.1" sourceEnd="//@children.4/@sourceConnections.1/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="92,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="75,81" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" targetConnections="//@children.4/@sourceConnections.1" name="LocumsDisplayer" location="296,473" size="150,81" id="pl.jjkrol.proz.controller/LocumsDisplayer" runTimeClassModel="displayLocumsList(Ljava.util.List;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="119,18">
+      <children xsi:type="editmodel:MethodEditModel" name="displayLocumsList" id="pl.jjkrol.proz.controller/LocumsDisplayer#displayLocumsList(Ljava.util.List;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="OccupantsTab" location="917,654" size="258,261" id="pl.jjkrol.proz.view/OccupantsTab" runTimeClassModel="displayOccupantsList(Ljava.util.List;),blockingQueue,deleteListener,OccupantsTab(Ljava.util.concurrent.BlockingQueue;),saveListener,name,logger,getJPanel(),getReady(),displayOccupantsData(Lpl.jjkrol.proz.mockups.OccupantMockup;),createListener">
+    <children xsi:type="editmodel:CompartmentEditModel" size="235,108">
+      <children xsi:type="editmodel:AttributeEditModel" name="blockingQueue" id="pl.jjkrol.proz.view/OccupantsTab#blockingQueue"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="createListener" id="pl.jjkrol.proz.view/OccupantsTab#createListener"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="deleteListener" id="pl.jjkrol.proz.view/OccupantsTab#deleteListener"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="logger" id="pl.jjkrol.proz.view/OccupantsTab#logger"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="name" id="pl.jjkrol.proz.view/OccupantsTab#name"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="saveListener" id="pl.jjkrol.proz.view/OccupantsTab#saveListener"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="139,90">
+      <children xsi:type="editmodel:MethodEditModel" name="OccupantsTab" id="pl.jjkrol.proz.view/OccupantsTab#OccupantsTab(Ljava.util.concurrent.BlockingQueue;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="displayOccupantsData" id="pl.jjkrol.proz.view/OccupantsTab#displayOccupantsData(Lpl.jjkrol.proz.mockups.OccupantMockup;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="displayOccupantsList" id="pl.jjkrol.proz.view/OccupantsTab#displayOccupantsList(Ljava.util.List;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getJPanel" id="pl.jjkrol.proz.view/OccupantsTab#getJPanel()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getReady" id="pl.jjkrol.proz.view/OccupantsTab#getReady()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.view/SpecificTab&lt;-pl.jjkrol.proz.view/OccupantsTab" source="//@children.6" target="//@children.4/@sourceConnections.0" targetEnd="//@children.6/@sourceConnections.0/@children.1" sourceEnd="//@children.6/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="129,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="PaymentsTab" location="482,654" size="262,225" id="pl.jjkrol.proz.view/PaymentsTab" runTimeClassModel="PaymentsTab(Ljava.util.concurrent.BlockingQueue;),displayUsageTable(Ljava.lang.String;),name,displayLocumMeasurementsAndQuotations(Ljava.util.List;Ljava.util.Map;),displayCalculationResults(Lpl.jjkrol.proz.mockups.ResultMockup;),logger,getJPanel(),displayLocumsList(Ljava.util.List;),getReady()">
+    <children xsi:type="editmodel:CompartmentEditModel" size="89,36">
+      <children xsi:type="editmodel:AttributeEditModel" name="logger" id="pl.jjkrol.proz.view/PaymentsTab#logger"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="name" id="pl.jjkrol.proz.view/PaymentsTab#name"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="239,126">
+      <children xsi:type="editmodel:MethodEditModel" name="PaymentsTab" id="pl.jjkrol.proz.view/PaymentsTab#PaymentsTab(Ljava.util.concurrent.BlockingQueue;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="displayCalculationResults" id="pl.jjkrol.proz.view/PaymentsTab#displayCalculationResults(Lpl.jjkrol.proz.mockups.ResultMockup;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="displayLocumMeasurementsAndQuotations" id="pl.jjkrol.proz.view/PaymentsTab#displayLocumMeasurementsAndQuotations(Ljava.util.List;Ljava.util.Map;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="displayLocumsList" id="pl.jjkrol.proz.view/PaymentsTab#displayLocumsList(Ljava.util.List;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="displayUsageTable" id="pl.jjkrol.proz.view/PaymentsTab#displayUsageTable(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getJPanel" id="pl.jjkrol.proz.view/PaymentsTab#getJPanel()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getReady" id="pl.jjkrol.proz.view/PaymentsTab#getReady()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.view/SpecificTab&lt;-pl.jjkrol.proz.view/PaymentsTab" source="//@children.7" target="//@children.4/@sourceConnections.0" targetEnd="//@children.7/@sourceConnections.0/@children.1" sourceEnd="//@children.7/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="131,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.controller/LocumsDisplayer&lt;-pl.jjkrol.proz.view/PaymentsTab" source="//@children.7" target="//@children.4/@sourceConnections.1" targetEnd="//@children.7/@sourceConnections.1/@children.1" sourceEnd="//@children.7/@sourceConnections.1/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="131,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" targetConnections="//@children.4/@sourceConnections.0" name="SpecificTab" location="651,473" size="116,131" id="pl.jjkrol.proz.view/SpecificTab" runTimeClassModel="getName(),getJPanel(),getReady()">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="76,54">
+      <children xsi:type="editmodel:MethodEditModel" name="getJPanel" id="pl.jjkrol.proz.view/SpecificTab#getJPanel()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getName" id="pl.jjkrol.proz.view/SpecificTab#getName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getReady" id="pl.jjkrol.proz.view/SpecificTab#getReady()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="DisplayOccupantDataStrategy" location="535,320" size="230,85" id="pl.jjkrol.proz.controller/DisplayOccupantDataStrategy" runTimeClassModel="DisplayOccupantDataStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;),execute(Lpl.jjkrol.proz.events.PROZEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="175,36">
+      <children xsi:type="editmodel:MethodEditModel" name="DisplayOccupantDataStrategy" id="pl.jjkrol.proz.controller/DisplayOccupantDataStrategy#DisplayOccupantDataStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="execute" id="pl.jjkrol.proz.controller/DisplayOccupantDataStrategy#execute(Lpl.jjkrol.proz.events.PROZEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.controller/OccupantsStrategy&lt;-pl.jjkrol.proz.controller/DisplayOccupantDataStrategy" source="//@children.9" target="//@children.16/@sourceConnections.0" targetEnd="//@children.9/@sourceConnections.0/@children.1" sourceEnd="//@children.9/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="115,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="DisplayCalculatedResultsStrategy" location="1992,320" size="254,103" id="pl.jjkrol.proz.controller/DisplayCalculatedResultsStrategy" runTimeClassModel="DisplayCalculatedResultsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;),logger,execute(Lpl.jjkrol.proz.events.PROZEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="89,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="logger" id="pl.jjkrol.proz.controller/DisplayCalculatedResultsStrategy#logger"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="192,36">
+      <children xsi:type="editmodel:MethodEditModel" name="DisplayCalculatedResultsStrategy" id="pl.jjkrol.proz.controller/DisplayCalculatedResultsStrategy#DisplayCalculatedResultsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="execute" id="pl.jjkrol.proz.controller/DisplayCalculatedResultsStrategy#execute(Lpl.jjkrol.proz.events.PROZEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.controller/PaymentsStrategy&lt;-pl.jjkrol.proz.controller/DisplayCalculatedResultsStrategy" source="//@children.10" target="//@children.15/@sourceConnections.0" targetEnd="//@children.10/@sourceConnections.0/@children.1" sourceEnd="//@children.10/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="127,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="WindowClosingStrategy" location="817,185" size="194,85" id="pl.jjkrol.proz.controller/WindowClosingStrategy" runTimeClassModel="WindowClosingStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;),execute(Lpl.jjkrol.proz.events.PROZEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="146,36">
+      <children xsi:type="editmodel:MethodEditModel" name="WindowClosingStrategy" id="pl.jjkrol.proz.controller/WindowClosingStrategy#WindowClosingStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="execute" id="pl.jjkrol.proz.controller/WindowClosingStrategy#execute(Lpl.jjkrol.proz.events.PROZEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.controller/PROZStrategy&lt;-pl.jjkrol.proz.controller/WindowClosingStrategy" source="//@children.11" target="//@children.21/@sourceConnections.0" targetEnd="//@children.11/@sourceConnections.0/@children.1" sourceEnd="//@children.11/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="97,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.21/@sourceConnections.0" name="PROZStrategy" location="980,50" size="130,85" id="pl.jjkrol.proz.controller/PROZStrategy" runTimeClassModel="PROZStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;),execute(Lpl.jjkrol.proz.events.PROZEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="99,36">
+      <children xsi:type="editmodel:MethodEditModel" name="PROZStrategy" id="pl.jjkrol.proz.controller/PROZStrategy#PROZStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="execute" id="pl.jjkrol.proz.controller/PROZStrategy#execute(Lpl.jjkrol.proz.events.PROZEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="DisplayLocumMeasurementsStrategy" location="1287,320" size="276,103" id="pl.jjkrol.proz.controller/DisplayLocumMeasurementsStrategy" runTimeClassModel="DisplayLocumMeasurementsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;),logger,execute(Lpl.jjkrol.proz.events.PROZEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="89,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="logger" id="pl.jjkrol.proz.controller/DisplayLocumMeasurementsStrategy#logger"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="209,36">
+      <children xsi:type="editmodel:MethodEditModel" name="DisplayLocumMeasurementsStrategy" id="pl.jjkrol.proz.controller/DisplayLocumMeasurementsStrategy#DisplayLocumMeasurementsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="execute" id="pl.jjkrol.proz.controller/DisplayLocumMeasurementsStrategy#execute(Lpl.jjkrol.proz.events.PROZEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.controller/MeasurementsStrategy&lt;-pl.jjkrol.proz.controller/DisplayLocumMeasurementsStrategy" source="//@children.13" target="//@children.22" targetEnd="//@children.13/@sourceConnections.0/@children.1" sourceEnd="//@children.13/@sourceConnections.0/@children.0" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="137,0" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="93,67"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="DeleteOccupantDataStrategy" location="1032,320" size="225,85" id="pl.jjkrol.proz.controller/DeleteOccupantDataStrategy" runTimeClassModel="DeleteOccupantDataStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;),execute(Lpl.jjkrol.proz.events.PROZEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="170,36">
+      <children xsi:type="editmodel:MethodEditModel" name="DeleteOccupantDataStrategy" id="pl.jjkrol.proz.controller/DeleteOccupantDataStrategy#DeleteOccupantDataStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="execute" id="pl.jjkrol.proz.controller/DeleteOccupantDataStrategy#execute(Lpl.jjkrol.proz.events.PROZEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.controller/OccupantsStrategy&lt;-pl.jjkrol.proz.controller/DeleteOccupantDataStrategy" source="//@children.14" target="//@children.16/@sourceConnections.0" targetEnd="//@children.14/@sourceConnections.0/@children.1" sourceEnd="//@children.14/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="112,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="DisplayLocumMeasurementsAndQuotationsStrategy" location="1593,320" size="369,103" id="pl.jjkrol.proz.controller/DisplayLocumMeasurementsAndQuotationsStrategy" runTimeClassModel="DisplayLocumMeasurementsAndQuotationsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;),logger,execute(Lpl.jjkrol.proz.events.PROZEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="89,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="logger" id="pl.jjkrol.proz.controller/DisplayLocumMeasurementsAndQuotationsStrategy#logger"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="281,36">
+      <children xsi:type="editmodel:MethodEditModel" name="DisplayLocumMeasurementsAndQuotationsStrategy" id="pl.jjkrol.proz.controller/DisplayLocumMeasurementsAndQuotationsStrategy#DisplayLocumMeasurementsAndQuotationsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="execute" id="pl.jjkrol.proz.controller/DisplayLocumMeasurementsAndQuotationsStrategy#execute(Lpl.jjkrol.proz.events.PROZEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.10/@sourceConnections.0 //@children.23/@sourceConnections.0" autoLocated="true" id="pl.jjkrol.proz.controller/PaymentsStrategy&lt;-pl.jjkrol.proz.controller/DisplayLocumMeasurementsAndQuotationsStrategy" source="//@children.15" target="//@children.19" targetEnd="//@children.15/@sourceConnections.0/@children.1" sourceEnd="//@children.15/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="184,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="78,67" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="AddOccupantDataStrategy" location="50,320" size="209,85" id="pl.jjkrol.proz.controller/AddOccupantDataStrategy" runTimeClassModel="AddOccupantDataStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;),execute(Lpl.jjkrol.proz.events.PROZEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="159,36">
+      <children xsi:type="editmodel:MethodEditModel" name="AddOccupantDataStrategy" id="pl.jjkrol.proz.controller/AddOccupantDataStrategy#AddOccupantDataStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="execute" id="pl.jjkrol.proz.controller/AddOccupantDataStrategy#execute(Lpl.jjkrol.proz.events.PROZEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.20/@sourceConnections.0 //@children.9/@sourceConnections.0 //@children.17/@sourceConnections.0 //@children.14/@sourceConnections.0" autoLocated="true" id="pl.jjkrol.proz.controller/OccupantsStrategy&lt;-pl.jjkrol.proz.controller/AddOccupantDataStrategy" source="//@children.16" target="//@children.21" targetEnd="//@children.16/@sourceConnections.0/@children.1" sourceEnd="//@children.16/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="104,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="80,67" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="DisplayOccupantsStrategy" location="795,320" size="207,85" id="pl.jjkrol.proz.controller/DisplayOccupantsStrategy" runTimeClassModel="DisplayOccupantsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;),execute(Lpl.jjkrol.proz.events.PROZEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="159,36">
+      <children xsi:type="editmodel:MethodEditModel" name="DisplayOccupantsStrategy" id="pl.jjkrol.proz.controller/DisplayOccupantsStrategy#DisplayOccupantsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="execute" id="pl.jjkrol.proz.controller/DisplayOccupantsStrategy#execute(Lpl.jjkrol.proz.events.PROZEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.controller/OccupantsStrategy&lt;-pl.jjkrol.proz.controller/DisplayOccupantsStrategy" source="//@children.17" target="//@children.16/@sourceConnections.0" targetEnd="//@children.17/@sourceConnections.0/@children.1" sourceEnd="//@children.17/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="103,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="DisplayLocumsStrategy" location="50,185" size="190,85" id="pl.jjkrol.proz.controller/DisplayLocumsStrategy" runTimeClassModel="DisplayLocumsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;),execute(Lpl.jjkrol.proz.events.PROZEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="144,36">
+      <children xsi:type="editmodel:MethodEditModel" name="DisplayLocumsStrategy" id="pl.jjkrol.proz.controller/DisplayLocumsStrategy#DisplayLocumsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="execute" id="pl.jjkrol.proz.controller/DisplayLocumsStrategy#execute(Lpl.jjkrol.proz.events.PROZEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.controller/PROZStrategy&lt;-pl.jjkrol.proz.controller/DisplayLocumsStrategy" source="//@children.18" target="//@children.21/@sourceConnections.0" targetEnd="//@children.18/@sourceConnections.0/@children.1" sourceEnd="//@children.18/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="95,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.15/@sourceConnections.0" name="PaymentsStrategy" location="2017,185" size="157,67" id="pl.jjkrol.proz.controller/PaymentsStrategy" runTimeClassModel="PaymentsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="118,18">
+      <children xsi:type="editmodel:MethodEditModel" name="PaymentsStrategy" id="pl.jjkrol.proz.controller/PaymentsStrategy#PaymentsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.controller/PROZStrategy&lt;-pl.jjkrol.proz.controller/PaymentsStrategy" source="//@children.19" target="//@children.21/@sourceConnections.0" targetEnd="//@children.19/@sourceConnections.0/@children.1" sourceEnd="//@children.19/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="78,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="SaveOccupantDataStrategy" location="289,320" size="216,85" id="pl.jjkrol.proz.controller/SaveOccupantDataStrategy" runTimeClassModel="SaveOccupantDataStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;),execute(Lpl.jjkrol.proz.events.PROZEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="165,36">
+      <children xsi:type="editmodel:MethodEditModel" name="SaveOccupantDataStrategy" id="pl.jjkrol.proz.controller/SaveOccupantDataStrategy#SaveOccupantDataStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="execute" id="pl.jjkrol.proz.controller/SaveOccupantDataStrategy#execute(Lpl.jjkrol.proz.events.PROZEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.controller/OccupantsStrategy&lt;-pl.jjkrol.proz.controller/SaveOccupantDataStrategy" source="//@children.20" target="//@children.16/@sourceConnections.0" targetEnd="//@children.20/@sourceConnections.0/@children.1" sourceEnd="//@children.20/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="108,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.16/@sourceConnections.0" name="OccupantsStrategy" location="568,185" size="161,67" id="pl.jjkrol.proz.controller/OccupantsStrategy" runTimeClassModel="OccupantsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="124,18">
+      <children xsi:type="editmodel:MethodEditModel" name="OccupantsStrategy" id="pl.jjkrol.proz.controller/OccupantsStrategy#OccupantsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.22/@sourceConnections.0 //@children.18/@sourceConnections.0 //@children.11/@sourceConnections.0 //@children.19/@sourceConnections.0" autoLocated="true" id="pl.jjkrol.proz.controller/PROZStrategy&lt;-pl.jjkrol.proz.controller/OccupantsStrategy" source="//@children.21" target="//@children.12" targetEnd="//@children.21/@sourceConnections.0/@children.1" sourceEnd="//@children.21/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="80,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="65,85" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.13/@sourceConnections.0" name="MeasurementsStrategy" location="1331,185" size="187,67" id="pl.jjkrol.proz.controller/MeasurementsStrategy" runTimeClassModel="MeasurementsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="142,18">
+      <children xsi:type="editmodel:MethodEditModel" name="MeasurementsStrategy" id="pl.jjkrol.proz.controller/MeasurementsStrategy#MeasurementsStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.controller/PROZStrategy&lt;-pl.jjkrol.proz.controller/MeasurementsStrategy" source="//@children.22" target="//@children.21/@sourceConnections.0" targetEnd="//@children.22/@sourceConnections.0/@children.1" sourceEnd="//@children.22/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="93,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="GenerateUsageTableStrategy" location="2276,320" size="228,103" id="pl.jjkrol.proz.controller/GenerateUsageTableStrategy" runTimeClassModel="logger,GenerateUsageTableStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;),execute(Lpl.jjkrol.proz.events.PROZEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="89,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="logger" id="pl.jjkrol.proz.controller/GenerateUsageTableStrategy#logger"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="172,36">
+      <children xsi:type="editmodel:MethodEditModel" name="GenerateUsageTableStrategy" id="pl.jjkrol.proz.controller/GenerateUsageTableStrategy#GenerateUsageTableStrategy(Lpl.jjkrol.proz.view.View;Lpl.jjkrol.proz.model.Model;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="execute" id="pl.jjkrol.proz.controller/GenerateUsageTableStrategy#execute(Lpl.jjkrol.proz.events.PROZEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="pl.jjkrol.proz.controller/PaymentsStrategy&lt;-pl.jjkrol.proz.controller/GenerateUsageTableStrategy" source="//@children.23" target="//@children.15/@sourceConnections.0" targetEnd="//@children.23/@sourceConnections.0/@children.1" sourceEnd="//@children.23/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="114,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" level="-1" properties="wireOptions=1;Product=eUML2"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="15,15" gridOrigin="0,0" rulerUnit="pixel" gridVisibility="false">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showPopupBars="true" showConnectionHandles="true" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" showDependencyStereotype="true" showInterfaceStereotype="true" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+</editmodel:ClassDiagramEditModel>

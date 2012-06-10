@@ -9,10 +9,9 @@ import pl.jjkrol.proz.view.View;
 	/**
 	 * adds data of a new occupant
 	 */
-	class AddOccupantDataStrategy extends PROZStrategy {
+	class AddOccupantDataStrategy extends OccupantsStrategy {
 		public AddOccupantDataStrategy (View view, Model model) {
 			super(view,model);
-			// TODO Auto-generated constructor stub
 		}
 		
 		@Override

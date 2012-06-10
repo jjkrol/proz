@@ -1,11 +1,17 @@
 package pl.jjkrol.proz.events.occupants;
 
 import pl.jjkrol.proz.mockups.OccupantMockup;
-import pl.jjkrol.proz.events.PROZEvent;
 
+/**
+ * @author   jjkrol
+ */
+public class DeleteOccupantEvent extends OccupantsEvent {
 
-public class DeleteOccupantEvent extends PROZEvent {
-
+	/**
+	 * Passed empty mockup with filled id
+	 * @uml.property  name="mockup"
+	 * @uml.associationEnd  
+	 */
 	public final OccupantMockup mockup;
 
 	public DeleteOccupantEvent(OccupantMockup moc) {

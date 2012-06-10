@@ -33,7 +33,7 @@ public class UsageTableBuilder extends DocumentBuilder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void initializeListeners(String filename) throws DocumentException,
+	public void initializeListeners(final String filename) throws DocumentException,
 			FileNotFoundException {
 		writer =
 				PdfWriter.getInstance(document, new FileOutputStream(filename));
@@ -43,19 +43,27 @@ public class UsageTableBuilder extends DocumentBuilder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void buildBody(final Map<BillableService, Float> results,
-			final Map<BillableService, Float> administrativeResults,
-			Calendar from, Calendar to)
+	public void buildBody(final Map<String, String> values)
 			throws DocumentException, IOException {
 			SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 		document.open();
+				BaseFont bf =
+				BaseFont.createFont("c:/windows/fonts/arial.ttf",
+						BaseFont.CP1250, BaseFont.EMBEDDED);
+		Font font = new Font(bf, 12);
+		Paragraph par = new Paragraph("Rozliczenie op³at zaliczkowych za media", new Font(bf,15));
+		document.add(par);
+		par = new Paragraph("Okres: "+values.get("from")+" - "+values.get("to"), new Font(bf, 13));
+		document.add(par);
+		par = new Paragraph("Lokal: "+values.get("locum_name"), font);
+		document.add(par);
+		par = new Paragraph("Najemca: "+values.get("occupant"), font);
+		document.add(par);
 		PdfPTable t = new PdfPTable(7);
 		t.setWidthPercentage(100f);
 		t.setWidths(new int[] { 3, 1, 1, 1, 1, 1, 1 });
-		BaseFont bf =
-				BaseFont.createFont("c:/windows/fonts/arial.ttf",
-						BaseFont.CP1250, BaseFont.EMBEDDED);
-		Font font = new Font(bf, 12);
+		t.setSpacingBefore(10f);
+
 		PdfPCell cell;
 		t.getDefaultCell().setPadding(5);
 		cell = new PdfPCell();
@@ -70,93 +78,90 @@ public class UsageTableBuilder extends DocumentBuilder {
 		cell = new PdfPCell(new Phrase("Op³aty administracyjne", font));
 		cell.setColspan(2);
 		t.addCell(cell);
-		cell = new PdfPCell(new Phrase(df.format(from.getTime())));
+		cell = new PdfPCell(new Phrase(values.get("from")));
 		t.addCell(cell);
-		cell = new PdfPCell(new Phrase(df.format(to.getTime())));
+		cell = new PdfPCell(new Phrase(values.get("to")));
 		t.addCell(cell);
 		t.addCell(new Phrase("stawka", font));
 		t.addCell(new Phrase("op³ata", font));
 		t.addCell(new Phrase("wsp.", font));
 		t.addCell(new Phrase("op³ata", font));
+		
 		t.addCell("Centralne Ogrzewanie");
+		t.addCell(values.get("mea_start_CO"));
+		t.addCell(values.get("mea_end_CO"));
 		t.addCell("");
+		t.addCell(values.get("CO"));
 		t.addCell("");
-		t.addCell("");
-		t.addCell(new DecimalFormat("#.##").format(results
-				.get(BillableService.CO)));
-		t.addCell("");
-		t.addCell(new DecimalFormat("#.##").format(administrativeResults
-				.get(BillableService.CO)));
+		t.addCell(values.get("adm_CO"));
+		
 		t.addCell(new Phrase("Woda zimna i ciep³a", font));
+		t.addCell(values.get("mea_start_WODA"));
+		t.addCell(values.get("mea_end_WODA"));
 		t.addCell("");
+		t.addCell(values.get("WODA"));
 		t.addCell("");
-		t.addCell("");
-		t.addCell(new DecimalFormat("#.##").format(results
-				.get(BillableService.WODA)));
-		t.addCell("");
-		t.addCell(new DecimalFormat("#.##").format(administrativeResults
-				.get(BillableService.WODA)));
+		t.addCell(values.get("adm_WODA"));
+		
 		t.addCell(new Phrase("Podgrzanie ciep³ej wody", font));
+		t.addCell(values.get("mea_start_PODGRZANIE"));
+		t.addCell(values.get("mea_end_PODGRZANIE"));
+		t.addCell("");
+		t.addCell(values.get("PODGRZANIE"));
 		t.addCell("");
 		t.addCell("");
-		t.addCell("");
-		t.addCell(new DecimalFormat("#.##").format(results
-				.get(BillableService.PODGRZANIE)));
-		t.addCell("");
-		t.addCell("");
+		
 		t.addCell(new Phrase("Wywóz œcieków", font));
+		t.addCell(values.get("mea_start_SCIEKI"));
+		t.addCell(values.get("mea_end_SCIEKI"));
+		t.addCell("");
+		t.addCell(values.get("SCIECKI"));
 		t.addCell("");
 		t.addCell("");
-		t.addCell("");
-		t.addCell(new DecimalFormat("#.##").format(results
-				.get(BillableService.SCIEKI)));
-		t.addCell("");
-		t.addCell("");
+		
 		t.addCell("Gaz");
+		t.addCell(values.get("mea_start_GAZ"));
+		t.addCell(values.get("mea_end_GAZ"));
+		t.addCell("");
+		t.addCell(values.get("GAZ"));
 		t.addCell("");
 		t.addCell("");
-		t.addCell("");
-		t.addCell(new DecimalFormat("#.##").format(results
-				.get(BillableService.GAZ)));
-		t.addCell("");
-		t.addCell("");
+		
 		t.addCell("Energia elektryczna");
+		t.addCell(values.get("mea_start_EE"));
+		t.addCell(values.get("mea_end_EE"));
 		t.addCell("");
+		t.addCell(values.get("EE"));
 		t.addCell("");
-		t.addCell("");
-		t.addCell(new DecimalFormat("#.##").format(results
-				.get(BillableService.EE)));
-		t.addCell("");
-		t.addCell(new DecimalFormat("#.##").format(administrativeResults
-				.get(BillableService.EE)));
+		t.addCell(values.get("adm_EE"));
+		
 		t.addCell(new Phrase("Wywóz œmieci", font));
+		t.addCell(values.get("mea_start_SMIECI"));
+		t.addCell(values.get("mea_end_SMIECI"));
+		t.addCell("");
+		t.addCell(values.get("SMIECI"));
 		t.addCell("");
 		t.addCell("");
-		t.addCell("");
-		t.addCell(new DecimalFormat("#.##").format(results
-				.get(BillableService.SMIECI)));
-		;
-		t.addCell("");
-		t.addCell("");
+		
 		t.addCell("Internet");
+		t.addCell(values.get("mea_start_INTERNET"));
+		t.addCell(values.get("mea_end_INTERNET"));
+		t.addCell("");
+		t.addCell(values.get("INTERNET"));
 		t.addCell("");
 		t.addCell("");
-		t.addCell("");
-		t.addCell(new DecimalFormat("#.##").format(results
-				.get(BillableService.INTERNET)));
-		t.addCell("");
-		t.addCell("");
+		
 		t.addCell(new Phrase("Nale¿na suma op³at za media", font));
 		cell = new PdfPCell();
 		cell.setColspan(3);
 		t.addCell(cell);
-		t.addCell("suma");
+		t.addCell(values.get("sum"));
 		t.addCell("");
-		t.addCell("suma");
+		t.addCell(values.get("adm_sum"));
 		document.add(t);
-		Paragraph par = new Paragraph("Pobrana op³ata: op³ata", font);
+		par = new Paragraph("Pobrana op³ata: "+values.get("advancement"), font);
 		document.add(par);
-		par = new Paragraph("Nale¿noœæ: op³ata", font);
+		par = new Paragraph("Nale¿noœæ: "+values.get("to_pay"), font);
 		document.add(par);
 	}
 

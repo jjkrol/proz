@@ -1,10 +1,15 @@
 package pl.jjkrol.proz.events.payments;
 
-import pl.jjkrol.proz.events.PROZEvent;
 import pl.jjkrol.proz.mockups.LocumMockup;
 
-
-public class LocumMeasurementsAndQuotationsNeededEvent extends PROZEvent {
+/**
+ * @author   jjkrol
+ */
+public class LocumMeasurementsAndQuotationsNeededEvent extends PaymentsEvent {
+	/**
+	 * @uml.property  name="moc"
+	 * @uml.associationEnd  
+	 */
 	public final LocumMockup moc;
 	public LocumMeasurementsAndQuotationsNeededEvent(LocumMockup moc) {
 		this.moc = moc;

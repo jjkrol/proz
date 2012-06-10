@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2012-05-30 21:10:43 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+	<class name="pl.jjkrol.proz.model.Building" table="BUILDINGS">
+		
+		<id name="id" type="int">
+			<column name="BUILDING_ID"/>
+		</id>
+		
+		<property name="name" type="java.lang.String">
+			<column name="NAME" />
+		</property>
+		
+		<property name="address" type="java.lang.String">
+			<column name="ADDRESS"/>
+		</property>
+		
+		<set name="locums" table="LOCUMS" lazy="true" inverse="false" order-by="LOCUM_NAME ASC">
+			<key>
+				<column name="BUILDING_ID" not-null="true"/>
+			</key>
+			<one-to-many class="pl.jjkrol.proz.model.Locum" />
+		</set>
+		
+		<map name="counters" table="BUILDINGS_COUNTERS" lazy="false">
+			<key column="BUILDING_ID"/>
+			<map-key>
+				<column name="SERVICE" />
+				<type name="org.hibernate.type.EnumType">
+					<param name="type">12</param>
+					<param name="enumClass">pl.jjkrol.proz.model.MeasurableService</param>
+				</type>
+			</map-key>
+			<many-to-many column="COUNTER" class="pl.jjkrol.proz.model.Counter"/>
+		</map>
+	</class>
+</hibernate-mapping>

@@ -2,40 +2,47 @@ package pl.jjkrol.proz.model;
 
 /**
  * Enumeration type respresenting services that occupant pays for
- * @author jjkrol
- *
+ * @author     jjkrol
  */
 public enum BillableService {
 	/**
-	 * Central heating
+	 * @uml.property  name="cO"
+	 * @uml.associationEnd  
 	 */
 	CO,
 	/**
-	 * Electric energy
+	 * @uml.property  name="eE"
+	 * @uml.associationEnd  
 	 */
 	EE,
 	/**
-	 * Gas ?
+	 * @uml.property  name="gAZ"
+	 * @uml.associationEnd  
 	 */
 	GAZ,
 	/**
-	 * water
+	 * @uml.property  name="wODA"
+	 * @uml.associationEnd  
 	 */
 	WODA, 
 	/**
-	 * Heating the water (for hot water)
+	 * @uml.property  name="pODGRZANIE"
+	 * @uml.associationEnd  
 	 */
 	PODGRZANIE, 
 	/**
-	 * sewage
+	 * @uml.property  name="sCIEKI"
+	 * @uml.associationEnd  
 	 */
 	SCIEKI,
 	/**
-	 * trash
+	 * @uml.property  name="sMIECI"
+	 * @uml.associationEnd  
 	 */
 	SMIECI,
 	/**
-	 * Internet
+	 * @uml.property  name="iNTERNET"
+	 * @uml.associationEnd  
 	 */
 	INTERNET
 }

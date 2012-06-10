@@ -25,7 +25,7 @@ abstract public class DocumentBuilder {
 	 * @throws DocumentException
 	 * @throws FileNotFoundException
 	 */
-	abstract public void initializeListeners(String filename)
+	abstract public void initializeListeners(final String filename)
 			throws DocumentException, FileNotFoundException;
 
 	/**
@@ -35,9 +35,7 @@ abstract public class DocumentBuilder {
 	 * @throws DocumentException
 	 * @throws IOException
 	 */
-	abstract public void buildBody(final Map<BillableService, Float> results,
-			final Map<BillableService, Float> administrativeResults,
-			final Calendar from, final Calendar to)
+	abstract public void buildBody(final Map<String,String> values)
 			throws DocumentException, IOException;
 	
 	/**

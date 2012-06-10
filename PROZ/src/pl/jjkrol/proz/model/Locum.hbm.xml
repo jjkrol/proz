@@ -1,18 +1,47 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated 2012-05-30 21:10:43 by Hibernate Tools 3.4.0.CR1 -->
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
- <class name="pl.jjkrol.proz.model.Locum" table="LOCUMS">
-  <id access="field" name="name" type="java.lang.String">
-   <column name="NAME"/>
-   <generator class="increment"/>
-  </id>
-  <property access="field" generated="never" lazy="false" name="area" type="float">
-   <column name="AREA"/>
-  </property>
-  <property generated="never" lazy="false" name="participationFactor" type="float">
-   <column name="PARTICIPATIONFACTOR"/>
-  </property>
- </class>
+	<class name="pl.jjkrol.proz.model.Locum" table="LOCUMS">
+		<id name="name" type="java.lang.String">
+			<column name="LOCUM_NAME"/>
+		</id>
+		
+		<property name="area" type="float">
+			<column name="AREA"/>
+		</property>
+		
+		<property name="participationFactor" type="float">
+			<column name="PARTICIPATIONFACTOR"/>
+		</property>
+		
+		<property name="advancement" type="big_decimal">
+			<column name="ADVANCEMENT"/>
+		</property>
+		
+		<property name="rent" type="big_decimal">
+			<column name="RENT"/>
+		</property>	
+		
+		<map name="counters" table="COUNTERS_LOCUMS" lazy="false">
+			<key column="LOCUM_NAME"/>
+			<map-key>
+				<column name="SERVICE" />
+				<type name="org.hibernate.type.EnumType">
+					<param name="type">12</param>
+					<param name="enumClass">pl.jjkrol.proz.model.MeasurableService</param>
+				</type>
+			</map-key>
+			<many-to-many column="COUNTER" class="pl.jjkrol.proz.model.Counter"/>
+		</map>
+		
+		<set name="occupants" table="LOCUMS_OCCUPANTS" lazy="true" inverse="false">
+			<key>
+				<column name="LOCUM_NAME" not-null="true"/>
+			</key>
+			<many-to-many class="pl.jjkrol.proz.model.Occupant">
+				<column name="OCCUPANT_ID" not-null="true"/>
+			</many-to-many>
+		</set>
+	</class>
 </hibernate-mapping>

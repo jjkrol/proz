@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.icepdf.ri.common.SwingViewBuilder;
 
 import pl.jjkrol.proz.events.*;
 import pl.jjkrol.proz.events.payments.CalculatedResultsNeededEvent;
+import pl.jjkrol.proz.events.payments.GenerateInvoiceEvent;
 import pl.jjkrol.proz.events.payments.GenerateUsageTableEvent;
 import pl.jjkrol.proz.events.payments.LocumMeasurementsAndQuotationsNeededEvent;
 import pl.jjkrol.proz.mockups.LocumMockup;
@@ -41,15 +43,18 @@ import pl.jjkrol.proz.model.BillableService;
 import pl.jjkrol.proz.mockups.ResultMockup;
 
 /**
- * A class responsible for handling all user interactions connected with
- * operating on payments
- * 
- * @author jjkrol
+ * A class responsible for handling all user interactions connected with operating on payments
+ * @author   jjkrol
  */
-public class PaymentsTab implements SpecificTab, LocumsDisplayer {
+public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 
+	/**
+	 * @author   jjkrol
+	 */
 	private class AcceptGeneratedUsageTableState extends State {
 		private SwingController controller;
+		/**
+		 */
 		private State previousState;
 
 		public AcceptGeneratedUsageTableState(final State previousState) {
@@ -73,32 +78,6 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 							.getDocumentViewController()));
 
 			statePanel.add(viewerComponentPanel);
-
-			/*
-			 * // FIXME that is a business rule!
-			 * administrativeServices.add(BillableService.CO);
-			 * administrativeServices.add(BillableService.WODA);
-			 * administrativeServices.add(BillableService.EE);
-			 * 
-			 * 
-			 * // get service types for displaying BillableService[] services =
-			 * BillableService.class.getEnumConstants();
-			 * 
-			 * for (BillableService serv : services) { JLabel lab = new
-			 * JLabel(serv.toString()); statePanel.add(lab);
-			 * serviceLabels.put(serv, lab); JTextField field = new
-			 * JTextField(10); if (administrativeServices.contains(serv)) {
-			 * statePanel.add(field); serviceFields.put(serv, field); JLabel
-			 * admLab = new JLabel(serv.toString()); statePanel.add(admLab);
-			 * administrativeServiceLabels.put(serv, admLab); JTextField
-			 * admField = new JTextField(10); statePanel.add(admField, "wrap");
-			 * administrativeServiceFields.put(serv, admField); } else {
-			 * statePanel.add(field, "wrap"); serviceFields.put(serv, field); }
-			 * 
-			 * } statePanel.add(new JLabel("Suma: ")); statePanel.add(sumField);
-			 * generateTableButton.addActionListener(generateTable);
-			 * statePanel.add(generateTableButton);
-			 */
 		}
 
 		public void displayPdf(String filename) {
@@ -127,48 +106,156 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 			super.prev();
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
+		void next() {
+			panel.remove(statePanel);
+			internalState = new AcceptInvoiceDataState(this);
+			super.next();		}
+		
 		void toggleButtons() {
 			unboldLabels();
 			Font f = genTableLabel.getFont();
 			genTableLabel.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
 			prevButton.setEnabled(true);
-			nextButton.setEnabled(false);
+			nextButton.setEnabled(true);
 		}
 
 	}
 
 	/**
-	 * 
+	 * @author   jjkrol
 	 */
-	private class AcceptInvoiceDataState extends State {
-		private Map<BillableService, Float> administrativeResults;
-		private Map<BillableService, JTextField> administrativeServiceFields =
-				new HashMap<BillableService, JTextField>();
-		private Map<BillableService, JLabel> administrativeServiceLabels =
-				new HashMap<BillableService, JLabel>();
-		private List<BillableService> administrativeServices =
-				new ArrayList<BillableService>();
+	private class AcceptGeneratedInvoiceState extends State {
+		private SwingController controller;
 		/**
-		 * storing previous state, so entered data could be preserved
 		 */
 		private State previousState;
-		private Map<BillableService, Float> results;
-		private Map<BillableService, JTextField> serviceFields =
-				new HashMap<BillableService, JTextField>();
-		private Map<BillableService, JLabel> serviceLabels =
-				new HashMap<BillableService, JLabel>();
-		private JTextField sumField = new JTextField("20");
 
-		public AcceptInvoiceDataState() {
-			// TODO Auto-generated constructor stub
+		AcceptGeneratedInvoiceState(final State previousState) {
+			this.previousState = previousState;
+			statePanel.setLayout(new MigLayout());
+			statePanel.setPreferredSize(new Dimension(700, 450));
+			statePanel.setBorder(BorderFactory.createLineBorder(Color.black));
+			controller = new SwingController();
+
+			SwingViewBuilder factory = new SwingViewBuilder(controller);
+
+			JPanel viewerComponentPanel = factory.buildViewerPanel();
+
+			// TODO needed?
+			// add copy keyboard command
+			ComponentKeyBinding.install(controller, viewerComponentPanel);
+
+			// add interactive mouse link annotation support via callback
+			controller.getDocumentViewController().setAnnotationCallback(
+					new org.icepdf.ri.common.MyAnnotationCallback(controller
+							.getDocumentViewController()));
+
+			statePanel.add(viewerComponentPanel);
 		}
 
-		public AcceptInvoiceDataState(State previousState, ResultMockup result) {
+		void displayPdf(String filename) {
+			controller.openDocument(filename);
+		}
 
-			// FIXME that is a business rule!
-			administrativeServices.add(BillableService.CO);
-			administrativeServices.add(BillableService.WODA);
-			administrativeServices.add(BillableService.EE);
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		void addPanel() {
+			panel.add(statePanel, "span 6");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		void prev() {
+			panel.remove(statePanel);
+
+			if (previousState == null)
+				logger.warn("Akcja niedozwolona");
+			else
+				internalState = previousState;
+			super.prev();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		void next() {
+			panel.remove(statePanel);
+			internalState = new Finish(this);
+			super.next();
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		void toggleButtons() {
+			unboldLabels();
+			Font f = genTableLabel.getFont();
+			genInvoiceLabel.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
+			prevButton.setEnabled(true);
+			nextButton.setEnabled(true);
+		}
+
+	}
+
+	private class Finish extends State{
+		private State previousState;
+		Finish(State previousState) {
+			this.previousState = previousState;
+		}
+		
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		void prev() {
+			panel.remove(statePanel);
+
+			if (previousState == null)
+				logger.warn("Akcja niedozwolona");
+			else
+				internalState = previousState;
+			super.prev();
+		}
+		/**
+		 * {@inheritDoc}
+		 */
+		void next() {
+			panel.remove(statePanel);
+			nextButton.setText("dalej");
+			internalState = new DataChooseState();
+			super.next();
+		}	
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		void toggleButtons() {
+			unboldLabels();
+			Font f = genTableLabel.getFont();
+			genInvoiceLabel.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
+			prevButton.setEnabled(true);
+			nextButton.setText("Koniec");
+			nextButton.setEnabled(true);
+		}
+		
+	}
+	
+	/**
+	 * @author   jjkrol
+	 */
+	private class AcceptInvoiceDataState extends State {
+		private State previousState;
+
+		public AcceptInvoiceDataState(State previousState) {
 
 			this.previousState = previousState;
 			// statePanel.add(new JLabel("Wyniki obliczen:"), "wrap");
@@ -176,63 +263,11 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 			statePanel.setPreferredSize(new Dimension(700, 450));
 			statePanel.setBorder(BorderFactory.createLineBorder(Color.black));
 
-			// get service types for displaying
-			BillableService[] services =
-					BillableService.class.getEnumConstants();
-
-			for (BillableService serv : services) {
-				JLabel lab = new JLabel(serv.toString());
-				statePanel.add(lab);
-				serviceLabels.put(serv, lab);
-				JTextField field = new JTextField(10);
-				if (administrativeServices.contains(serv)) {
-					statePanel.add(field);
-					serviceFields.put(serv, field);
-					JLabel admLab = new JLabel(serv.toString());
-					statePanel.add(admLab);
-					administrativeServiceLabels.put(serv, admLab);
-					JTextField admField = new JTextField(10);
-					statePanel.add(admField, "wrap");
-					administrativeServiceFields.put(serv, admField);
-				} else {
-					statePanel.add(field, "wrap");
-					serviceFields.put(serv, field);
-				}
-
-			}
+	
 
 			statePanel.add(new JLabel("Suma: "));
-			statePanel.add(sumField);
 		}
 
-		public void displayCalculationResults(
-				Map<BillableService, Float> results,
-				Map<BillableService, Float> administrativeResults) {
-			this.results = results;
-			this.administrativeResults = administrativeResults;
-			Float sum = 0f;
-			LocumMockup selectedLocum =
-					((DataChooseState) previousState).getSelectedLocum();
-			for (BillableService serv : results.keySet()) {
-				if (!selectedLocum.getEnabledServices().contains(serv)) {
-					results.put(serv, 0f);
-				}
-				JTextField input = serviceFields.get(serv);
-				Float resultValue = results.get(serv);
-				sum += resultValue;
-				input.setText(resultValue.toString());
-				if (administrativeServices.contains(serv)) {
-					resultValue = administrativeResults.get(serv);
-					input = administrativeServiceFields.get(serv);
-					input.setText(resultValue.toString());
-				}
-			}
-			sumField.setText(sum.toString());
-			// TODO disabled services (or in model)
-			for (BillableService serv : administrativeResults.keySet()) {
-
-			}
-		}
 
 		/**
 		 * {@inheritDoc}
@@ -257,18 +292,32 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 			super.prev();
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
+		void next() {
+			try {
+				blockingQueue.put(new GenerateInvoiceEvent(result));
+			} catch (InterruptedException e) {
+				logger.warn(e.getMessage());
+				e.printStackTrace();
+			}
+			panel.remove(statePanel);
+			internalState = new AcceptGeneratedInvoiceState(this);
+			super.next();			
+		}
+		
 		void toggleButtons() {
 			unboldLabels();
 			Font f = invoiceDataLabel.getFont();
 			invoiceDataLabel.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
 			prevButton.setEnabled(true);
-			nextButton.setEnabled(false);
+			nextButton.setEnabled(true);
 		}
 	}
 
 	/**
-	 * A class responsible for a state in which calculation results are
-	 * presented to the user and he can accept, dismiss or modify them
+	 * A class responsible for a state in which calculation results are presented to the user and he can accept, dismiss or modify them
 	 */
 	private class AcceptResultsState extends State {
 
@@ -278,36 +327,13 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 				new HashMap<BillableService, JLabel>();
 		private List<BillableService> administrativeServices =
 				new ArrayList<BillableService>();
-		private ActionListener generateInvoice = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				proceedToInvoice();
-			}
-		};
-		private JButton generateInvoiceButton = new JButton("Stwórz fakturê");
-		private ActionListener generateTable = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				proceedToUsageTable();
-			}
-		};
-		private JButton generateTableButton = new JButton("Stwórz tabelê");
-
-		/**
-		 * storing previous state, so entered data could be preserved
-		 */
+		/** storing previous state, so entered data could be preserved */
 		private State previousState;
-		private ResultMockup result;
 		private Map<BillableService, JTextField> serviceFields =
 				new HashMap<BillableService, JTextField>();
 		private Map<BillableService, JLabel> serviceLabels =
 				new HashMap<BillableService, JLabel>();
 		private JTextField sumField = new JTextField("20");
-		final private AcceptResultsState thisObject = this;
-
-		public AcceptResultsState() {
-			this(null);
-		}
 
 		public AcceptResultsState(State previousState) {
 
@@ -349,26 +375,21 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 
 			statePanel.add(new JLabel("Suma: "));
 			statePanel.add(sumField);
-			generateTableButton.addActionListener(generateTable);
-			statePanel.add(generateTableButton);
-			generateInvoiceButton.addActionListener(generateInvoice);
-			statePanel.add(generateInvoiceButton);
 		}
 
-		public void displayCalculationResults(ResultMockup moc) {
-			this.result = moc;
-			Map<BillableService, Float> results = result.results;
-			Map<BillableService, Float> administrativeResults =
-					result.administrativeResults;
-			Float sum = 0f;
-			LocumMockup selectedLocum = moc.locum;
+		public void displayCalculationResults() {
+			Map<BillableService, BigDecimal> results = result.getResults();
+			Map<BillableService, BigDecimal> administrativeResults =
+					result.getAdministrativeResults();
+			BigDecimal sum = new BigDecimal(0);
+			LocumMockup selectedLocum = result.getLocum();
 			for (BillableService serv : results.keySet()) {
 				if (!selectedLocum.getEnabledServices().contains(serv)) {
-					results.put(serv, 0f);
+					results.put(serv, new BigDecimal(0));
 				}
 				JTextField input = serviceFields.get(serv);
-				Float resultValue = results.get(serv);
-				sum += resultValue;
+				BigDecimal resultValue = results.get(serv);
+				sum = sum.add(resultValue);
 				input.setText(resultValue.toString());
 				if (administrativeServices.contains(serv)) {
 					resultValue = administrativeResults.get(serv);
@@ -379,19 +400,6 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 			sumField.setText(sum.toString());
 		}
 
-		private void proceedToInvoice() {
-			panel.remove(statePanel);
-			internalState = new AcceptInvoiceDataState(this, result);
-			super.next();
-		}
-
-		private void proceedToUsageTable() {
-			panel.remove(statePanel);
-			internalState = new AcceptUsageTableDataState(this, result);
-			super.next();
-
-		}
-
 		/**
 		 * {@inheritDoc}
 		 */
@@ -400,6 +408,15 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 			panel.add(statePanel, "span 6");
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
+		void next() {
+			panel.remove(statePanel);
+			internalState = new AcceptUsageTableDataState(this, result);
+			super.next();
+			
+		}
 		/**
 		 * {@inheritDoc}
 		 */
@@ -418,14 +435,13 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 			unboldLabels();
 			Font f = resultLabel.getFont();
 			resultLabel.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
-			prevButton.setEnabled(false);
 			prevButton.setEnabled(true);
-			nextButton.setEnabled(false);
+			nextButton.setEnabled(true);
 		}
 	}
 
 	/**
-	 * 
+	 * @author   jjkrol
 	 */
 	private class AcceptUsageTableDataState extends State {
 		private Map<BillableService, Float> administrativeResults;
@@ -435,11 +451,16 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 				new HashMap<BillableService, JLabel>();
 		private List<BillableService> administrativeServices =
 				new ArrayList<BillableService>();
+		/**
+		 * @uml.property  name="previousState"
+		 * @uml.associationEnd  
+		 */
 		private State previousState;
 		/**
 		 * storing previous state, so entered data could be preserved
+		 * @uml.property  name="result"
+		 * @uml.associationEnd  
 		 */
-		final private ResultMockup result;
 		private Map<BillableService, Float> results;
 		private Map<BillableService, JTextField> serviceFields =
 				new HashMap<BillableService, JTextField>();
@@ -448,9 +469,9 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 		private JTextField sumField = new JTextField("20");
 
 		public AcceptUsageTableDataState(final State previousState,
-				final ResultMockup result) {
+				final ResultMockup givenResult) {
 			this.previousState = previousState;
-			this.result = result;
+			result = givenResult;
 			statePanel.setLayout(new MigLayout());
 			statePanel.setPreferredSize(new Dimension(700, 450));
 			statePanel.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -524,7 +545,7 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 			try {
 				blockingQueue.put(new GenerateUsageTableEvent(result));
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				logger.warn(e.getMessage());
 				e.printStackTrace();
 			}
 			panel.remove(statePanel);
@@ -556,8 +577,7 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 	}
 
 	/**
-	 * Class responsible for state in which the user is entering data concerning
-	 * locum, date and quotations to calculate payment.
+	 * Class responsible for state in which the user is entering data concerning locum, date and quotations to calculate payment.
 	 */
 	private class DataChooseState extends State {
 		private DefaultComboBoxModel locumsComboModel =
@@ -577,13 +597,19 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 		private DefaultComboBoxModel quotationsComboModel =
 				new DefaultComboBoxModel();
 		private JComboBox quotationsCombo = new JComboBox(quotationsComboModel);
+		/**
+		 * @uml.property  name="selectedLocum"
+		 * @uml.associationEnd  
+		 */
 		private LocumMockup selectedLocum = new LocumMockup(null, 0, 0, null,
-				null, null);
+				null, null,null,null);
 
 		/**
 		 * Constructor creates the state panel and all its components
 		 */
 		DataChooseState() {
+			result = null;
+			
 			statePanel.setLayout(new MigLayout());
 			statePanel.add(new JLabel("Lokal: "));
 			statePanel.add(locumsCombo, "wrap");
@@ -604,7 +630,7 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 									.put(new LocumMeasurementsAndQuotationsNeededEvent(
 											moc));
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
+							logger.warn(e.getMessage());
 							e.printStackTrace();
 						}
 					}
@@ -625,7 +651,7 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 						if (selected != null) {
 							measurementsToComboModel.removeAllElements();
 							for (MeasurementMockup moc : measurements) {
-								if (moc.date.after(selected.date)) {
+								if (moc.getDate().after(selected.getDate())) {
 									measurementsToComboModel.addElement(moc);
 								}
 							}
@@ -665,7 +691,7 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 			measurementsToComboModel.removeAllElements();
 			MeasurementMockup oldestMeasurement = measurements.get(0);
 			for (MeasurementMockup mock : measurements) {
-				if (mock.date.before(oldestMeasurement.date))
+				if (mock.getDate().before(oldestMeasurement.getDate()))
 					oldestMeasurement = mock;
 				measurementsToComboModel.addElement(mock);
 			}
@@ -698,6 +724,10 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 			}
 		}
 
+		/**
+		 * @return
+		 * @uml.property  name="selectedLocum"
+		 */
 		LocumMockup getSelectedLocum() {
 			return selectedLocum;
 		}
@@ -718,7 +748,7 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 				blockingQueue.put(new CalculatedResultsNeededEvent(
 						selectedLocum, meaFrom, meaTo, quot));
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				logger.warn(e.getMessage());
 				e.printStackTrace();
 			}
 			internalState = new AcceptResultsState(this);
@@ -740,10 +770,10 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 	private class State {
 		protected JPanel statePanel = new JPanel();
 
-		public void displayCalculationResults(ResultMockup moc) {
+		void displayCalculationResults() {
 		}
 
-		public void displayLocumMeasurementsAndQuotations(
+		void displayLocumMeasurementsAndQuotations(
 				List<MeasurementMockup> measurements,
 				Map<String, List<QuotationMockup>> quotations) {
 		}
@@ -784,6 +814,9 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 			internalState.toggleButtons();
 		}
 
+		/**
+		 * sets states of buttons and labels
+		 */
 		void toggleButtons() {
 		}
 
@@ -793,6 +826,13 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 				label.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
 			}
 		}
+
+		/**
+		 * displays a specified file in the tab
+		 * @param filename
+		 */
+		void displayPdf(String filename) {
+		}
 	}
 
 	static Logger logger = Logger.getLogger(PROZJFrame.class);
@@ -800,6 +840,7 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 	private State internalState = new DataChooseState();
 	private String name = "P³atnoœci";
 
+	private ResultMockup result;
 	private JButton nextButton = new JButton("Dalej");
 	private final JPanel panel = new JPanel();
 	private JButton prevButton = new JButton("Wstecz");
@@ -862,7 +903,8 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				internalState.displayCalculationResults(moc);
+				result = moc;
+				internalState.displayCalculationResults();
 			}
 		});
 
@@ -904,8 +946,7 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 			@Override
 			public void run() {
 				// TODO excepetions, reuse in other rab
-				((AcceptGeneratedUsageTableState) internalState)
-						.displayPdf(filename);
+				internalState.displayPdf(filename);
 			}
 		});
 	}
@@ -916,7 +957,8 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@inheritDoc} 
+	 * @uml.property  name="name"
 	 */
 	@Override
 	public String getName() {
@@ -928,7 +970,7 @@ public class PaymentsTab implements SpecificTab, LocumsDisplayer {
 		try {
 			blockingQueue.put(new LocumsListNeededEvent(this));
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			logger.warn(e.getMessage());
 			e.printStackTrace();
 		}
 	}

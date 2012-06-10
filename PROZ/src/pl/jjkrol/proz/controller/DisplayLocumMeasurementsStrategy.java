@@ -10,13 +10,14 @@ import pl.jjkrol.proz.model.NoSuchLocum;
 import pl.jjkrol.proz.view.MeasurementsTab;
 import pl.jjkrol.proz.view.NoSuchTabException;
 import pl.jjkrol.proz.view.View;
-import pl.jjkrol.proz.events.LocumChosenForViewingEvent;
+import pl.jjkrol.proz.events.measurements.LocumChosenForViewingEvent;
+
 import org.apache.log4j.Logger;
 
 /**
  * display single locum measurements on the measurements tab
  */
-class DisplayLocumMeasurementsStrategy extends PROZStrategy {
+class DisplayLocumMeasurementsStrategy extends MeasurementsStrategy {
 	static Logger logger = Logger.getLogger(PROZStrategy.class);
 
 	DisplayLocumMeasurementsStrategy(View view, Model model) {
@@ -26,6 +27,7 @@ class DisplayLocumMeasurementsStrategy extends PROZStrategy {
 	public void execute(final PROZEvent e) {
 		LocumMockup emptyMockup = ((LocumChosenForViewingEvent) e).moc;
 		String locumName = emptyMockup.getName();
+		//FIXME: not onmly for Measurements Tab
 		try {
 
 			final List<MeasurementMockup> mocs =
@@ -39,8 +41,7 @@ class DisplayLocumMeasurementsStrategy extends PROZStrategy {
 			// TODO messagebox?
 			logger.warn("No such locum: " + locumName + "!");
 		} catch (NoSuchTabException exc) {
-			// TODO Auto-generated catch block
-			exc.printStackTrace();
+			logger.warn("No such tab");
 		}
 	}
 }

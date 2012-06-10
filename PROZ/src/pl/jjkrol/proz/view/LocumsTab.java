@@ -30,13 +30,19 @@ import pl.jjkrol.proz.controller.LocumsDisplayer;
 import pl.jjkrol.proz.mockups.OccupantMockup;
 import pl.jjkrol.proz.model.Occupant;
 
-public class LocumsTab implements SpecificTab, LocumsDisplayer{
+/**
+ * @author   jjkrol
+ */
+public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 	private BlockingQueue<PROZEvent> blockingQueue;
 	
 	public LocumsTab(BlockingQueue<PROZEvent> blockingQueue) {
 		this.blockingQueue = blockingQueue;
 	}
 	
+	/**
+	 * @author   jjkrol
+	 */
 	private class ListItem {
 		private String name;
 		private int id;
@@ -81,7 +87,7 @@ public class LocumsTab implements SpecificTab, LocumsDisplayer{
 			try {
 				blockingQueue.put(new OccupantChosenForViewingEvent(moc));
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				logger.warn(e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -196,7 +202,7 @@ public class LocumsTab implements SpecificTab, LocumsDisplayer{
 	}
 
 	public void displayOccupantsData(OccupantMockup moc) {
-		nameInput.setText(moc.name);
+		nameInput.setText(moc.getName());
 	}
 
 	@Override
@@ -285,7 +291,7 @@ public class LocumsTab implements SpecificTab, LocumsDisplayer{
 		try {
 			blockingQueue.put(new LocumsListNeededEvent(this));
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			logger.warn(e.getMessage());
 			e.printStackTrace();
 		}
 	}
