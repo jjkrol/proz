@@ -15,16 +15,17 @@ import org.apache.log4j.Logger;
  * 
  * @author jjkrol
  */
-public class Locum implements Measurable{
+public class Locum implements Measurable {
 
 	/**
 	 * Responsible for representing ownership of a locum.
 	 */
 	public enum Ownership {
 
-		/** */
+		/** The FO r_ rent. */
 		FOR_RENT,
-		/** */
+
+		/** The OWN. */
 		OWN
 	}
 
@@ -37,21 +38,23 @@ public class Locum implements Measurable{
 	/** The building. */
 	private Building building;
 	/** list of counters installed in the locum. */
-	private Map<MeasurableService, Counter> counters =
-			new HashMap<MeasurableService, Counter>();
+	private Map<LocumService, Counter> counters =
+			new HashMap<LocumService, Counter>();
 	/**
 	 * a list of services which are enabled for the locum (and which are billed
-	 * in consequence). 
+	 * in consequence).
 	 */
 	private List<BillableService> enabledServices =
 			new ArrayList<BillableService>();
 	/** The name. */
 	private String name;
-	/** The advancement paid for the media */
+
+	/** The advancement paid for the media. */
 	private BigDecimal advancement;
-	/** The rent paid for the locum */
+
+	/** The rent paid for the locum. */
 	private BigDecimal rent;
-	/** list of occupants living in this locum.*/
+	/** list of occupants living in this locum. */
 	private Set<Occupant> occupants = new HashSet<Occupant>();
 	/** tells if this locum is rented or used by administration. */
 	private Ownership ownership;
@@ -78,7 +81,7 @@ public class Locum implements Measurable{
 	 * @param givenName
 	 *            the given name
 	 */
-	Locum(float givenArea, String givenName) {
+	Locum(final float givenArea, final String givenName) {
 		this(givenArea, givenName, Ownership.FOR_RENT);
 	}
 
@@ -92,7 +95,8 @@ public class Locum implements Measurable{
 	 * @param givenOwnership
 	 *            the given ownership
 	 */
-	Locum(float givenArea, String givenName, Ownership givenOwnership) {
+	Locum(final float givenArea, final String givenName,
+			final Ownership givenOwnership) {
 		name = givenName;
 		area = givenArea;
 		ownership = givenOwnership;
@@ -102,9 +106,9 @@ public class Locum implements Measurable{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void addMeasures(Calendar date,
-			Map<MeasurableService, Float> measures) {
-		for (MeasurableService serv : measures.keySet()) {
+	public void addMeasures(final Calendar date,
+			final Map<LocumService, Float> measures) {
+		for (LocumService serv : measures.keySet()) {
 			Counter count = counters.get(serv);
 			count.addMeasure(date, measures.get(serv));
 		}
@@ -116,7 +120,7 @@ public class Locum implements Measurable{
 	 * @param occupant
 	 *            the occupant
 	 */
-	void addOccupant(Occupant occupant) {
+	void addOccupant(final Occupant occupant) {
 		occupants.add(occupant);
 	}
 
@@ -128,7 +132,7 @@ public class Locum implements Measurable{
 	 * @param quotations
 	 *            the quotations
 	 */
-	void addQuotationSet(String name, final List<Quotation> quotations) {
+	void addQuotationSet(final String name, final List<Quotation> quotations) {
 		if (!this.quotations.containsKey(name)) {
 			this.quotations.put(name, quotations);
 		}
@@ -157,7 +161,7 @@ public class Locum implements Measurable{
 	 * 
 	 * @return the counters
 	 */
-	Map<MeasurableService, Counter> getCounters() {
+	Map<LocumService, Counter> getCounters() {
 		return counters;
 	}
 
@@ -176,13 +180,13 @@ public class Locum implements Measurable{
 	 * @return the measurements mockups
 	 */
 	List<MeasurementMockup> getMeasurementsMockups() {
-		Map<Calendar, Map<MeasurableService, Float>> dates =
-				new HashMap<Calendar, Map<MeasurableService, Float>>();
-		for (MeasurableService serv : counters.keySet()) {
+		Map<Calendar, Map<LocumService, Float>> dates =
+				new HashMap<Calendar, Map<LocumService, Float>>();
+		for (LocumService serv : counters.keySet()) {
 			Counter c = counters.get(serv);
 			for (Calendar date : c.getDates()) {
 				if (!dates.containsKey(date)) {
-					dates.put(date, new HashMap<MeasurableService, Float>());
+					dates.put(date, new HashMap<LocumService, Float>());
 				}
 				try {
 					dates.get(date).put(serv, c.getMeasure(date));
@@ -213,9 +217,9 @@ public class Locum implements Measurable{
 		for (Occupant occ : occupants) {
 			occs.add(occ.getMockup());
 		}
-		Map<MeasurableService, CounterMockup> counts =
-				new HashMap<MeasurableService, CounterMockup>();
-		for (MeasurableService serv : counters.keySet()) {
+		Map<LocumService, CounterMockup> counts =
+				new HashMap<LocumService, CounterMockup>();
+		for (LocumService serv : counters.keySet()) {
 			Counter c = counters.get(serv);
 			counts.put(serv, c.getMockup());
 		}
@@ -234,6 +238,8 @@ public class Locum implements Measurable{
 	}
 
 	/**
+	 * Gets the advancement.
+	 * 
 	 * @return the advancement
 	 */
 	BigDecimal getAdvancement() {
@@ -241,13 +247,18 @@ public class Locum implements Measurable{
 	}
 
 	/**
-	 * @param advancement the advancement to set
+	 * Sets the advancement.
+	 * 
+	 * @param advancement
+	 *            the advancement to set
 	 */
-	void setAdvancement(BigDecimal advancement) {
+	void setAdvancement(final BigDecimal advancement) {
 		this.advancement = advancement;
 	}
 
 	/**
+	 * Gets the rent.
+	 * 
 	 * @return the rent
 	 */
 	BigDecimal getRent() {
@@ -255,9 +266,12 @@ public class Locum implements Measurable{
 	}
 
 	/**
-	 * @param rent the rent to set
+	 * Sets the rent.
+	 * 
+	 * @param rent
+	 *            the rent to set
 	 */
-	void setRent(BigDecimal rent) {
+	void setRent(final BigDecimal rent) {
 		this.rent = rent;
 	}
 
@@ -315,7 +329,7 @@ public class Locum implements Measurable{
 	 * @throws NoSuchQuotationSet
 	 *             the no such quotation set
 	 */
-	List<Quotation> getQuotationSet(String name)
+	List<Quotation> getQuotationSet(final String name)
 			throws NoSuchQuotationSet {
 		if (quotations.containsKey(name)) {
 			return quotations.get(name);
@@ -344,26 +358,25 @@ public class Locum implements Measurable{
 	/**
 	 * calculates usage for each counter and returns all.
 	 * 
-	 * @param start
-	 *            the start
-	 * @param end
-	 *            the end
+	 * @param date
+	 *            the date
 	 * @return the usage
-	 * @throws NoSuchDate 
+	 * @throws NoSuchDate
+	 *             the no such date
 	 */
-	public Map<MeasurableService, Float> getMeasurement(Calendar date) throws NoSuchDate {
-		Map<MeasurableService, Float> returnMap =
-				new HashMap<MeasurableService, Float>();
+	public Map<LocumService, Float> getMeasurement(final Calendar date)
+			throws NoSuchDate {
+		Map<LocumService, Float> returnMap = new HashMap<LocumService, Float>();
 
-		for (MeasurableService service : counters.keySet()) {
+		for (LocumService service : counters.keySet()) {
 			Counter singleCounter = counters.get(service);
 			float counterUsage = singleCounter.getMeasure(date);
 			returnMap.put(service, counterUsage);
 		}
 
 		return returnMap;
-	}	
-	
+	}
+
 	/**
 	 * calculates usage for each counter and returns all.
 	 * 
@@ -372,21 +385,22 @@ public class Locum implements Measurable{
 	 * @param end
 	 *            the end
 	 * @return the usage
-	 * @throws NoSuchDate 
+	 * @throws NoSuchDate
+	 *             the no such date
 	 */
 	@Override
-	public Map<MeasurableService, Float> getUsage(Calendar start, Calendar end) throws NoSuchDate {
-		Map<MeasurableService, Float> returnMap =
-				new HashMap<MeasurableService, Float>();
+	public Map<LocumService, Float> getUsage(final Calendar start,
+			final Calendar end) throws NoSuchDate {
+		Map<LocumService, Float> returnMap = new HashMap<LocumService, Float>();
 
-		for (MeasurableService service : counters.keySet()) {
+		for (LocumService service : counters.keySet()) {
 			Counter singleCounter = counters.get(service);
 			float counterUsage = singleCounter.getUsage(start, end);
 			returnMap.put(service, counterUsage);
 		}
 
 		return returnMap;
-	}
+	}
 
 	/**
 	 * Removes the occupant.
@@ -394,7 +408,7 @@ public class Locum implements Measurable{
 	 * @param occupant
 	 *            the occupant
 	 */
-	void removeOccupant(Occupant occupant) {
+	void removeOccupant(final Occupant occupant) {
 		occupants.remove(occupant);
 	}
 
@@ -404,7 +418,7 @@ public class Locum implements Measurable{
 	 * @param area
 	 *            the area to set
 	 */
-	void setArea(float area) {
+	void setArea(final float area) {
 		this.area = area;
 	}
 
@@ -419,7 +433,7 @@ public class Locum implements Measurable{
 	 * quotations) { this.quotations = quotations; }
 	 */
 
-	void setBillingPerson(Occupant billingPerson) {
+	void setBillingPerson(final Occupant billingPerson) {
 		this.billingPerson = billingPerson;
 	}
 
@@ -429,7 +443,7 @@ public class Locum implements Measurable{
 	 * @param counters
 	 *            the counters to set
 	 */
-	void setCounters(Map<MeasurableService, Counter> counters) {
+	void setCounters(final Map<LocumService, Counter> counters) {
 		this.counters = counters;
 	}
 
@@ -439,7 +453,7 @@ public class Locum implements Measurable{
 	 * @param enabledServices
 	 *            the enabledServices to set
 	 */
-	void setEnabledServices(List<BillableService> enabledServices) {
+	void setEnabledServices(final List<BillableService> enabledServices) {
 		this.enabledServices = enabledServices;
 	}
 
@@ -449,7 +463,7 @@ public class Locum implements Measurable{
 	 * @param name
 	 *            the name to set
 	 */
-	void setName(String name) {
+	void setName(final String name) {
 		this.name = name;
 	}
 
@@ -459,7 +473,7 @@ public class Locum implements Measurable{
 	 * @param occupants
 	 *            the occupants to set
 	 */
-	void setOccupants(Set<Occupant> occupants) {
+	void setOccupants(final Set<Occupant> occupants) {
 		this.occupants = occupants;
 	}
 
@@ -469,7 +483,7 @@ public class Locum implements Measurable{
 	 * @param ownership
 	 *            the ownership to set
 	 */
-	void setOwnership(Ownership ownership) {
+	void setOwnership(final Ownership ownership) {
 		this.ownership = ownership;
 	}
 
@@ -479,7 +493,7 @@ public class Locum implements Measurable{
 	 * @param participationFactor
 	 *            the new participation factor
 	 */
-	void setParticipationFactor(float participationFactor) {
+	void setParticipationFactor(final float participationFactor) {
 		this.participationFactor = participationFactor;
 	}
 
@@ -489,7 +503,7 @@ public class Locum implements Measurable{
 	 * @param quotations
 	 *            the quotations to set
 	 */
-	void setQuotations(Map<String, List<Quotation>> quotations) {
+	void setQuotations(final Map<String, List<Quotation>> quotations) {
 		this.quotations = quotations;
 	}
 
@@ -508,19 +522,33 @@ public class Locum implements Measurable{
 	 * @param building
 	 *            the new building
 	 */
-	private void setBuilding(Building building) {
+	private void setBuilding(final Building building) {
 		this.building = building;
 	}
 
-	void removeMeasures(Calendar date) {
-		for(MeasurableService service : counters.keySet()) {
+	/**
+	 * Removes the measures.
+	 * 
+	 * @param date
+	 *            the date
+	 */
+	void removeMeasures(final Calendar date) {
+		for (LocumService service : counters.keySet()) {
 			Counter count = counters.get(service);
 			count.removeMeasure(date);
 		}
 	}
 
-	void setMeasures(Calendar date, Map<MeasurableService, Float> values) {
-		for(MeasurableService service : counters.keySet()) {
+	/**
+	 * Sets the measures.
+	 * 
+	 * @param date
+	 *            the date
+	 * @param values
+	 *            the values
+	 */
+	void setMeasures(final Calendar date, final Map<LocumService, Float> values) {
+		for (LocumService service : counters.keySet()) {
 			Counter count = counters.get(service);
 			count.removeMeasure(date);
 			count.addMeasure(date, values.get(service));

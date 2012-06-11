@@ -10,13 +10,19 @@ import org.hibernate.service.ServiceRegistryBuilder;
 import org.apache.log4j.Logger;
 
 /**
+ * The Class HibernateUtil.
+ *
  * @author jjkrol
  */
 public class HibernateUtil {
-	/**
-	 */
+	
+	/** The session factory. */
 	private static SessionFactory sessionFactory;
+	
+	/** The service registry. */
 	private static ServiceRegistry serviceRegistry;
+	
+	/** The logger. */
 	static Logger logger = Logger.getLogger(HibernateUtil.class);
 
 	static {
@@ -32,14 +38,19 @@ public class HibernateUtil {
 		}
 	}
 
+	/** The Constant threadSession. */
 	private static final ThreadLocal<Session> threadSession =
 			new ThreadLocal<Session>();
+	
+	/** The Constant threadTransaction. */
 	private static final ThreadLocal<Transaction> threadTransaction =
 			new ThreadLocal<Transaction>();
-	static {
-		// Initialize SessionFactory...
-	}
 
+	/**
+	 * Gets the session.
+	 *
+	 * @return the session
+	 */
 	public static Session getSession() {
 		Session s = (Session) threadSession.get();
 		// Open a new Session, if this thread has none yet
@@ -55,6 +66,9 @@ public class HibernateUtil {
 		return s;
 	}
 
+	/**
+	 * Close session.
+	 */
 	public static void closeSession() {
 		try {
 			Session s = (Session) threadSession.get();
@@ -66,6 +80,9 @@ public class HibernateUtil {
 		}
 	}
 
+	/**
+	 * Begin transaction.
+	 */
 	public static void beginTransaction() {
 		Transaction tx = (Transaction) threadTransaction.get();
 		try {
@@ -78,6 +95,9 @@ public class HibernateUtil {
 		}
 	}
 
+	/**
+	 * Commit transaction.
+	 */
 	public static void commitTransaction() {
 		Transaction tx = (Transaction) threadTransaction.get();
 		try {
@@ -90,6 +110,9 @@ public class HibernateUtil {
 		}
 	}
 
+	/**
+	 * Rollback transaction.
+	 */
 	public static void rollbackTransaction() {
 		Transaction tx = (Transaction) threadTransaction.get();
 		try {

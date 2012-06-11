@@ -9,10 +9,24 @@ import pl.jjkrol.proz.mockups.MeasurementMockup;
 import pl.jjkrol.proz.model.Model;
 import pl.jjkrol.proz.view.View;
 
+/**
+ * The Class SaveMeasurementDataStrategy.
+ */
 public class SaveMeasurementDataStrategy extends PROZStrategy {
-	public SaveMeasurementDataStrategy(View view, Model model) {
+	
+	/**
+	 * Instantiates a new save measurement data strategy.
+	 *
+	 * @param view the view
+	 * @param model the model
+	 */
+	public SaveMeasurementDataStrategy(final View view, final Model model) {
 		super(view, model);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	public void execute(final PROZEvent event) {
 		MeasurementMockup mea = ((SaveMeasurementEvent) event).getMeasurementMockup();
 		LocumMockup loc = ((SaveMeasurementEvent) event).getLocumMockup();

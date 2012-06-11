@@ -6,35 +6,31 @@
 		<id name="name" type="java.lang.String">
 			<column name="LOCUM_NAME"/>
 		</id>
-		
 		<property name="area" type="float">
 			<column name="AREA"/>
 		</property>
-		
 		<property name="participationFactor" type="float">
 			<column name="PARTICIPATIONFACTOR"/>
 		</property>
-		
 		<property name="advancement" type="big_decimal">
 			<column name="ADVANCEMENT"/>
 		</property>
-		
 		<property name="rent" type="big_decimal">
 			<column name="RENT"/>
-		</property>	
-		
+		</property>
+		<many-to-one name="billingPerson" class="pl.jjkrol.proz.model.Occupant" lazy="false"
+		column="billing_person"/>
 		<map name="counters" table="COUNTERS_LOCUMS" lazy="false">
 			<key column="LOCUM_NAME"/>
 			<map-key>
 				<column name="SERVICE" />
 				<type name="org.hibernate.type.EnumType">
 					<param name="type">12</param>
-					<param name="enumClass">pl.jjkrol.proz.model.MeasurableService</param>
+					<param name="enumClass">pl.jjkrol.proz.model.LocumService</param>
 				</type>
 			</map-key>
 			<many-to-many column="COUNTER" class="pl.jjkrol.proz.model.Counter"/>
 		</map>
-		
 		<set name="occupants" table="LOCUMS_OCCUPANTS" lazy="true" inverse="false">
 			<key>
 				<column name="LOCUM_NAME" not-null="true"/>

@@ -9,19 +9,33 @@ import pl.jjkrol.proz.view.NoSuchTabException;
 import pl.jjkrol.proz.view.OccupantsTab;
 import pl.jjkrol.proz.view.View;
 import org.apache.log4j.Logger;
+
 /**
- * displays occupants on occupants panel
+ * displays occupants on occupants panel.
  */
 
 public class DisplayOccupantsStrategy extends OccupantsStrategy {
-static Logger logger = Logger.getLogger("strategy");
-	public DisplayOccupantsStrategy(View view, Model model) {
+
+	/** The logger. */
+	static Logger logger = Logger.getLogger("strategy");
+
+	/**
+	 * Instantiates a new display occupants strategy.
+	 * 
+	 * @param view
+	 *            the view
+	 * @param model
+	 *            the model
+	 */
+	public DisplayOccupantsStrategy(final View view, final Model model) {
 		super(view, model);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public
-	void execute(final PROZEvent event) {
+	public void execute(final PROZEvent event) {
 		List<OccupantMockup> occMocks = model.getOccupantsMockups();
 		OccupantsTab v;
 		try {

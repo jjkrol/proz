@@ -19,6 +19,9 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.util.Calendar;
 
+/**
+ * The Class UsageTableBuilder.
+ */
 public class UsageTableBuilder extends DocumentBuilder {
 
 	/**

@@ -3,16 +3,22 @@ package pl.jjkrol.proz.events.occupants;
 import pl.jjkrol.proz.mockups.OccupantMockup;
 
 /**
- * @author   jjkrol
+ * The Class AddOccupantEvent.
+ * 
+ * @author jjkrol
  */
 public class AddOccupantEvent extends OccupantsEvent {
-	/**
-	 * @uml.property  name="mockup"
-	 * @uml.associationEnd  
-	 */
+
+	/** The mockup. */
 	public final OccupantMockup mockup;
 
-	public AddOccupantEvent(OccupantMockup moc) {
+	/**
+	 * Instantiates a new adds the occupant event.
+	 * 
+	 * @param moc
+	 *            the moc
+	 */
+	public AddOccupantEvent(final OccupantMockup moc) {
 		this.mockup = moc;
 	}
 

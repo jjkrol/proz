@@ -17,39 +17,53 @@ import pl.jjkrol.proz.view.View;
 
 import org.apache.log4j.Logger;
 
+/**
+ * displays measurements and quotations of the locum for showing in the payments
+ * tab.
+ */
+public class DisplayLocumMeasurementsAndQuotationsStrategy extends
+		PaymentsStrategy {
+
+	/** The logger. */
+	static Logger logger = Logger.getLogger(PROZStrategy.class);
+
 	/**
-	 * displays measurements and quotations of the locum for showing in the
-	 * payments tab
+	 * Instantiates a new display locum measurements and quotations strategy.
+	 * 
+	 * @param view
+	 *            the view
+	 * @param model
+	 *            the model
 	 */
-	public class DisplayLocumMeasurementsAndQuotationsStrategy extends PaymentsStrategy {
-		static Logger logger = Logger.getLogger(PROZStrategy.class);
-		
-		public DisplayLocumMeasurementsAndQuotationsStrategy(View view, Model model) {
-			super(view, model);
-		}
+	public DisplayLocumMeasurementsAndQuotationsStrategy(final View view,
+			final Model model) {
+		super(view, model);
+	}
 
-		public void execute(final PROZEvent e) {
-			LocumMockup emptyMockup =
-					((LocumMeasurementsAndQuotationsNeededEvent) e).moc;
-			String locumName = emptyMockup.getName();
-			try {
+	/**
+	 * {@inheritDoc}
+	 */
+	public void execute(final PROZEvent e) {
+		LocumMockup emptyMockup =
+				((LocumMeasurementsAndQuotationsNeededEvent) e).moc;
+		String locumName = emptyMockup.getName();
+		try {
 
-				// get measurement and quotation data
-				final List<MeasurementMockup> measurements =
-						model.getLocumMeasurementMockups(locumName);
-				final Map<String, List<QuotationMockup>> quotations =
-						model.getLocumQuotationMockups(locumName);
+			// get measurement and quotation data
+			final List<MeasurementMockup> measurements =
+					model.getLocumMeasurementMockups(locumName);
+			final Map<String, List<QuotationMockup>> quotations =
+					model.getLocumQuotationMockups(locumName);
 
-				final PaymentsTab v =
-						(PaymentsTab) view.getSpecificView(PaymentsTab.class);
-						v.displayLocumMeasurementsAndQuotations(measurements,
-								quotations);
-			} catch (NoSuchLocum exception) {
-				logger.warn("No such locum: " + locumName + "!");
-				// TODO some messagebox?
-			} catch (NoSuchTabException exception) {
-				logger.warn("No such tab");
-				exception.printStackTrace();
-			}
+			final PaymentsTab v =
+					(PaymentsTab) view.getSpecificView(PaymentsTab.class);
+			v.displayLocumMeasurementsAndQuotations(measurements, quotations);
+		} catch (NoSuchLocum exception) {
+			logger.warn("No such locum: " + locumName + "!");
+			// TODO some messagebox?
+		} catch (NoSuchTabException exception) {
+			logger.warn("No such tab");
+			exception.printStackTrace();
 		}
 	}
+}

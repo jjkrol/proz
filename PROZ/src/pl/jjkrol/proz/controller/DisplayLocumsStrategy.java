@@ -9,16 +9,26 @@ import pl.jjkrol.proz.model.Model;
 import pl.jjkrol.proz.view.View;
 
 /**
- * displays locums 
+ * displays locums.
  */
 class DisplayLocumsStrategy extends PROZStrategy {
-	public DisplayLocumsStrategy(View view, Model model) {
+	
+	/**
+	 * Instantiates a new display locums strategy.
+	 *
+	 * @param view the view
+	 * @param model the model
+	 */
+	public DisplayLocumsStrategy(final View view, final Model model) {
 		super(view, model);
 	}
 
-	public void execute(final PROZEvent e) {
+	/**
+	 * {@inheritDoc}
+	 */
+	public void execute(final PROZEvent event) {
 		final List<LocumMockup> locMocks = model.getLocumsMockups();
-		final LocumsDisplayer d = ((LocumsListNeededEvent) e).caller;
+		final LocumsDisplayer d = ((LocumsListNeededEvent) event).caller;
 		d.displayLocumsList(locMocks);
 	}
 }

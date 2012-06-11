@@ -3,16 +3,22 @@ package pl.jjkrol.proz.events;
 import pl.jjkrol.proz.controller.LocumsDisplayer;
 
 /**
- * @author   jjkrol
+ * The Class LocumsListNeededEvent.
+ * 
+ * @author jjkrol
  */
 public class LocumsListNeededEvent extends PROZEvent {
-	/**
-	 * @uml.property  name="caller"
-	 * @uml.associationEnd  
-	 */
+
+	/** The caller. */
 	final public LocumsDisplayer caller;
 
-	public LocumsListNeededEvent(LocumsDisplayer caller) {
+	/**
+	 * Instantiates a new locums list needed event.
+	 * 
+	 * @param caller
+	 *            the caller
+	 */
+	public LocumsListNeededEvent(final LocumsDisplayer caller) {
 		this.caller = caller;
 	}
 }

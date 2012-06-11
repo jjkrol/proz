@@ -1,11 +1,28 @@
 package pl.jjkrol.proz.model;
 
+/**
+ * The Class Flat.
+ */
 public class Flat extends Locum{
-	public Flat(float givenArea, String givenName){
+	
+	/**
+	 * Instantiates a new flat.
+	 *
+	 * @param givenArea the given area
+	 * @param givenName the given name
+	 */
+	public Flat(final float givenArea, final String givenName){
 		super(givenArea, givenName);
 	}
 	
-	public Flat(float givenArea, String givenName, Ownership ownership){
+	/**
+	 * Instantiates a new flat.
+	 *
+	 * @param givenArea the given area
+	 * @param givenName the given name
+	 * @param ownership the ownership
+	 */
+	public Flat(final float givenArea, final String givenName, final Ownership ownership){
 		super(givenArea, givenName, ownership);
 	}
 }

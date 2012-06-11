@@ -4,9 +4,20 @@ import pl.jjkrol.proz.controller.PROZStrategy;
 import pl.jjkrol.proz.model.Model;
 import pl.jjkrol.proz.view.View;
 
+/**
+ * The Class PaymentsStrategy.
+ */
 public class PaymentsStrategy extends PROZStrategy {
 
-	PaymentsStrategy(View view, Model model) {
+	/**
+	 * Instantiates a new payments strategy.
+	 * 
+	 * @param view
+	 *            the view
+	 * @param model
+	 *            the model
+	 */
+	PaymentsStrategy(final View view, final Model model) {
 		super(view, model);
 	}
 

@@ -31,6 +31,7 @@ import pl.jjkrol.proz.mockups.OccupantMockup;
 import pl.jjkrol.proz.model.Occupant;
 
 /**
+ * TODO: implement this
  * The Class LocumsTab.
  *
  * @author   jjkrol
@@ -45,13 +46,13 @@ public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 	 *
 	 * @param blockingQueue the blocking queue
 	 */
-	public LocumsTab(BlockingQueue<PROZEvent> blockingQueue) {
+	public LocumsTab(final BlockingQueue<PROZEvent> blockingQueue) {
 		this.blockingQueue = blockingQueue;
 	}
 	
 	/**
 	 * The Class ListItem.
-	 *
+	 * TODO: change to LocumMockup
 	 * @author   jjkrol
 	 */
 	private class ListItem {
@@ -68,7 +69,7 @@ public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 		 * @param name the name
 		 * @param id the id
 		 */
-		ListItem(String name, int id) {
+		ListItem(final String name, final int id) {
 			this.name = name;
 			this.id = id;
 		}
@@ -98,7 +99,7 @@ public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 		/* (non-Javadoc)
 		 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
 		 */
-		public void valueChanged(ListSelectionEvent event) {
+		public void valueChanged(final ListSelectionEvent event) {
 			if (!event.getValueIsAdjusting()) {
 				int id;
 				try {
@@ -127,21 +128,21 @@ public class LocumsTab extends SpecificTab implements LocumsDisplayer{
 		 *
 		 * @param occupantId the occupant id
 		 */
-		void saveOccupant(int occupantId) { };
+		void saveOccupant(final int occupantId) { };
 		
 		/**
 		 * Delete occupant.
 		 *
 		 * @param occupantId the occupant id
 		 */
-		void deleteOccupant(int occupantId){};
+		void deleteOccupant(final int occupantId){};
 		
 		/**
 		 * Value changed.
 		 *
 		 * @param id the id
 		 */
-		void valueChanged(int id) {
+		void valueChanged(final int id) {
 			OccupantMockup moc = new OccupantMockup(id, null, null, null, null,
 					null);
 			try {

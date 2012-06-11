@@ -8,23 +8,24 @@ import pl.jjkrol.proz.events.PROZEvent;
 
 /**
  * The Class ReportsTab.
- *
- * @author   jjkrol
+ * 
+ * @author jjkrol
  */
 public class ReportsTab extends SpecificTab {
-	
+
 	/** The name. */
 	private String name = "Raporty";
-	
+
 	/** The blocking queue. */
 	private BlockingQueue<PROZEvent> blockingQueue;
 
 	/**
 	 * Instantiates a new reports tab.
-	 *
-	 * @param blockingQueue the blocking queue
+	 * 
+	 * @param blockingQueue
+	 *            the blocking queue
 	 */
-	public ReportsTab(BlockingQueue<PROZEvent> blockingQueue) {
+	public ReportsTab(final BlockingQueue<PROZEvent> blockingQueue) {
 		this.blockingQueue = blockingQueue;
 	}
 

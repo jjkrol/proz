@@ -1,48 +1,33 @@
 package pl.jjkrol.proz.model;
 
 /**
- * Enumeration type respresenting services that occupant pays for
- * @author     jjkrol
+ * Enumeration type respresenting services that occupant pays for.
+ * 
+ * @author jjkrol
  */
 public enum BillableService {
-	/**
-	 * @uml.property  name="cO"
-	 * @uml.associationEnd  
-	 */
+
+	/** The CO. */
 	CO,
-	/**
-	 * @uml.property  name="eE"
-	 * @uml.associationEnd  
-	 */
+
+	/** The EE. */
 	EE,
-	/**
-	 * @uml.property  name="gAZ"
-	 * @uml.associationEnd  
-	 */
+
+	/** The GAZ. */
 	GAZ,
-	/**
-	 * @uml.property  name="wODA"
-	 * @uml.associationEnd  
-	 */
-	WODA, 
-	/**
-	 * @uml.property  name="pODGRZANIE"
-	 * @uml.associationEnd  
-	 */
-	PODGRZANIE, 
-	/**
-	 * @uml.property  name="sCIEKI"
-	 * @uml.associationEnd  
-	 */
+
+	/** The WODA. */
+	WODA,
+
+	/** The PODGRZANIE. */
+	PODGRZANIE,
+
+	/** The SCIEKI. */
 	SCIEKI,
-	/**
-	 * @uml.property  name="sMIECI"
-	 * @uml.associationEnd  
-	 */
+
+	/** The SMIECI. */
 	SMIECI,
-	/**
-	 * @uml.property  name="iNTERNET"
-	 * @uml.associationEnd  
-	 */
+
+	/** The INTERNET. */
 	INTERNET
 }

@@ -11,15 +11,28 @@ import pl.jjkrol.proz.events.occupants.OccupantChosenForViewingEvent;
 import org.apache.log4j.Logger;
 
 /**
- * displays data of a specific occupant
+ * displays data of a specific occupant.
  */
 public class DisplayOccupantDataStrategy extends OccupantsStrategy {
+
+	/** The logger. */
 	static Logger logger = Logger.getLogger("strategy");
 
-	public DisplayOccupantDataStrategy(View view, Model model) {
+	/**
+	 * Instantiates a new display occupant data strategy.
+	 * 
+	 * @param view
+	 *            the view
+	 * @param model
+	 *            the model
+	 */
+	public DisplayOccupantDataStrategy(final View view, final Model model) {
 		super(view, model);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void execute(final PROZEvent event) {
 		OccupantMockup moc;

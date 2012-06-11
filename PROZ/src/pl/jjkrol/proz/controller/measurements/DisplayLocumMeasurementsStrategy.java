@@ -16,19 +16,32 @@ import pl.jjkrol.proz.events.measurements.LocumChosenForViewingEvent;
 import org.apache.log4j.Logger;
 
 /**
- * display single locum measurements on the measurements tab
+ * display single locum measurements on the measurements tab.
  */
 public class DisplayLocumMeasurementsStrategy extends MeasurementsStrategy {
+
+	/** The logger. */
 	static Logger logger = Logger.getLogger(PROZStrategy.class);
 
-	public DisplayLocumMeasurementsStrategy(View view, Model model) {
+	/**
+	 * Instantiates a new display locum measurements strategy.
+	 * 
+	 * @param view
+	 *            the view
+	 * @param model
+	 *            the model
+	 */
+	public DisplayLocumMeasurementsStrategy(final View view, final Model model) {
 		super(view, model);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void execute(final PROZEvent e) {
 		LocumMockup emptyMockup = ((LocumChosenForViewingEvent) e).moc;
 		String locumName = emptyMockup.getName();
-		//FIXME: not onmly for Measurements Tab
+		// FIXME: not onmly for Measurements Tab
 		try {
 
 			final List<MeasurementMockup> mocs =

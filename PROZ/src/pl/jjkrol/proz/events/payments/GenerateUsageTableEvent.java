@@ -1,14 +1,24 @@
 package pl.jjkrol.proz.events.payments;
 
-import pl.jjkrol.proz.mockups.ResultMockup;
+import pl.jjkrol.proz.mockups.UsageTableData;
 
 /**
- * @author   jjkrol
+ * The Class GenerateUsageTableEvent.
+ * 
+ * @author jjkrol
  */
 public class GenerateUsageTableEvent extends PaymentsEvent {
-	public final ResultMockup result;
 
-	public GenerateUsageTableEvent(ResultMockup result ) {
-		this.result = result;
+	/** The usage table data. */
+	public final UsageTableData usageTableData;
+
+	/**
+	 * Instantiates a new generate usage table event.
+	 * 
+	 * @param usageTableData
+	 *            the usage table data
+	 */
+	public GenerateUsageTableEvent(final UsageTableData usageTableData) {
+		this.usageTableData = usageTableData;
 	}
 }

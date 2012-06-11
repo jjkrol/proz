@@ -4,28 +4,39 @@ import pl.jjkrol.proz.mockups.LocumMockup;
 import pl.jjkrol.proz.mockups.MeasurementMockup;
 
 /**
- * @author   jjkrol
+ * The Class CalculatedResultsNeededEvent.
+ * 
+ * @author jjkrol
  */
 public class CalculatedResultsNeededEvent extends PaymentsEvent {
-	/**
-	 * @uml.property  name="locum"
-	 * @uml.associationEnd  
-	 */
+
+	/** The locum. */
 	public LocumMockup locum;
-	/**
-	 * @uml.property  name="from"
-	 * @uml.associationEnd  
-	 */
+
+	/** The from. */
 	public MeasurementMockup from;
-	/**
-	 * @uml.property  name="to"
-	 * @uml.associationEnd  
-	 */
+
+	/** The to. */
 	public MeasurementMockup to;
+
+	/** The quotation. */
 	public String quotation;
-	
-	public CalculatedResultsNeededEvent(LocumMockup locum, MeasurementMockup from,
-			MeasurementMockup to, String quotation) {
+
+	/**
+	 * Instantiates a new calculated results needed event.
+	 * 
+	 * @param locum
+	 *            the locum
+	 * @param from
+	 *            the from
+	 * @param to
+	 *            the to
+	 * @param quotation
+	 *            the quotation
+	 */
+	public CalculatedResultsNeededEvent(final LocumMockup locum,
+			final MeasurementMockup from, final MeasurementMockup to,
+			final String quotation) {
 		this.locum = locum;
 		this.from = from;
 		this.to = to;

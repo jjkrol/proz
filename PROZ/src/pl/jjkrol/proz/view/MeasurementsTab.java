@@ -1,7 +1,6 @@
 package pl.jjkrol.proz.view;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
@@ -13,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import java.util.jar.JarInputStream;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -26,22 +24,22 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import pl.jjkrol.proz.events.*;
-import pl.jjkrol.proz.events.measurements.AddMeasurementEvent;
-import pl.jjkrol.proz.events.measurements.DeleteMeasurementEvent;
-import pl.jjkrol.proz.events.measurements.LocumChosenForViewingEvent;
-import pl.jjkrol.proz.events.measurements.SaveMeasurementEvent;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
 import pl.jjkrol.proz.controller.Controller;
-import pl.jjkrol.proz.mockups.LocumMockup;
 import pl.jjkrol.proz.controller.LocumsDisplayer;
+import pl.jjkrol.proz.events.LocumsListNeededEvent;
+import pl.jjkrol.proz.events.PROZEvent;
+import pl.jjkrol.proz.events.measurements.AddMeasurementEvent;
+import pl.jjkrol.proz.events.measurements.DeleteMeasurementEvent;
+import pl.jjkrol.proz.events.measurements.LocumChosenForViewingEvent;
+import pl.jjkrol.proz.events.measurements.SaveMeasurementEvent;
+import pl.jjkrol.proz.mockups.LocumMockup;
 import pl.jjkrol.proz.mockups.MeasurementMockup;
-import pl.jjkrol.proz.model.MeasurableService;
+import pl.jjkrol.proz.model.LocumService;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MeasurementsTab.
  * 
@@ -57,7 +55,7 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 		/**
 		 * {@inheritDoc}
 		 */
-		public void valueChanged(ListSelectionEvent event) {
+		public void valueChanged(final ListSelectionEvent event) {
 			if (!event.getValueIsAdjusting()) {
 				try {
 					LocumMockup moc = getSelectedLocum();
@@ -77,7 +75,7 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 		/**
 		 * {@inheritDoc}
 		 */
-		public void valueChanged(ListSelectionEvent event) {
+		public void valueChanged(final ListSelectionEvent event) {
 			if (!event.getValueIsAdjusting()) {
 				try {
 					MeasurementMockup moc = getSelectedMeasurement();
@@ -105,14 +103,14 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 
 		/**
 		 * Save measurement.
-		 *
+		 * 
 		 */
 		void save() {
 		};
 
 		/**
 		 * Delete measurement.
-		 *
+		 * 
 		 */
 		void delete() {
 		};
@@ -123,7 +121,7 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 		 * @param moc
 		 *            the moc
 		 */
-		void locumsValueChanged(LocumMockup moc) {
+		void locumsValueChanged(final LocumMockup moc) {
 			try {
 				blockingQueue.put(new LocumChosenForViewingEvent(moc));
 			} catch (InterruptedException e) {
@@ -138,7 +136,7 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 		 * @param moc
 		 *            the moc
 		 */
-		void measurementsValueChanged(MeasurementMockup moc) {
+		void measurementsValueChanged(final MeasurementMockup moc) {
 			displayMeasurementData(moc);
 		}
 
@@ -236,10 +234,10 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 
 		/**
 		 * Instantiates a new editing new state.
-		 *
+		 * 
 		 */
 		EditingNewState() {
-				clearFields();
+			clearFields();
 			SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 			String dateString = df.format(new Date());
 			dateInput.setText(dateString);
@@ -279,7 +277,7 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 		 * {@inheritDoc}
 		 */
 		@Override
-		void locumsValueChanged(LocumMockup moc) {
+		void locumsValueChanged(final LocumMockup moc) {
 			// TODO drop the changes, and revert to the normal state
 			// revert to normal state
 			internalState = new NormalState();
@@ -294,7 +292,7 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 		 * {@inheritDoc}
 		 */
 		@Override
-		void measurementsValueChanged(MeasurementMockup moc) {
+		void measurementsValueChanged(final MeasurementMockup moc) {
 			if (moc != emptyElement) {
 				internalState = new NormalState();
 				internalState.toggleButtons();
@@ -353,11 +351,7 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 	private JList measurementsList;
 	/** List model for the measurements list. */
 	private DefaultListModel measurementsListModel = new DefaultListModel();
-	/**
-	 * An empty measurement mockup for showing as a new unsaved item.
-	 * 
-	 * @uml.property name="emptyElement" @uml.associationEnd
-	 */
+	/** An empty measurement mockup for showing as a new unsaved item. */
 	private MeasurementMockup emptyElement = new MeasurementMockup(null, null);
 	/** Input for date of the measurement. */
 	private final JTextField dateInput = new JTextField(30);
@@ -368,11 +362,11 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 	private final ListSelectionListener measurementsListListener =
 			new MeasurementsValueReporter();
 	/** Map of labels for each measurable service. */
-	private final Map<MeasurableService, JLabel> serviceLabels =
-			new HashMap<MeasurableService, JLabel>();
+	private final Map<LocumService, JLabel> serviceLabels =
+			new HashMap<LocumService, JLabel>();
 	/** Map of text fields for each measurable service. */
-	private final Map<MeasurableService, JTextField> serviceFields =
-			new HashMap<MeasurableService, JTextField>();
+	private final Map<LocumService, JTextField> serviceFields =
+			new HashMap<LocumService, JTextField>();
 
 	/** The delete listener. */
 	ActionListener deleteListener = new ActionListener() {
@@ -402,7 +396,7 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void displayLocumsList(List<LocumMockup> locums) {
+	public void displayLocumsList(final List<LocumMockup> locums) {
 		locumsList.removeListSelectionListener(locumsListListener);
 		locumsListModel.removeAllElements();
 		for (LocumMockup loc : locums) {
@@ -443,13 +437,13 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 	 * @param moc
 	 *            the moc
 	 */
-	private void displayMeasurementData(MeasurementMockup moc) {
+	private void displayMeasurementData(final MeasurementMockup moc) {
 		Calendar date = moc.getDate();
-		Map<MeasurableService, Float> values = moc.getValues();
+		Map<LocumService, Float> values = moc.getValues();
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 		String dateString = df.format(date.getTime());
 		dateInput.setText(dateString);
-		for (MeasurableService serv : values.keySet()) {
+		for (LocumService serv : values.keySet()) {
 			JTextField field = serviceFields.get(serv);
 			Float value = values.get(serv);
 			field.setText(value.toString());
@@ -465,7 +459,7 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 	 * @param blockingQueue
 	 *            the blocking queue
 	 */
-	public MeasurementsTab(BlockingQueue<PROZEvent> blockingQueue) {
+	public MeasurementsTab(final BlockingQueue<PROZEvent> blockingQueue) {
 		this.blockingQueue = blockingQueue;
 		panel.setLayout(new MigLayout());
 	}
@@ -492,13 +486,9 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 		panel.add(dateLabel, "");
 		panel.add(dateInput, "wrap");
 
-		MeasurableService[] services =
-				new MeasurableService[] { MeasurableService.CW,
-						MeasurableService.CCW, MeasurableService.ZW,
-						MeasurableService.CO, MeasurableService.EE,
-						MeasurableService.GAZ };
+		LocumService[] services = LocumService.class.getEnumConstants();
 
-		for (MeasurableService serv : services) {
+		for (LocumService serv : services) {
 			JLabel lab = new JLabel(serv.toString());
 			panel.add(lab);
 			serviceLabels.put(serv, lab);
@@ -507,20 +497,6 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 			serviceFields.put(serv, field);
 		}
 
-		/*
-		 * JLabel addressLabel = new JLabel("Adres"); panel.add(addressLabel,
-		 * ""); panel.add(addressInput, "wrap");
-		 * 
-		 * JLabel telephoneLabel = new JLabel("Telefon");
-		 * panel.add(telephoneLabel, ""); panel.add(telephoneInput, "wrap");
-		 * 
-		 * JLabel nipLabel = new JLabel("Nip"); panel.add(nipLabel,
-		 * "gap unrelated"); panel.add(nipInput, "grow, wrap");
-		 * 
-		 * JLabel billingLabel = new JLabel("Typ rozliczenia");
-		 * billingInput.setPreferredSize(new Dimension(350, 10));
-		 * panel.add(billingLabel, ""); panel.add(billingInput, "wrap");
-		 */
 		createButton = new JButton("Nowy odczyt");
 		saveButton = new JButton("Zapisz");
 		deleteButton = new JButton("Usuñ");
@@ -539,7 +515,6 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 	 * Gets the name.
 	 * 
 	 * @return the name
-	 * @uml.property name="name"
 	 */
 	@Override
 	public String getName() {
@@ -601,7 +576,7 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 	 */
 	private void clearFields() {
 		dateInput.setText("");
-		for (MeasurableService serv : serviceFields.keySet()) {
+		for (LocumService serv : serviceFields.keySet()) {
 			JTextField field = serviceFields.get(serv);
 			field.setText("");
 		}
@@ -626,9 +601,10 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 
 	/**
 	 * Gets the measurement mockup from fields.
-	 *
+	 * 
 	 * @return the measurement mockup from fields
-	 * @throws BadDateValue the bad date value
+	 * @throws BadDateValue
+	 *             the bad date value
 	 */
 	private MeasurementMockup getMeasurementMockupFromFields()
 			throws BadDateValue {
@@ -638,9 +614,9 @@ public class MeasurementsTab extends SpecificTab implements LocumsDisplayer {
 			d = df.parse(dateInput.getText());
 			Calendar date = new GregorianCalendar();
 			date.setTime(d);
-			Map<MeasurableService, Float> values =
-					new HashMap<MeasurableService, Float>();
-			for (MeasurableService serv : serviceFields.keySet()) {
+			Map<LocumService, Float> values =
+					new HashMap<LocumService, Float>();
+			for (LocumService serv : serviceFields.keySet()) {
 				String value = serviceFields.get(serv).getText();
 				values.put(serv, new Float(value));
 			}

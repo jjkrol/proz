@@ -8,22 +8,36 @@ import pl.jjkrol.proz.model.NoSuchQuotationSet;
 import org.apache.log4j.Logger;
 
 /**
- * Responsible for calculating usage and payments for all services
+ * Responsible for calculating usage and payments for all services.
  * 
  * @author jjkrol
  */
 public class BronowskaCalculator implements PaymentCalculator {
 
-	/**
-	 */
+	/** The result. */
 	private Result result;
+
+	/** The logger. */
 	static Logger logger = Logger.getLogger(BronowskaCalculator.class);
 
 	/**
-	 * Calculates all usage information
+	 * Calculates all usage information.
 	 * 
+	 * @param building
+	 *            the building
+	 * @param loc
+	 *            the loc
+	 * @param from
+	 *            the from
+	 * @param to
+	 *            the to
+	 * @param quotationName
+	 *            the quotation name
+	 * @return the result
 	 * @throws NoSuchQuotationSet
-	 * @throws NoSuchDate 
+	 *             the no such quotation set
+	 * @throws NoSuchDate
+	 *             the no such date
 	 */
 	public Result calculate(final Building building, final Locum loc,
 			final Calendar from, final Calendar to, final String quotationName)
@@ -43,11 +57,27 @@ public class BronowskaCalculator implements PaymentCalculator {
 	}
 
 	/**
-	 * Calculates payments for usage of single locum services
-	 * @throws NoSuchDate 
+	 * Calculates payments for usage of single locum services.
+	 * 
+	 * @param house
+	 *            the house
+	 * @param loc
+	 *            the loc
+	 * @param start
+	 *            the start
+	 * @param end
+	 *            the end
+	 * @param quotationName
+	 *            the quotation name
+	 * @return the map
+	 * @throws NoSuchQuotationSet
+	 *             the no such quotation set
+	 * @throws NoSuchDate
+	 *             the no such date
 	 */
-	private Map<BillableService, BigDecimal> calculatePayment(Building house,
-			Locum loc, Calendar start, Calendar end, String quotationName)
+	private Map<BillableService, BigDecimal> calculatePayment(
+			final Building house, final Locum loc, final Calendar start,
+			final Calendar end, final String quotationName)
 			throws NoSuchQuotationSet, NoSuchDate {
 
 		int monthDiff = end.get(Calendar.MONTH) - start.get(Calendar.MONTH);
@@ -59,13 +89,13 @@ public class BronowskaCalculator implements PaymentCalculator {
 		float heatFactor = house.getHeatFactor(start, end);
 
 		try {
-		Map<MeasurableService, Float> startMeasurement =
-				loc.getMeasurement(start);
-		Map<MeasurableService, Float> endMeasurement = loc.getMeasurement(end);
-		result.setBillableMeasurementStart(calculateBillableMeasurement(startMeasurement));
-		result.setBillableMeasurementEnd(calculateBillableMeasurement(endMeasurement));
-		Map<BillableService, Float> billableUsage =
-				calculateBillableUsage(period, occupantsNumber, heatFactor);
+			Map<LocumService, Float> startMeasurement =
+					loc.getMeasurement(start);
+			Map<LocumService, Float> endMeasurement = loc.getMeasurement(end);
+			result.setBillableMeasurementStart(calculateBillableMeasurement(startMeasurement));
+			result.setBillableMeasurementEnd(calculateBillableMeasurement(endMeasurement));
+			Map<BillableService, Float> billableUsage =
+					calculateBillableUsage(period, occupantsNumber, heatFactor);
 			List<Quotation> quotations = loc.getQuotationSet(quotationName);
 			return calculatePayment(billableUsage, quotations);
 		} catch (NoSuchQuotationSet e) {
@@ -75,34 +105,57 @@ public class BronowskaCalculator implements PaymentCalculator {
 		}
 	}
 
+	/**
+	 * Calculate billable measurement.
+	 * 
+	 * @param measurements
+	 *            the measurements
+	 * @return the map
+	 */
 	private Map<BillableService, Float> calculateBillableMeasurement(
-			Map<MeasurableService, Float> measurements) {
+			final Map<LocumService, Float> measurements) {
 		Map<BillableService, Float> billableMeasurements =
 				new HashMap<BillableService, Float>();
 
-		float cw = measurements.get(MeasurableService.CW);
-		float zw = measurements.get(MeasurableService.ZW);
-		float ccw = measurements.get(MeasurableService.CCW);
+		float cw = measurements.get(LocumService.CW);
+		float zw = measurements.get(LocumService.ZW);
+		float ccw = measurements.get(LocumService.CCW);
 		billableMeasurements.put(BillableService.WODA, cw + zw - ccw);
 		billableMeasurements.put(BillableService.PODGRZANIE, cw - ccw);
 		billableMeasurements.put(BillableService.SCIEKI, cw + zw - ccw);
 		billableMeasurements.put(BillableService.CO, measurements
-				.get(MeasurableService.CO));
+				.get(LocumService.CO));
 		billableMeasurements.put(BillableService.GAZ, measurements
-				.get(MeasurableService.GAZ));
+				.get(LocumService.GAZ));
 		billableMeasurements.put(BillableService.EE, measurements
-				.get(MeasurableService.EE));
+				.get(LocumService.EE));
 
 		return billableMeasurements;
 	}
 
 	/**
-	 * Calculates payments for usage of administrative services
-	 * @throws NoSuchDate 
+	 * Calculates payments for usage of administrative services.
+	 * 
+	 * @param house
+	 *            the house
+	 * @param loc
+	 *            the loc
+	 * @param start
+	 *            the start
+	 * @param end
+	 *            the end
+	 * @param quotationName
+	 *            the quotation name
+	 * @return the map
+	 * @throws NoSuchQuotationSet
+	 *             the no such quotation set
+	 * @throws NoSuchDate
+	 *             the no such date
 	 */
 	private Map<BillableService, BigDecimal> calculateAdministrativePayment(
-			Building house, Locum loc, Calendar start, Calendar end,
-			String quotationName) throws NoSuchQuotationSet, NoSuchDate {
+			final Building house, final Locum loc, final Calendar start,
+			final Calendar end, final String quotationName)
+			throws NoSuchQuotationSet, NoSuchDate {
 		Map<BillableService, Float> administrativeUsage =
 				getAdministrativeUsage(loc, start, end, house);
 		try {
@@ -114,15 +167,17 @@ public class BronowskaCalculator implements PaymentCalculator {
 	}
 
 	/**
-	 * Calculates all payments
+	 * Calculates all payments.
 	 * 
 	 * @param billableUsage
+	 *            the billable usage
 	 * @param quotations
+	 *            the quotations
 	 * @return Result object with all data concerning payment
 	 */
 	private Map<BillableService, BigDecimal> calculatePayment(
-			Map<BillableService, Float> billableUsage,
-			List<Quotation> quotations) {
+			final Map<BillableService, Float> billableUsage,
+			final List<Quotation> quotations) {
 		Map<BillableService, BigDecimal> payment =
 				new HashMap<BillableService, BigDecimal>();
 		for (BillableService serv : billableUsage.keySet()) {
@@ -143,16 +198,18 @@ public class BronowskaCalculator implements PaymentCalculator {
 	}
 
 	/**
-	 * Calculates usage of services
+	 * Calculates usage of services.
 	 * 
-	 * @param usage
 	 * @param period
+	 *            the period
 	 * @param size
+	 *            the size
 	 * @param heatFactor
+	 *            the heat factor
 	 * @return map of usages
 	 */
-	private Map<BillableService, Float> calculateBillableUsage(int period,
-			int size, float heatFactor) {
+	private Map<BillableService, Float> calculateBillableUsage(
+			final int period, final int size, final float heatFactor) {
 		Map<BillableService, Float> billableUsage =
 				new HashMap<BillableService, Float>();
 
@@ -160,10 +217,11 @@ public class BronowskaCalculator implements PaymentCalculator {
 				result.getBillableMeasurementEnd().get(BillableService.WODA)
 						- result.getBillableMeasurementStart().get(
 								BillableService.WODA);
-		billableUsage.put(BillableService.WODA, woda); 
-		
+		billableUsage.put(BillableService.WODA, woda);
+
 		float podgrzanie =
-				result.getBillableMeasurementEnd().get(BillableService.PODGRZANIE)
+				result.getBillableMeasurementEnd().get(
+						BillableService.PODGRZANIE)
 						- result.getBillableMeasurementStart().get(
 								BillableService.PODGRZANIE);
 		billableUsage.put(BillableService.PODGRZANIE, podgrzanie);
@@ -176,15 +234,16 @@ public class BronowskaCalculator implements PaymentCalculator {
 				result.getBillableMeasurementEnd().get(BillableService.CO)
 						- result.getBillableMeasurementStart().get(
 								BillableService.CO);
-		logger.debug(result.getBillableMeasurementEnd().get(BillableService.CO)+" "+
-								result.getBillableMeasurementStart().get(BillableService.CO)+" "+heatFactor);
+		logger.debug(result.getBillableMeasurementEnd().get(BillableService.CO)
+				+ " "
+				+ result.getBillableMeasurementStart().get(BillableService.CO)
+				+ " " + heatFactor);
 		billableUsage.put(BillableService.CO, co * heatFactor);
 		float gaz =
 				result.getBillableMeasurementEnd().get(BillableService.GAZ)
 						- result.getBillableMeasurementStart().get(
 								BillableService.GAZ);
-		billableUsage
-				.put(BillableService.GAZ, gaz);
+		billableUsage.put(BillableService.GAZ, gaz);
 		float ee =
 				result.getBillableMeasurementEnd().get(BillableService.EE)
 						- result.getBillableMeasurementStart().get(
@@ -198,34 +257,50 @@ public class BronowskaCalculator implements PaymentCalculator {
 	}
 
 	/**
-	 * Calculates usage of administrative services
+	 * Calculates usage of administrative services.
 	 * 
 	 * @param loc
+	 *            the loc
 	 * @param start
+	 *            the start
 	 * @param end
+	 *            the end
 	 * @param house
-	 * @return
-	 * @throws NoSuchDate 
+	 *            the house
+	 * @return the administrative usage
+	 * @throws NoSuchDate
+	 *             the no such date
 	 */
-	private Map<BillableService, Float> getAdministrativeUsage(Locum loc,
-			Calendar start, Calendar end, Building house) throws NoSuchDate {
+	private Map<BillableService, Float> getAdministrativeUsage(final Locum loc,
+			final Calendar start, final Calendar end, final Building house)
+			throws NoSuchDate {
 
-		Map<MeasurableService, Float> houseUsage = house.getUsage(start, end);
+		Map<BuildingService, Float> houseUsage = house.getUsage(start, end);
 		float heatFactor = house.getHeatFactor(start, end);
 		float partFact = loc.getParticipationFactor();
 
 		Map<BillableService, Float> retMap =
 				new HashMap<BillableService, Float>();
 
-		retMap.put(BillableService.CO, houseUsage.get(MeasurableService.CO_ADM)
+		retMap.put(BillableService.CO, houseUsage.get(BuildingService.CO_ADM)
 				* heatFactor * partFact);
 		retMap.put(BillableService.WODA, houseUsage
-				.get(MeasurableService.POLEWACZKI)
+				.get(BuildingService.POLEWACZKI)
 				* partFact);
-		retMap.put(BillableService.EE, houseUsage.get(MeasurableService.EE)
+		retMap.put(BillableService.EE, houseUsage.get(BuildingService.EE)
 				* partFact);
 
 		return retMap;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.jjkrol.proz.model.PaymentCalculator#getLastResult()
+	 */
+	@Override
+	public Result getLastResult() {
+		return result;
 	}
 
 }

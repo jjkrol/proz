@@ -6,13 +6,18 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-
-import javassist.compiler.ProceedHandler;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -30,42 +35,49 @@ import org.icepdf.ri.common.ComponentKeyBinding;
 import org.icepdf.ri.common.SwingController;
 import org.icepdf.ri.common.SwingViewBuilder;
 
-import pl.jjkrol.proz.events.*;
+import pl.jjkrol.proz.controller.LocumsDisplayer;
+import pl.jjkrol.proz.events.LocumsListNeededEvent;
+import pl.jjkrol.proz.events.PROZEvent;
 import pl.jjkrol.proz.events.payments.CalculatedResultsNeededEvent;
 import pl.jjkrol.proz.events.payments.GenerateInvoiceEvent;
 import pl.jjkrol.proz.events.payments.GenerateUsageTableEvent;
+import pl.jjkrol.proz.events.payments.InvoiceDataNeededEvent;
 import pl.jjkrol.proz.events.payments.LocumMeasurementsAndQuotationsNeededEvent;
+import pl.jjkrol.proz.events.payments.UsageTableDataNeededEvent;
+import pl.jjkrol.proz.mockups.InvoiceData;
 import pl.jjkrol.proz.mockups.LocumMockup;
-import pl.jjkrol.proz.controller.LocumsDisplayer;
 import pl.jjkrol.proz.mockups.MeasurementMockup;
 import pl.jjkrol.proz.mockups.QuotationMockup;
-import pl.jjkrol.proz.model.BillableService;
 import pl.jjkrol.proz.mockups.ResultMockup;
+import pl.jjkrol.proz.mockups.UsageTableData;
+import pl.jjkrol.proz.model.BillableService;
 
 /**
- * A class responsible for handling all user interactions connected with operating on payments.
- *
- * @author   jjkrol
+ * A class responsible for handling all user interactions connected with
+ * operating on payments.
+ * 
+ * @author jjkrol
  */
 public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 
 	/**
 	 * The Class AcceptGeneratedUsageTableState.
-	 *
-	 * @author   jjkrol
+	 * 
+	 * @author jjkrol
 	 */
 	private class AcceptGeneratedUsageTableState extends State {
-		
+
 		/** The controller. */
 		private SwingController controller;
-		
+
 		/** The previous state. */
 		private State previousState;
 
 		/**
 		 * Instantiates a new accept generated usage table state.
-		 *
-		 * @param previousState the previous state
+		 * 
+		 * @param previousState
+		 *            the previous state
 		 */
 		public AcceptGeneratedUsageTableState(final State previousState) {
 			this.previousState = previousState;
@@ -93,7 +105,7 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 		/**
 		 * {@inheritDoc}
 		 */
-		public void displayPdf(String filename) {
+		public void displayPdf(final String filename) {
 			controller.openDocument(filename);
 		}
 
@@ -125,8 +137,14 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 		void next() {
 			panel.remove(statePanel);
 			internalState = new AcceptInvoiceDataState(this);
-			super.next();		}
-		
+			try {
+				blockingQueue.put(new InvoiceDataNeededEvent());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			super.next();
+		}
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -142,21 +160,22 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 
 	/**
 	 * The Class AcceptGeneratedInvoiceState.
-	 *
-	 * @author   jjkrol
+	 * 
+	 * @author jjkrol
 	 */
 	private class AcceptGeneratedInvoiceState extends State {
-		
+
 		/** The controller. */
 		private SwingController controller;
-		
+
 		/** The previous state. */
 		private State previousState;
 
 		/**
 		 * Instantiates a new accept generated invoice state.
-		 *
-		 * @param previousState the previous state
+		 * 
+		 * @param previousState
+		 *            the previous state
 		 */
 		AcceptGeneratedInvoiceState(final State previousState) {
 			this.previousState = previousState;
@@ -184,7 +203,7 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 		/**
 		 * {@inheritDoc}
 		 */
-		void displayPdf(String filename) {
+		void displayPdf(final String filename) {
 			controller.openDocument(filename);
 		}
 
@@ -218,7 +237,7 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 			internalState = new Finish(this);
 			super.next();
 		}
-		
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -236,20 +255,20 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 	/**
 	 * The Class Finish.
 	 */
-	private class Finish extends State{
-		
+	private class Finish extends State {
+
 		/** The previous state. */
 		private State previousState;
-		
+
 		/**
 		 * Instantiates a new finish.
-		 *
-		 * @param previousState the previous state
+		 * 
+		 * @param previousState
+		 *            the previous state
 		 */
-		Finish(State previousState) {
+		Finish(final State previousState) {
 			this.previousState = previousState;
 		}
-		
 
 		/**
 		 * {@inheritDoc}
@@ -264,6 +283,7 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 				internalState = previousState;
 			super.prev();
 		}
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -272,7 +292,8 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 			nextButton.setText("dalej");
 			internalState = new DataChooseState();
 			super.next();
-		}	
+		}
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -285,25 +306,26 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 			nextButton.setText("Koniec");
 			nextButton.setEnabled(true);
 		}
-		
+
 	}
-	
+
 	/**
 	 * The Class AcceptInvoiceDataState.
-	 *
-	 * @author   jjkrol
+	 * 
+	 * @author jjkrol
 	 */
 	private class AcceptInvoiceDataState extends State {
-		
+
 		/** The previous state. */
 		private State previousState;
 
 		/**
 		 * Instantiates a new accept invoice data state.
-		 *
-		 * @param previousState the previous state
+		 * 
+		 * @param previousState
+		 *            the previous state
 		 */
-		public AcceptInvoiceDataState(State previousState) {
+		public AcceptInvoiceDataState(final State previousState) {
 
 			this.previousState = previousState;
 			// statePanel.add(new JLabel("Wyniki obliczen:"), "wrap");
@@ -311,11 +333,8 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 			statePanel.setPreferredSize(new Dimension(700, 450));
 			statePanel.setBorder(BorderFactory.createLineBorder(Color.black));
 
-	
-
 			statePanel.add(new JLabel("Suma: "));
 		}
-
 
 		/**
 		 * {@inheritDoc}
@@ -352,9 +371,9 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 			}
 			panel.remove(statePanel);
 			internalState = new AcceptGeneratedInvoiceState(this);
-			super.next();			
+			super.next();
 		}
-		
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -365,45 +384,58 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 			prevButton.setEnabled(true);
 			nextButton.setEnabled(true);
 		}
+
+		/**
+		 * Display invoice data.
+		 * 
+		 * @param invoiceData
+		 *            the invoice data
+		 */
+		public void displayInvoiceData(final InvoiceData invoiceData) {
+			// TODO Auto-generated method stub
+
+		}
 	}
 
 	/**
-	 * A class responsible for a state in which calculation results are presented to the user and he can accept, dismiss or modify them.
+	 * A class responsible for a state in which calculation results are
+	 * presented to the user and he can accept, dismiss or modify them.
 	 */
 	private class AcceptResultsState extends State {
 
 		/** The administrative service fields. */
 		private Map<BillableService, JTextField> administrativeServiceFields =
 				new HashMap<BillableService, JTextField>();
-		
+
 		/** The administrative service labels. */
 		private Map<BillableService, JLabel> administrativeServiceLabels =
 				new HashMap<BillableService, JLabel>();
-		
+
 		/** The administrative services. */
 		private List<BillableService> administrativeServices =
 				new ArrayList<BillableService>();
-		
+
 		/** storing previous state, so entered data could be preserved. */
 		private State previousState;
-		
+
 		/** The service fields. */
 		private Map<BillableService, JTextField> serviceFields =
 				new HashMap<BillableService, JTextField>();
-		
+
 		/** The service labels. */
 		private Map<BillableService, JLabel> serviceLabels =
 				new HashMap<BillableService, JLabel>();
-		
+
 		/** The sum field. */
 		private JTextField sumField = new JTextField("20");
 
 		/**
 		 * Instantiates a new accept results state.
-		 *
-		 * @param previousState the previous state
+		 * 
+		 * @param previousState
+		 *            the previous state
 		 */
-		public AcceptResultsState(State previousState) {
+		public AcceptResultsState(final State previousState) {
 
 			// FIXME that is a business rule!
 			administrativeServices.add(BillableService.CO);
@@ -425,6 +457,7 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 				statePanel.add(lab);
 				serviceLabels.put(serv, lab);
 				JTextField field = new JTextField(10);
+				field.setEditable(false);
 				if (administrativeServices.contains(serv)) {
 					statePanel.add(field);
 					serviceFields.put(serv, field);
@@ -432,6 +465,7 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 					statePanel.add(admLab);
 					administrativeServiceLabels.put(serv, admLab);
 					JTextField admField = new JTextField(10);
+					admField.setEditable(false);
 					statePanel.add(admField, "wrap");
 					administrativeServiceFields.put(serv, admField);
 				} else {
@@ -441,6 +475,7 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 
 			}
 
+			sumField.setEditable(false);
 			statePanel.add(new JLabel("Suma: "));
 			statePanel.add(sumField);
 		}
@@ -485,9 +520,14 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 		void next() {
 			panel.remove(statePanel);
 			internalState = new AcceptUsageTableDataState(this, result);
+			try {
+				blockingQueue.put(new UsageTableDataNeededEvent());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			super.next();
-			
 		}
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -516,48 +556,27 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 
 	/**
 	 * The Class AcceptUsageTableDataState.
-	 *
-	 * @author   jjkrol
+	 * 
+	 * @author jjkrol
 	 */
 	private class AcceptUsageTableDataState extends State {
-		
-		/** The administrative results. */
-		private Map<BillableService, Float> administrativeResults;
-		
-		/** The administrative service fields. */
-		private Map<BillableService, JTextField> administrativeServiceFields =
-				new HashMap<BillableService, JTextField>();
-		
-		/** The administrative service labels. */
-		private Map<BillableService, JLabel> administrativeServiceLabels =
-				new HashMap<BillableService, JLabel>();
-		
-		/** The administrative services. */
-		private List<BillableService> administrativeServices =
-				new ArrayList<BillableService>();
-		
+
 		/** The previous state. */
 		private State previousState;
-		
-		/** storing previous state, so entered data could be preserved. */
-		private Map<BillableService, Float> results;
-		
-		/** The service fields. */
-		private Map<BillableService, JTextField> serviceFields =
-				new HashMap<BillableService, JTextField>();
-		
-		/** The service labels. */
-		private Map<BillableService, JLabel> serviceLabels =
-				new HashMap<BillableService, JLabel>();
-		
-		/** The sum field. */
-		private JTextField sumField = new JTextField("20");
+
+		/** The to. */
+		private JTextField locumName = new JTextField(20),
+				occupantName = new JTextField(20),
+				advancement = new JTextField(20), from = new JTextField(20),
+				to = new JTextField(20);
 
 		/**
 		 * Instantiates a new accept usage table data state.
-		 *
-		 * @param previousState the previous state
-		 * @param givenResult the given result
+		 * 
+		 * @param previousState
+		 *            the previous state
+		 * @param givenResult
+		 *            the given result
 		 */
 		public AcceptUsageTableDataState(final State previousState,
 				final ResultMockup givenResult) {
@@ -566,67 +585,16 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 			statePanel.setLayout(new MigLayout());
 			statePanel.setPreferredSize(new Dimension(700, 450));
 			statePanel.setBorder(BorderFactory.createLineBorder(Color.black));
-
-			/*
-			 * // FIXME that is a business rule!
-			 * administrativeServices.add(BillableService.CO);
-			 * administrativeServices.add(BillableService.WODA);
-			 * administrativeServices.add(BillableService.EE);
-			 * 
-			 * 
-			 * // get service types for displaying BillableService[] services =
-			 * BillableService.class.getEnumConstants();
-			 * 
-			 * for (BillableService serv : services) { JLabel lab = new
-			 * JLabel(serv.toString()); statePanel.add(lab);
-			 * serviceLabels.put(serv, lab); JTextField field = new
-			 * JTextField(10); if (administrativeServices.contains(serv)) {
-			 * statePanel.add(field); serviceFields.put(serv, field); JLabel
-			 * admLab = new JLabel(serv.toString()); statePanel.add(admLab);
-			 * administrativeServiceLabels.put(serv, admLab); JTextField
-			 * admField = new JTextField(10); statePanel.add(admField, "wrap");
-			 * administrativeServiceFields.put(serv, admField); } else {
-			 * statePanel.add(field, "wrap"); serviceFields.put(serv, field); }
-			 * 
-			 * } statePanel.add(new JLabel("Suma: ")); statePanel.add(sumField);
-			 * generateTableButton.addActionListener(generateTable);
-			 * statePanel.add(generateTableButton);
-			 */
-		}
-
-		/**
-		 * Display calculation results.
-		 *
-		 * @param results the results
-		 * @param administrativeResults the administrative results
-		 */
-		public void displayCalculationResults(
-				Map<BillableService, Float> results,
-				Map<BillableService, Float> administrativeResults) {
-			this.results = results;
-			this.administrativeResults = administrativeResults;
-			Float sum = 0f;
-			LocumMockup selectedLocum =
-					((DataChooseState) previousState).getSelectedLocum();
-			for (BillableService serv : results.keySet()) {
-				if (!selectedLocum.getEnabledServices().contains(serv)) {
-					results.put(serv, 0f);
-				}
-				JTextField input = serviceFields.get(serv);
-				Float resultValue = results.get(serv);
-				sum += resultValue;
-				input.setText(resultValue.toString());
-				if (administrativeServices.contains(serv)) {
-					resultValue = administrativeResults.get(serv);
-					input = administrativeServiceFields.get(serv);
-					input.setText(resultValue.toString());
-				}
-			}
-			sumField.setText(sum.toString());
-			// TODO disabled services (or in model)
-			for (BillableService serv : administrativeResults.keySet()) {
-
-			}
+			statePanel.add(new JLabel("Nazwa lokalu:"));
+			statePanel.add(locumName, "wrap");
+			statePanel.add(new JLabel("Najemca:"));
+			statePanel.add(occupantName, "wrap");
+			statePanel.add(new JLabel("Zaliczka:"));
+			statePanel.add(advancement, "wrap");
+			statePanel.add(new JLabel("Od:"));
+			statePanel.add(from, "wrap");
+			statePanel.add(new JLabel("Do:"));
+			statePanel.add(to, "wrap");
 		}
 
 		/**
@@ -643,8 +611,28 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 		@Override
 		void next() {
 			try {
-				blockingQueue.put(new GenerateUsageTableEvent(result));
+				UsageTableData usageTableData =
+						new UsageTableData(locumName.getText(), occupantName
+								.getText(), new BigDecimal(advancement
+								.getText()));
+
+				DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+
+				Date d;
+				d = df.parse(from.getText());
+				Calendar fromDate = new GregorianCalendar();
+				fromDate.setTime(d);
+				usageTableData.setFrom(fromDate);
+
+				d = df.parse(to.getText());
+				Calendar toDate = new GregorianCalendar();
+				toDate.setTime(d);
+				usageTableData.setTo(toDate);
+				blockingQueue.put(new GenerateUsageTableEvent(usageTableData));
 			} catch (InterruptedException e) {
+				logger.warn(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
 				logger.warn(e.getMessage());
 				e.printStackTrace();
 			}
@@ -677,59 +665,76 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 			prevButton.setEnabled(true);
 			nextButton.setEnabled(true);
 		}
+
+		/**
+		 * displays usage table data in the text fields.
+		 * 
+		 * @param usageTableData
+		 *            the usage table data
+		 */
+		public void displayUsageTableData(final UsageTableData usageTableData) {
+			locumName.setText(usageTableData.getLocumName());
+			occupantName.setText(usageTableData.getOccupantName());
+			advancement.setText(new DecimalFormat("0.00").format(usageTableData
+					.getAdvancement())); // TODO: prettify
+			SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+			from.setText(df.format(usageTableData.getFrom().getTime()));
+			to.setText(df.format(usageTableData.getTo().getTime()));
+		}
 	}
 
 	/**
-	 * Class responsible for state in which the user is entering data concerning locum, date and quotations to calculate payment.
+	 * Class responsible for state in which the user is entering data concerning
+	 * locum, date and quotations to calculate payment.
 	 */
 	private class DataChooseState extends State {
-		
+
 		/** The locums combo model. */
 		private DefaultComboBoxModel locumsComboModel =
 				new DefaultComboBoxModel();
-		
+
 		/** The locums combo. */
 		private JComboBox locumsCombo = new JComboBox(locumsComboModel);
 
 		/** The measurements. */
 		private List<MeasurementMockup> measurements;
-		
+
 		/** The measurements from combo model. */
 		private DefaultComboBoxModel measurementsFromComboModel =
 				new DefaultComboBoxModel();
-		
+
 		/** The measurements from combo. */
 		private JComboBox measurementsFromCombo = new JComboBox(
 				measurementsFromComboModel);
-		
+
 		/** The measurements to combo model. */
 		private DefaultComboBoxModel measurementsToComboModel =
 				new DefaultComboBoxModel();
-		
+
 		/** The measurements to combo. */
 		private JComboBox measurementsToCombo = new JComboBox(
 				measurementsToComboModel);
-		
+
 		/** The quotations. */
 		private Map<String, List<QuotationMockup>> quotations;
-		
+
 		/** The quotations combo model. */
 		private DefaultComboBoxModel quotationsComboModel =
 				new DefaultComboBoxModel();
-		
+
 		/** The quotations combo. */
 		private JComboBox quotationsCombo = new JComboBox(quotationsComboModel);
-		
+
 		/** The selected locum. */
 		private LocumMockup selectedLocum = new LocumMockup(null, 0, 0, null,
-				null, null,null,null);
+				null, null, null, null);
 
 		/**
 		 * Constructor creates the state panel and all its components.
 		 */
 		DataChooseState() {
 			result = null;
-			
+
 			statePanel.setLayout(new MigLayout());
 			statePanel.add(new JLabel("Lokal: "));
 			statePanel.add(locumsCombo, "wrap");
@@ -764,19 +769,20 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					// assure that to is greater than from
-					if (measurements != null) {
+
+					try {
 						MeasurementMockup selected =
-								(MeasurementMockup) measurementsFromCombo
-										.getSelectedItem();
-						if (selected != null) {
-							measurementsToComboModel.removeAllElements();
-							for (MeasurementMockup moc : measurements) {
-								if (moc.getDate().after(selected.getDate())) {
-									measurementsToComboModel.addElement(moc);
-								}
+								getSelectedMeasurementsFrom();
+						measurementsToComboModel.removeAllElements();
+						for (MeasurementMockup moc : measurements) {
+							if (moc.getDate().after(selected.getDate())) {
+								measurementsToComboModel.addElement(moc);
 							}
 						}
+					} catch (NoMeasurementSelected e) {
+						logger.warn(e.getMessage());
 					}
+
 				}
 			});
 			// combo for ending date
@@ -793,13 +799,15 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 
 		/**
 		 * Inserts data to three combo boxes: from, to and quotations.
-		 *
-		 * @param measurements the measurements
-		 * @param quotations the quotations
+		 * 
+		 * @param measurements
+		 *            the measurements
+		 * @param quotations
+		 *            the quotations
 		 */
 		public void displayLocumMeasurementsAndQuotations(
-				List<MeasurementMockup> measurements,
-				Map<String, List<QuotationMockup>> quotations) {
+				final List<MeasurementMockup> measurements,
+				final Map<String, List<QuotationMockup>> quotations) {
 
 			// fill from combo
 			this.measurements = measurements;
@@ -839,10 +847,11 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 
 		/**
 		 * Fills the locums combo box.
-		 *
-		 * @param locums the locums
+		 * 
+		 * @param locums
+		 *            the locums
 		 */
-		void displayLocumsList(List<LocumMockup> locums) {
+		void displayLocumsList(final List<LocumMockup> locums) {
 			locumsComboModel.removeAllElements();
 			for (LocumMockup loc : locums) {
 				locumsComboModel.addElement(loc);
@@ -851,7 +860,7 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 
 		/**
 		 * Gets the selected locum.
-		 *
+		 * 
 		 * @return the selected locum
 		 */
 		LocumMockup getSelectedLocum() {
@@ -864,21 +873,37 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 		@Override
 		void next() {
 			panel.remove(statePanel);
-			selectedLocum = (LocumMockup) locumsCombo.getSelectedItem();
-			MeasurementMockup meaFrom =
-					(MeasurementMockup) measurementsFromCombo.getSelectedItem();
-			MeasurementMockup meaTo =
-					(MeasurementMockup) measurementsToCombo.getSelectedItem();
-			String quot = (String) quotationsCombo.getSelectedItem();
 			try {
+				selectedLocum = (LocumMockup) locumsCombo.getSelectedItem();
+				MeasurementMockup meaFrom = getSelectedMeasurementsFrom();
+				MeasurementMockup meaTo = getSelectedMeasurementsTo();
+				String quot = (String) quotationsCombo.getSelectedItem();
 				blockingQueue.put(new CalculatedResultsNeededEvent(
 						selectedLocum, meaFrom, meaTo, quot));
 			} catch (InterruptedException e) {
 				logger.warn(e.getMessage());
 				e.printStackTrace();
+			} catch (NoMeasurementSelected e) {
+				logger.warn(e.getMessage());
 			}
 			internalState = new AcceptResultsState(this);
 			super.next();
+		}
+
+		/**
+		 * Gets the selected measurements to.
+		 * 
+		 * @return the selected measurements to
+		 * @throws NoMeasurementSelected
+		 *             the no measurement selected
+		 */
+		private MeasurementMockup getSelectedMeasurementsTo()
+				throws NoMeasurementSelected {
+			MeasurementMockup meaTo =
+					(MeasurementMockup) measurementsToCombo.getSelectedItem();
+			if (meaTo == null)
+				throw new NoMeasurementSelected();
+			return meaTo;
 		}
 
 		/**
@@ -891,13 +916,29 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 			prevButton.setEnabled(false);
 			nextButton.setEnabled(true);
 		}
+
+		/**
+		 * Gets the selected measurements from.
+		 * 
+		 * @return the selected measurements from
+		 * @throws NoMeasurementSelected
+		 *             the no measurement selected
+		 */
+		private MeasurementMockup getSelectedMeasurementsFrom()
+				throws NoMeasurementSelected {
+			MeasurementMockup selected =
+					(MeasurementMockup) measurementsFromCombo.getSelectedItem();
+			if (selected == null)
+				throw new NoMeasurementSelected();
+			return selected;
+		}
 	}
 
 	/**
 	 * General class representing the tab state.
 	 */
 	private class State {
-		
+
 		/** The state panel. */
 		protected JPanel statePanel = new JPanel();
 
@@ -909,13 +950,15 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 
 		/**
 		 * Display locum measurements and quotations.
-		 *
-		 * @param measurements the measurements
-		 * @param quotations the quotations
+		 * 
+		 * @param measurements
+		 *            the measurements
+		 * @param quotations
+		 *            the quotations
 		 */
 		void displayLocumMeasurementsAndQuotations(
-				List<MeasurementMockup> measurements,
-				Map<String, List<QuotationMockup>> quotations) {
+				final List<MeasurementMockup> measurements,
+				final Map<String, List<QuotationMockup>> quotations) {
 		}
 
 		/**
@@ -934,10 +977,11 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 		// move to the specific state
 		/**
 		 * Display locums list.
-		 *
-		 * @param locums the locums
+		 * 
+		 * @param locums
+		 *            the locums
 		 */
-		void displayLocumsList(List<LocumMockup> locums) {
+		void displayLocumsList(final List<LocumMockup> locums) {
 
 		}
 
@@ -977,68 +1021,69 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 
 		/**
 		 * displays a specified file in the tab.
-		 *
-		 * @param filename the filename
+		 * 
+		 * @param filename
+		 *            the filename
 		 */
-		void displayPdf(String filename) {
+		void displayPdf(final String filename) {
 		}
 	}
 
 	/** The logger. */
 	static Logger logger = Logger.getLogger(PROZJFrame.class);
-	
+
 	/** The blocking queue. */
 	private BlockingQueue<PROZEvent> blockingQueue;
-	
+
 	/** The internal state. */
 	private State internalState = new DataChooseState();
-	
+
 	/** The name. */
 	private String name = "P³atnoœci";
 
 	/** The result. */
 	private ResultMockup result;
-	
+
 	/** The next button. */
 	private JButton nextButton = new JButton("Dalej");
-	
+
 	/** The panel. */
 	private final JPanel panel = new JPanel();
-	
+
 	/** The prev button. */
 	private JButton prevButton = new JButton("Wstecz");
-	
+
 	/** The wizard labels. */
 	private List<JLabel> wizardLabels = new ArrayList<JLabel>();
-	
+
 	/*
-	 * Panel components
-	 * TODO add to a map?
+	 * Panel components TODO add to a map?
 	 */
 	/** The data choice label. */
 	private JLabel dataChoiceLabel = new JLabel("Wybór danych");
-	
+
 	/** The gen invoice label. */
 	private JLabel genInvoiceLabel = new JLabel("Wygenerowana faktura");
 
 	/** The gen table label. */
 	private JLabel genTableLabel = new JLabel("Wygenerowana tabelka");
-	
+
 	/** The invoice data label. */
 	private JLabel invoiceDataLabel = new JLabel("Dane do faktury");
-	
+
 	/** The result label. */
 	private JLabel resultLabel = new JLabel("Wynik obliczeñ");
-	
+
 	/** The table data label. */
 	private JLabel tableDataLabel = new JLabel("Dane do tabelki");
 
 	/**
 	 * Instantiates a new payments tab.
-	 *
-	 * @param blockingQueue the blocking queue
+	 * 
+	 * @param blockingQueue
+	 *            the blocking queue
 	 */
-	public PaymentsTab(BlockingQueue<PROZEvent> blockingQueue) {
+	public PaymentsTab(final BlockingQueue<PROZEvent> blockingQueue) {
 		this.blockingQueue = blockingQueue;
 		panel.setLayout(new MigLayout());
 		panel.add(dataChoiceLabel, "");
@@ -1081,8 +1126,9 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 
 	/**
 	 * Display calculation results.
-	 *
-	 * @param moc the moc
+	 * 
+	 * @param moc
+	 *            the moc
 	 */
 	public void displayCalculationResults(final ResultMockup moc) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -1097,9 +1143,11 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 
 	/**
 	 * Display locum measurements and quotations.
-	 *
-	 * @param measurements the measurements
-	 * @param quotations the quotations
+	 * 
+	 * @param measurements
+	 *            the measurements
+	 * @param quotations
+	 *            the quotations
 	 */
 	public void displayLocumMeasurementsAndQuotations(
 			final List<MeasurementMockup> measurements,
@@ -1129,8 +1177,9 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 
 	/**
 	 * displays a pdf file with usage table.
-	 *
-	 * @param filename the filename
+	 * 
+	 * @param filename
+	 *            the filename
 	 */
 	public void displayUsageTable(final String filename) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -1151,7 +1200,7 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 	}
 
 	/**
-	 * {@inheritDoc} 
+	 * {@inheritDoc}
 	 */
 	@Override
 	public String getName() {
@@ -1169,5 +1218,37 @@ public class PaymentsTab extends SpecificTab implements LocumsDisplayer {
 			logger.warn(e.getMessage());
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Display usage table data.
+	 * 
+	 * @param usageTableData
+	 *            the usage table data
+	 */
+	public void displayUsageTableData(final UsageTableData usageTableData) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				((AcceptUsageTableDataState) internalState)
+						.displayUsageTableData(usageTableData);
+			}
+		});
+	}
+
+	/**
+	 * Display invoice data.
+	 * 
+	 * @param invoiceData
+	 *            the invoice data
+	 */
+	public void displayInvoiceData(final InvoiceData invoiceData) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				((AcceptInvoiceDataState) internalState)
+						.displayInvoiceData(invoiceData);
+			}
+		});
 	}
 }

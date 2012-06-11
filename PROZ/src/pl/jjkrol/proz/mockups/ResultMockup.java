@@ -12,60 +12,68 @@ import pl.jjkrol.proz.model.BillableService;
 import pl.jjkrol.proz.model.Building;
 import pl.jjkrol.proz.model.Locum;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ResultMockup.
- *
- * @author   jjkrol
+ * 
+ * @author jjkrol
  */
 public class ResultMockup {
-	
+
 	/** The administrative results. */
 	private final Map<BillableService, BigDecimal> administrativeResults;
-	//TODO change to building mockup
+	// TODO change to building mockup
 	/** The building. */
 	private final Building building;
-	
+
 	/** The from. */
 	private final Calendar from;
-	
+
 	/** The locum. */
 	private final LocumMockup locum;
-	
+
 	/** The quotation. */
 	private final List<QuotationMockup> quotation;
-	
+
 	/** The results. */
 	private final Map<BillableService, BigDecimal> results;
-	
+
 	/** The to. */
 	private final Calendar to;
-	
+
 	/** The billable measurement start. */
 	private Map<BillableService, Float> billableMeasurementStart;
-	
+
 	/** The billable measurement end. */
 	private Map<BillableService, Float> billableMeasurementEnd;
 
 	/**
 	 * Instantiates a new result mockup.
-	 *
-	 * @param building the building
-	 * @param locum the locum
-	 * @param from the from
-	 * @param to the to
-	 * @param quotationName the quotation name
-	 * @param results the results
-	 * @param administrativeResults the administrative results
-	 * @param billableMeasurementStart the billable measurement start
-	 * @param billableMeasurementEnd the billable measurement end
+	 * 
+	 * @param building
+	 *            the building
+	 * @param locum
+	 *            the locum
+	 * @param from
+	 *            the from
+	 * @param to
+	 *            the to
+	 * @param quotationName
+	 *            the quotation name
+	 * @param results
+	 *            the results
+	 * @param administrativeResults
+	 *            the administrative results
+	 * @param billableMeasurementStart
+	 *            the billable measurement start
+	 * @param billableMeasurementEnd
+	 *            the billable measurement end
 	 */
-	public ResultMockup(final Building building, final Locum locum, final Calendar from,
-			final Calendar to, final String quotationName,
+	public ResultMockup(final Building building, final Locum locum,
+			final Calendar from, final Calendar to, final String quotationName,
 			final Map<BillableService, BigDecimal> results,
 			final Map<BillableService, BigDecimal> administrativeResults,
 			final Map<BillableService, Float> billableMeasurementStart,
-			final Map<BillableService, Float> billableMeasurementEnd ) {
+			final Map<BillableService, Float> billableMeasurementEnd) {
 		this.building = building;
 		// TODO it makes locum methods public
 		this.locum = locum.getMockup();
@@ -75,16 +83,19 @@ public class ResultMockup {
 		// TODO it makes locum methods public
 		this.quotation = locum.getQuotationsMockups().get(quotationName);
 		this.results = new HashMap<BillableService, BigDecimal>(results);
-		this.administrativeResults = new HashMap<BillableService, BigDecimal>(administrativeResults);
-		this.billableMeasurementStart = new HashMap<BillableService, Float>(billableMeasurementStart);
-		this.billableMeasurementEnd = new HashMap<BillableService, Float>(billableMeasurementEnd);
+		this.administrativeResults =
+				new HashMap<BillableService, BigDecimal>(administrativeResults);
+		this.billableMeasurementStart =
+				new HashMap<BillableService, Float>(billableMeasurementStart);
+		this.billableMeasurementEnd =
+				new HashMap<BillableService, Float>(billableMeasurementEnd);
 
 	}
 
 	/**
 	 * Gets the administrative results.
-	 *
-	 * @return  the administrativeResults
+	 * 
+	 * @return the administrativeResults
 	 */
 	public Map<BillableService, BigDecimal> getAdministrativeResults() {
 		return administrativeResults;
@@ -92,14 +103,16 @@ public class ResultMockup {
 
 	/**
 	 * Gets the from.
-	 *
-	 * @return  the from
+	 * 
+	 * @return the from
 	 */
 	public Calendar getFrom() {
 		return from;
 	}
 
 	/**
+	 * Gets the billable measurement start.
+	 * 
 	 * @return the billableMeasurementStart
 	 */
 	public Map<BillableService, Float> getBillableMeasurementStart() {
@@ -107,6 +120,8 @@ public class ResultMockup {
 	}
 
 	/**
+	 * Gets the billable measurement end.
+	 * 
 	 * @return the billableMeasurementEnd
 	 */
 	public Map<BillableService, Float> getBillableMeasurementEnd() {
@@ -115,8 +130,8 @@ public class ResultMockup {
 
 	/**
 	 * Gets the locum.
-	 *
-	 * @return  the locum
+	 * 
+	 * @return the locum
 	 */
 	public LocumMockup getLocum() {
 		return locum;
@@ -124,8 +139,8 @@ public class ResultMockup {
 
 	/**
 	 * Gets the quotation.
-	 *
-	 * @return  the quotation
+	 * 
+	 * @return the quotation
 	 */
 	public List<QuotationMockup> getQuotation() {
 		return quotation;
@@ -133,8 +148,8 @@ public class ResultMockup {
 
 	/**
 	 * Gets the results.
-	 *
-	 * @return  the results
+	 * 
+	 * @return the results
 	 */
 	public Map<BillableService, BigDecimal> getResults() {
 		return results;
@@ -142,8 +157,8 @@ public class ResultMockup {
 
 	/**
 	 * Gets the to.
-	 *
-	 * @return  the to
+	 * 
+	 * @return the to
 	 */
 	public Calendar getTo() {
 		return to;

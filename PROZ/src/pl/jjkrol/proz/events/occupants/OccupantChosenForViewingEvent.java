@@ -3,15 +3,22 @@ package pl.jjkrol.proz.events.occupants;
 import pl.jjkrol.proz.mockups.OccupantMockup;
 
 /**
- * @author   jjkrol
+ * The Class OccupantChosenForViewingEvent.
+ * 
+ * @author jjkrol
  */
 public class OccupantChosenForViewingEvent extends OccupantsEvent {
-	/**
-	 * @uml.property  name="moc"
-	 * @uml.associationEnd  
-	 */
+
+	/** The moc. */
 	public final OccupantMockup moc;
-	public OccupantChosenForViewingEvent(OccupantMockup moc) {
+
+	/**
+	 * Instantiates a new occupant chosen for viewing event.
+	 * 
+	 * @param moc
+	 *            the moc
+	 */
+	public OccupantChosenForViewingEvent(final OccupantMockup moc) {
 		this.moc = moc;
 	}
 }

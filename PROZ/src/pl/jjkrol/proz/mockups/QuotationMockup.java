@@ -4,17 +4,28 @@ import java.util.Map;
 import pl.jjkrol.proz.model.BillableService;
 
 /**
- * @TODO  start using this
- * @author   jjkrol
+ * The Class QuotationMockup.
+ * 
+ * @TODO start using this
+ * @author jjkrol
  */
 public class QuotationMockup {
-	/**
-	 * @uml.property  name="service"
-	 * @uml.associationEnd  
-	 */
+
+	/** The service. */
 	private final BillableService service;
+
+	/** The value. */
 	private final Float value;
-	public QuotationMockup(final BillableService service, final Float value){
+
+	/**
+	 * Instantiates a new quotation mockup.
+	 * 
+	 * @param service
+	 *            the service
+	 * @param value
+	 *            the value
+	 */
+	public QuotationMockup(final BillableService service, final Float value) {
 		this.service = service;
 		this.value = value;
 	}

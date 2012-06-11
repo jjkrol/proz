@@ -10,5 +10,5 @@ public interface LocumsDisplayer {
 	 * Displays a list of locums
 	 * @param locums
 	 */
-	public void displayLocumsList(List<LocumMockup> locums);
+	public void displayLocumsList(final List<LocumMockup> locums);
 }

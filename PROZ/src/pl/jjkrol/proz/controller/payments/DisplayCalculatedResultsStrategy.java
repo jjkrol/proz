@@ -2,42 +2,50 @@ package pl.jjkrol.proz.controller.payments;
 
 import java.util.Calendar;
 
+import org.apache.log4j.Logger;
+
 import pl.jjkrol.proz.controller.PROZStrategy;
 import pl.jjkrol.proz.events.PROZEvent;
 import pl.jjkrol.proz.events.payments.CalculatedResultsNeededEvent;
 import pl.jjkrol.proz.mockups.LocumMockup;
 import pl.jjkrol.proz.mockups.ResultMockup;
-import pl.jjkrol.proz.model.BronowskaCalculator;
 import pl.jjkrol.proz.model.Model;
 import pl.jjkrol.proz.model.NoSuchDate;
 import pl.jjkrol.proz.model.NoSuchLocum;
 import pl.jjkrol.proz.model.NoSuchQuotationSet;
-import pl.jjkrol.proz.model.PaymentCalculator;
 import pl.jjkrol.proz.view.NoSuchTabException;
 import pl.jjkrol.proz.view.PaymentsTab;
 import pl.jjkrol.proz.view.View;
-import org.apache.log4j.Logger;
 
 /**
- * displays results of payment calculations
+ * displays results of payment calculations.
  */
 public class DisplayCalculatedResultsStrategy extends PaymentsStrategy {
+	
+	/** The logger. */
 	static Logger logger = Logger.getLogger(PROZStrategy.class);
 
-	public DisplayCalculatedResultsStrategy(View view, Model model) {
+	/**
+	 * Instantiates a new display calculated results strategy.
+	 *
+	 * @param view the view
+	 * @param model the model
+	 */
+	public DisplayCalculatedResultsStrategy(final View view, final Model model) {
 		super(view, model);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void execute(final PROZEvent event) {
 		LocumMockup emptyLocum = ((CalculatedResultsNeededEvent) event).locum;
 		Calendar from = ((CalculatedResultsNeededEvent) event).from.getDate();
 		Calendar to = ((CalculatedResultsNeededEvent) event).to.getDate();
 		String quotation = ((CalculatedResultsNeededEvent) event).quotation;
-		// FIXME this should not be here
-		PaymentCalculator calculator = new BronowskaCalculator();
 		try {
 			final ResultMockup result =
-					model.calculateResults(calculator, emptyLocum.getName(),
+					model.calculateResults(emptyLocum.getName(),
 							from, to, quotation);
 
 			final PaymentsTab c =

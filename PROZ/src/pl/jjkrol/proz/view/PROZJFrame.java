@@ -25,36 +25,38 @@ import pl.jjkrol.proz.events.PROZEvent;
 import pl.jjkrol.proz.events.WindowClosingEvent;
 
 /**
- * A subclassed JFrame, responsible for creating the main windows of the application.
- *
- * @author   jjkrol
+ * A subclassed JFrame, responsible for creating the main windows of the
+ * application.
+ * 
+ * @author jjkrol
  */
-public class PROZJFrame extends JFrame implements WindowListener{
-	
+public class PROZJFrame extends JFrame implements WindowListener {
+
 	/** The core. */
 	private Controller core = Controller.getInstance();
-	
+
 	/** The frame. */
 	private JFrame frame;
-	
+
 	/** The tabbed pane. */
 	private final JTabbedPane tabbedPane = new JTabbedPane();
-	
+
 	/** The views. */
 	private final List<SpecificTab> views = new ArrayList<SpecificTab>();
-	
+
 	/** The blocking queue. */
 	private final BlockingQueue<PROZEvent> blockingQueue;
-	
+
 	/** The logger. */
 	static Logger logger = Logger.getLogger(PROZJFrame.class);
 
 	/**
 	 * Instantiates a new pROZJ frame.
-	 *
-	 * @param blockingQueue the blocking queue
+	 * 
+	 * @param blockingQueue
+	 *            the blocking queue
 	 */
-	public PROZJFrame(BlockingQueue<PROZEvent> blockingQueue) {
+	public PROZJFrame(final BlockingQueue<PROZEvent> blockingQueue) {
 		this.blockingQueue = blockingQueue;
 		addWindowListener(this);
 		createMenu();
@@ -76,7 +78,7 @@ public class PROZJFrame extends JFrame implements WindowListener{
 
 	/**
 	 * Gets the help menu.
-	 *
+	 * 
 	 * @return the help menu
 	 */
 	private JMenu getHelpMenu() {
@@ -88,7 +90,7 @@ public class PROZJFrame extends JFrame implements WindowListener{
 
 	/**
 	 * Gets the edits the menu.
-	 *
+	 * 
 	 * @return the edits the menu
 	 */
 	private JMenu getEditMenu() {
@@ -100,7 +102,7 @@ public class PROZJFrame extends JFrame implements WindowListener{
 
 	/**
 	 * Gets the file menu.
-	 *
+	 * 
 	 * @return the file menu
 	 */
 	private JMenu getFileMenu() {
@@ -123,16 +125,14 @@ public class PROZJFrame extends JFrame implements WindowListener{
 	 * Creates the tabbed pane.
 	 */
 	private void createTabbedPane() {
-		tabbedPane.add("Home", getHomePanel());
 		tabbedPane.addChangeListener(new ChangeListener() {
 			// This method is called whenever the selected tab changes
 			public void stateChanged(ChangeEvent evt) {
 				JTabbedPane pane = (JTabbedPane) evt.getSource();
 				int sel = pane.getSelectedIndex();
-				for(SpecificTab tab : views){
-					
-					
-					if(tab.getName().equals(tabbedPane.getTitleAt(sel))){
+				for (SpecificTab tab : views) {
+
+					if (tab.getName().equals(tabbedPane.getTitleAt(sel))) {
 						tab.getReady();
 					}
 				}
@@ -141,54 +141,37 @@ public class PROZJFrame extends JFrame implements WindowListener{
 		add(tabbedPane);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.awt.Window#setVisible(boolean)
 	 */
 	@Override
-	public void setVisible(boolean bool) {
+	public void setVisible(final boolean bool) {
 		super.setVisible(bool);
 	}
 
 	/**
 	 * Adds the tab.
-	 *
-	 * @param tab the tab
+	 * 
+	 * @param tab
+	 *            the tab
 	 */
-	public void addTab(SpecificTab tab) {
-		logger.debug("Added view "+tab.getName());
+	public void addTab(final SpecificTab tab) {
+		logger.debug("Added view " + tab.getName());
 		tabbedPane.add(tab.getName(), tab.getJPanel());
 		views.add(tab);
-		if(!(tab instanceof PaymentsTab || 
-				tab instanceof MeasurementsTab ||
-				tab instanceof OccupantsTab ||
-				tab instanceof LocumsTab
-				))
-			tabbedPane.setEnabledAt(tabbedPane.getComponentCount()-2, false);
-	}
 
-	/**
-	 * Gets the home panel.
-	 *
-	 * @return the home panel
-	 */
-	private JPanel getHomePanel() {
-		JPanel homePanel = new JPanel();
-		JButton b1 = new JButton("Przycisk 1"), b2 = new JButton("Przycisk 2");
-		JTextField txt = new JTextField(10);
-
-
-
-		homePanel.add(b1);
-		homePanel.add(b2);
-		homePanel.add(txt);
-		return homePanel;
+		if (!(tab instanceof PaymentsTab || tab instanceof MeasurementsTab
+				|| tab instanceof OccupantsTab || tab instanceof BuildingMeasurementsTab))
+			tabbedPane.setEnabledAt(tabbedPane.getComponentCount() - 2, false);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void windowActivated(WindowEvent arg0) {
+	public void windowActivated(final WindowEvent arg0) {
 		
 	}
 
@@ -196,15 +179,15 @@ public class PROZJFrame extends JFrame implements WindowListener{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void windowClosed(WindowEvent arg0) {
-		
+	public void windowClosed(final WindowEvent arg0) {
+
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void windowClosing(WindowEvent arg0) {
+	public void windowClosing(final WindowEvent arg0) {
 		try {
 			blockingQueue.put(new WindowClosingEvent());
 		} catch (InterruptedException e) {
@@ -217,32 +200,32 @@ public class PROZJFrame extends JFrame implements WindowListener{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void windowDeactivated(WindowEvent arg0) {
-		
+	public void windowDeactivated(final WindowEvent arg0) {
+
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void windowDeiconified(WindowEvent arg0) {
-		
+	public void windowDeiconified(final WindowEvent arg0) {
+
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void windowIconified(WindowEvent arg0) {
-		
+	public void windowIconified(final WindowEvent arg0) {
+
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void windowOpened(WindowEvent arg0) {
-		
+	public void windowOpened(final WindowEvent arg0) {
+
 	}
 
 }

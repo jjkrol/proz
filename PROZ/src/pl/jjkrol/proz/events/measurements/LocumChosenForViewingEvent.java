@@ -2,17 +2,23 @@ package pl.jjkrol.proz.events.measurements;
 
 import pl.jjkrol.proz.mockups.LocumMockup;
 
-
 /**
- * @author   jjkrol
+ * The Class LocumChosenForViewingEvent.
+ * 
+ * @author jjkrol
  */
 public class LocumChosenForViewingEvent extends MeasurementsEvent {
-	/**
-	 * @uml.property  name="moc"
-	 * @uml.associationEnd  
-	 */
+
+	/** The mockup. */
 	public final LocumMockup moc;
-	public LocumChosenForViewingEvent(LocumMockup moc) {
+
+	/**
+	 * Instantiates a new locum chosen for viewing event.
+	 * 
+	 * @param moc
+	 *            the moc
+	 */
+	public LocumChosenForViewingEvent(final LocumMockup moc) {
 		this.moc = moc;
 	}
 }

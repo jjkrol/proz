@@ -1,27 +1,36 @@
 package pl.jjkrol.proz.controller;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import javax.swing.SwingUtilities;
-
 import org.apache.log4j.Logger;
 
+import pl.jjkrol.proz.controller.buildingMeasurements.AddBuildingMeasurementDataStrategy;
+import pl.jjkrol.proz.controller.buildingMeasurements.DeleteBuildingMeasurementDataStrategy;
+import pl.jjkrol.proz.controller.buildingMeasurements.DisplayBuildingMeasurementsStrategy;
+import pl.jjkrol.proz.controller.buildingMeasurements.SaveBuildingMeasurementDataStrategy;
 import pl.jjkrol.proz.controller.measurements.AddMeasurementDataStrategy;
 import pl.jjkrol.proz.controller.measurements.DeleteMeasurementDataStrategy;
 import pl.jjkrol.proz.controller.measurements.DisplayLocumMeasurementsStrategy;
 import pl.jjkrol.proz.controller.measurements.SaveMeasurementDataStrategy;
-import pl.jjkrol.proz.controller.occupants.*;
+import pl.jjkrol.proz.controller.occupants.AddOccupantDataStrategy;
+import pl.jjkrol.proz.controller.occupants.DeleteOccupantDataStrategy;
+import pl.jjkrol.proz.controller.occupants.DisplayOccupantDataStrategy;
+import pl.jjkrol.proz.controller.occupants.DisplayOccupantsStrategy;
+import pl.jjkrol.proz.controller.occupants.SaveOccupantDataStrategy;
 import pl.jjkrol.proz.controller.payments.DisplayCalculatedResultsStrategy;
+import pl.jjkrol.proz.controller.payments.DisplayInvoiceDataStrategy;
 import pl.jjkrol.proz.controller.payments.DisplayLocumMeasurementsAndQuotationsStrategy;
 import pl.jjkrol.proz.controller.payments.GenerateInvoiceStrategy;
 import pl.jjkrol.proz.controller.payments.GenerateUsageTableStrategy;
-import pl.jjkrol.proz.events.*;
+import pl.jjkrol.proz.events.LocumsListNeededEvent;
+import pl.jjkrol.proz.events.PROZEvent;
+import pl.jjkrol.proz.events.WindowClosingEvent;
+import pl.jjkrol.proz.events.buildingMeasurements.AddBuildingMeasurementEvent;
+import pl.jjkrol.proz.events.buildingMeasurements.BuildingMeasurementsListNeededEvent;
+import pl.jjkrol.proz.events.buildingMeasurements.DeleteBuildingMeasurementEvent;
+import pl.jjkrol.proz.events.buildingMeasurements.SaveBuildingMeasurementEvent;
 import pl.jjkrol.proz.events.measurements.AddMeasurementEvent;
 import pl.jjkrol.proz.events.measurements.DeleteMeasurementEvent;
 import pl.jjkrol.proz.events.measurements.LocumChosenForViewingEvent;
@@ -34,27 +43,13 @@ import pl.jjkrol.proz.events.occupants.SaveOccupantEvent;
 import pl.jjkrol.proz.events.payments.CalculatedResultsNeededEvent;
 import pl.jjkrol.proz.events.payments.GenerateInvoiceEvent;
 import pl.jjkrol.proz.events.payments.GenerateUsageTableEvent;
+import pl.jjkrol.proz.events.payments.InvoiceDataNeededEvent;
 import pl.jjkrol.proz.events.payments.LocumMeasurementsAndQuotationsNeededEvent;
-import pl.jjkrol.proz.model.DocumentBuilder;
-import pl.jjkrol.proz.model.DocumentDirector;
+import pl.jjkrol.proz.events.payments.UsageTableDataNeededEvent;
+import pl.jjkrol.proz.model.BronowskaCalculator;
 import pl.jjkrol.proz.model.Model;
-import pl.jjkrol.proz.model.NoSuchLocum;
-import pl.jjkrol.proz.model.NoSuchQuotationSet;
-import pl.jjkrol.proz.model.PaymentCalculator;
-import pl.jjkrol.proz.mockups.OccupantMockup;
-import pl.jjkrol.proz.mockups.ResultMockup;
-import pl.jjkrol.proz.model.UsageTableBuilder;
-import pl.jjkrol.proz.view.InvoicesTab;
-import pl.jjkrol.proz.view.LocumsTab;
-import pl.jjkrol.proz.view.MeasurementsTab;
-import pl.jjkrol.proz.view.OccupantsTab;
 import pl.jjkrol.proz.view.PROZJFrame;
-import pl.jjkrol.proz.view.PaymentsTab;
-import pl.jjkrol.proz.view.ReportsTab;
-import pl.jjkrol.proz.view.SpecificTab;
 import pl.jjkrol.proz.view.View;
-
-// TODO: Auto-generated Javadoc
 
 /**
  * A class responsible for the application control flow.
@@ -71,7 +66,7 @@ public class Controller {
 	private final View view;
 
 	/** The model. */
-	private final Model model = new Model();
+	private final Model model = new Model(new BronowskaCalculator());
 
 	/** The logger. */
 	static Logger logger = Logger.getLogger(PROZJFrame.class);
@@ -114,14 +109,18 @@ public class Controller {
 		initializeOccupantsDictionary();
 		initializeLocumsDictionary();
 		initializeMeasurementsDictionary();
-		
+		initializeBuildingMeasurementsDictionary();
+
 		eventDictionary.put(LocumsListNeededEvent.class,
 				new DisplayLocumsStrategy(view, model));
-
+		eventDictionary.put(InvoiceDataNeededEvent.class,
+				new DisplayInvoiceDataStrategy(view, model));
 		eventDictionary.put(LocumMeasurementsAndQuotationsNeededEvent.class,
 				new DisplayLocumMeasurementsAndQuotationsStrategy(view, model));
 		eventDictionary.put(CalculatedResultsNeededEvent.class,
 				new DisplayCalculatedResultsStrategy(view, model));
+		eventDictionary.put(UsageTableDataNeededEvent.class,
+				new DisplayUsageTableDataStrategy(view, model));
 		eventDictionary.put(GenerateUsageTableEvent.class,
 				new GenerateUsageTableStrategy(view, model));
 		eventDictionary.put(GenerateInvoiceEvent.class,
@@ -142,7 +141,7 @@ public class Controller {
 		eventDictionary.put(DeleteOccupantEvent.class,
 				new DeleteOccupantDataStrategy(view, model));
 	}
-	
+
 	private void initializeMeasurementsDictionary() {
 		eventDictionary.put(AddMeasurementEvent.class,
 				new AddMeasurementDataStrategy(view, model));
@@ -151,16 +150,29 @@ public class Controller {
 		eventDictionary.put(DeleteMeasurementEvent.class,
 				new DeleteMeasurementDataStrategy(view, model));
 	}
-	
+
+	private void initializeBuildingMeasurementsDictionary() {
+		eventDictionary.put(BuildingMeasurementsListNeededEvent.class,
+				new DisplayBuildingMeasurementsStrategy(view, model));
+		eventDictionary.put(AddBuildingMeasurementEvent.class,
+				new AddBuildingMeasurementDataStrategy(view, model));
+		eventDictionary.put(SaveBuildingMeasurementEvent.class,
+				new SaveBuildingMeasurementDataStrategy(view, model));
+		eventDictionary.put(DeleteBuildingMeasurementEvent.class,
+				new DeleteBuildingMeasurementDataStrategy(view, model));
+	}
+
 	private void initializeLocumsDictionary() {
 		eventDictionary.put(LocumChosenForViewingEvent.class,
 				new DisplayLocumMeasurementsStrategy(view, model));
-/*		eventDictionary.put(AddLocumEvent.class,
-				new AddOccupantDataStrategy(view, model));
-		eventDictionary.put(SaveLocumEvent.class,
-				new SaveOccupantDataStrategy(view, model));
-		eventDictionary.put(DeleteLocumEvent.class,
-				new DeleteOccupantDataStrategy(view, model));*/
+		/*
+		 * eventDictionary.put(AddLocumEvent.class, new
+		 * AddOccupantDataStrategy(view, model));
+		 * eventDictionary.put(SaveLocumEvent.class, new
+		 * SaveOccupantDataStrategy(view, model));
+		 * eventDictionary.put(DeleteLocumEvent.class, new
+		 * DeleteOccupantDataStrategy(view, model));
+		 */
 	}
 
 	/**
@@ -168,14 +180,7 @@ public class Controller {
 	 * 
 	 */
 	public void run() {
-		List<SpecificTab> views = new ArrayList<SpecificTab>();
-		views.add(new MeasurementsTab(blockingQueue));
-		views.add(new PaymentsTab(blockingQueue));
-		views.add(new OccupantsTab(blockingQueue));
-		views.add(new LocumsTab(blockingQueue));
-		views.add(new InvoicesTab(blockingQueue));
-		views.add(new ReportsTab(blockingQueue));
-		view.startGUI(views);
+		view.startGUI();
 		runLoop();
 	}
 

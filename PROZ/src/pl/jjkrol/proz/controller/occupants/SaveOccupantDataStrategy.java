@@ -8,23 +8,39 @@ import pl.jjkrol.proz.model.Model;
 import pl.jjkrol.proz.model.NoSuchOccupant;
 import pl.jjkrol.proz.view.View;
 import org.apache.log4j.Logger;
+
+/**
+ * saves occupant data.
+ */
+public class SaveOccupantDataStrategy extends OccupantsStrategy {
+
+	/** The logger. */
+	static Logger logger = Logger.getLogger("strategy");
+
 	/**
-	 * saves occupant data
+	 * Instantiates a new save occupant data strategy.
+	 * 
+	 * @param view
+	 *            the view
+	 * @param model
+	 *            the model
 	 */
-	public class SaveOccupantDataStrategy extends OccupantsStrategy {
-		static Logger logger = Logger.getLogger("strategy");
-		public SaveOccupantDataStrategy(View view, Model model) {
-			super(view, model);
-		}
-		public void execute(final PROZEvent event) {
-			OccupantMockup moc = ((SaveOccupantEvent) event).mockup;
-			try {
-				model.saveOccupant(moc.getId(), moc);
-			} catch (NoSuchOccupant e) {
-				logger.warn(e.getMessage());
-				e.printStackTrace();
-			}
-			PROZStrategy s = new DisplayOccupantsStrategy(view, model);
-			s.execute(event);
-		}
+	public SaveOccupantDataStrategy(final View view, final Model model) {
+		super(view, model);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void execute(final PROZEvent event) {
+		OccupantMockup moc = ((SaveOccupantEvent) event).mockup;
+		try {
+			model.saveOccupant(moc.getId(), moc);
+		} catch (NoSuchOccupant e) {
+			logger.warn(e.getMessage());
+			e.printStackTrace();
+		}
+		PROZStrategy s = new DisplayOccupantsStrategy(view, model);
+		s.execute(event);
+	}
+}

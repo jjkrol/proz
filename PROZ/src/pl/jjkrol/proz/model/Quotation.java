@@ -1,40 +1,56 @@
 package pl.jjkrol.proz.model;
+
 import pl.jjkrol.proz.mockups.QuotationMockup;
+
 /**
- * @author   jjkrol
+ * The Class Quotation.
+ * 
+ * @author jjkrol
  */
 public class Quotation {
-	/**
-	 * @uml.property  name="service"
-	 * @uml.associationEnd  
-	 */
+
+	/** The service. */
 	private BillableService service;
-	/**
-	 * @uml.property  name="price"
-	 */
+
+	/** The price. */
 	private float price;
 
-	public Quotation(float price, BillableService service) {
+	/**
+	 * Instantiates a new quotation.
+	 * 
+	 * @param price
+	 *            the price
+	 * @param service
+	 *            the service
+	 */
+	public Quotation(final float price, final BillableService service) {
 		this.price = price;
 		this.service = service;
 	}
 
 	/**
-	 * @return
-	 * @uml.property  name="price"
+	 * Gets the price.
+	 * 
+	 * @return the price
 	 */
 	public float getPrice() {
 		return price;
 	}
 
 	/**
-	 * @return
-	 * @uml.property  name="service"
+	 * Gets the service.
+	 * 
+	 * @return the service
 	 */
 	public BillableService getService() {
 		return service;
 	}
-	
+
+	/**
+	 * Gets the mockup.
+	 * 
+	 * @return the mockup
+	 */
 	public QuotationMockup getMockup() {
 		return new QuotationMockup(service, price);
 	}

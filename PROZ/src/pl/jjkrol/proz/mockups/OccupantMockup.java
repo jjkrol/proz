@@ -3,44 +3,49 @@ package pl.jjkrol.proz.mockups;
 import pl.jjkrol.proz.model.Occupant;
 
 /**
- * @author  jjkrol
+ * The Class OccupantMockup.
+ * 
+ * @author jjkrol
  */
 public class OccupantMockup {
 
-	/**
-	 * occupant's id
-	 * @uml.property  name="id"
-	 */
+	/** occupant's id. */
 	private final int id;
-	/**
-	 * occupant's name
-	 * @uml.property  name="name"
-	 */
+
+	/** occupant's name. */
 	private final String name;
-	/**
-	 * occupant's address
-	 * @uml.property  name="address"
-	 */
+
+	/** occupant's address. */
 	private final String address;
-	/**
-	 * occupant's telephone
-	 * @uml.property  name="telephone"
-	 */
+
+	/** occupant's telephone. */
 	private final String telephone;
-	/**
-	 * occupant's nip
-	 * @uml.property  name="nip"
-	 */
+
+	/** occupant's nip. */
 	private final String nip;
-	/**
-	 * type of billing
-	 * @uml.property  name="billingType"
-	 * @uml.associationEnd  
-	 */
+
+	/** type of billing. */
 	private final Occupant.Billing billingType;
 
-	public OccupantMockup(int id, String givenName, String givenAddress,
-			String givenTelephone, String givenNip, Occupant.Billing billingType) {
+	/**
+	 * Instantiates a new occupant mockup.
+	 * 
+	 * @param id
+	 *            the id
+	 * @param givenName
+	 *            the given name
+	 * @param givenAddress
+	 *            the given address
+	 * @param givenTelephone
+	 *            the given telephone
+	 * @param givenNip
+	 *            the given nip
+	 * @param billingType
+	 *            the billing type
+	 */
+	public OccupantMockup(final int id, final String givenName,
+			final String givenAddress, final String givenTelephone,
+			final String givenNip, final Occupant.Billing billingType) {
 		this.id = id;
 		this.name = givenName;
 		this.address = givenAddress;
@@ -50,48 +55,54 @@ public class OccupantMockup {
 	}
 
 	/**
-	 * @return  the id
-	 * @uml.property  name="id"
+	 * Gets the id.
+	 * 
+	 * @return the id
 	 */
 	public int getId() {
 		return id;
 	}
 
 	/**
-	 * @return  the name
-	 * @uml.property  name="name"
+	 * Gets the name.
+	 * 
+	 * @return the name
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * @return  the address
-	 * @uml.property  name="address"
+	 * Gets the address.
+	 * 
+	 * @return the address
 	 */
 	public String getAddress() {
 		return address;
 	}
 
 	/**
-	 * @return  the telephone
-	 * @uml.property  name="telephone"
+	 * Gets the telephone.
+	 * 
+	 * @return the telephone
 	 */
 	public String getTelephone() {
 		return telephone;
 	}
 
 	/**
-	 * @return  the nip
-	 * @uml.property  name="nip"
+	 * Gets the nip.
+	 * 
+	 * @return the nip
 	 */
 	public String getNip() {
 		return nip;
 	}
 
 	/**
-	 * @return  the billingType
-	 * @uml.property  name="billingType"
+	 * Gets the billing type.
+	 * 
+	 * @return the billingType
 	 */
 	public Occupant.Billing getBillingType() {
 		return billingType;
